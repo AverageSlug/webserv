@@ -1,163 +1,85 @@
-#include <iostream>
-#include <cstring>
-#include <cstdlib>
-#include <unistd.h>
-#include <fcntl.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/time.h>
+#include "Webserv.hpp"
 
-/* todo:
-// use parsed config
-// errors
-*/
+Webserv::Webserv() {}
 
-void	fd_set_set(int server_fd, int server_fd_highest, int tmp_listen[1], fd_set read_fd, fd_set write_fd)
+Webserv::~Webserv() {}
+
+Webserv::Webserv(const Webserv &cpy)
 {
-	FD_ZERO(&read_fd);
-	FD_ZERO(&write_fd);
-	FD_SET(server_fd, &read_fd);
-	FD_SET(server_fd, &write_fd);
-	for (int i = 0; i < 1; i++)
-	{
-		if (tmp_listen[i])
-		{
-			FD_SET(tmp_listen[i], &read_fd);
-			FD_SET(tmp_listen[i], &write_fd);
-			if (tmp_listen[i] > server_fd_highest)
-				server_fd_highest = tmp_listen[i];
-		}
-	}
+	*this = cpy;
 }
 
-void	new_fd(int server_fd, int tmp_listen[1])
+Webserv &Webserv::operator=(const Webserv &a)
 {
-	int	connect;
-	if ((connect = accept(server_fd, NULL, NULL)) < 0)
-	{
-		std::cout << "error" << std::endl;
-		exit(1);
-	}
-	fcntl(connect, F_SETFL, O_NONBLOCK);
-	for (int i = 0; i < 1; i++)
-	{
-		if (!tmp_listen[i])
-		{
-			tmp_listen[i] = connect;
-			connect = -1;
-		}
-	}
-	if (connect != -1)
-	{
-		std::cout << "error msg" << std::endl;
-		close(connect);
-	}
+	this->_tmp = a._tmp;
+	return (*this);
 }
 
-void handle_fd(int tmp_listen)
+void	Webserv::setup()
 {
-	char buffer[80];
-	char *cur_char;
-
-	if (read(tmp_listen, buffer, 80) < 0)
-	{
-		std::cout << "error msg" << std::endl;
-		close(tmp_listen);
-		tmp_listen = 0;
-	}
-	else
-	{
-		std::cout << "msg" << std::endl;
-		cur_char = buffer;
-		while (*cur_char)
-		{
-			*cur_char = toupper(*cur_char);
-			cur_char++;
-		}
-		std::cout << "msg" << std::endl;
-	}
-}
-
-void	handle_fd_set(int server_fd, int tmp_listen[1], fd_set read_fd, fd_set write_fd)
-{
-	if (FD_ISSET(server_fd, &read_fd))
-		new_fd(server_fd, tmp_listen);
-	if (FD_ISSET(server_fd, &write_fd))
-		new_fd(server_fd, tmp_listen);
-	for (int i = 0; i < 1; i++)
-	{
-		if (FD_ISSET(tmp_listen[i], &read_fd))
-			handle_fd(tmp_listen[i]);
-		if (FD_ISSET(tmp_listen[i], &write_fd))
-			handle_fd(tmp_listen[i]);
-	}
-}
-
-int		webserv()
-{
-	int		server_fd;
-	int		server_fd_highest;
-	int		reuse_addr = 1;
-	struct	sockaddr_in	val;
-	int		select_socks;
-	fd_set	read_fd;
-	fd_set	write_fd;
-	struct	timeval		timeout;
-
+	_Server = new Server[1]; //
 //	while (more config) {
-	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-	{
-		std::cout << "error" << std::endl;
-		exit(1);
-	}
-	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr)) < 0)
-	{
-		std::cout << "error" << std::endl;
-		exit(1);
-	}
-	fcntl(server_fd, F_SETFL, O_NONBLOCK);
-	memset((char *)&val, 0, sizeof(val));
-	val.sin_family = AF_INET;
-	val.sin_addr.s_addr = htonl(INADDR_ANY);
-	val.sin_port = 8000; //
-	if (bind(server_fd, (struct sockaddr *)&val, sizeof(val)) < 0)
-	{
-		std::cout << "error" << std::endl;
-		exit(1);
-	}
-	if (listen(server_fd, 1) < 0)
-	{
-		std::cout << "error" << std::endl;
-		exit(1);
-	}
-//	}
-	server_fd_highest = server_fd;
-	int	tmp_listen[1] = {0};
-	while (1) //main
-	{
-		fd_set_set(server_fd, server_fd_highest, tmp_listen, read_fd, write_fd);
-		timeout.tv_sec = 5;
-		timeout.tv_usec = 0;
-		if ((select_socks = select(server_fd_highest + 1, &read_fd, &write_fd, NULL, &timeout)) < 0)
+		Server	Server(0); //
+		if (Server.setup())
 		{
 			std::cout << "error" << std::endl;
 			exit(1);
 		}
-		if (!select_socks)
+		_Server[0] = Server; //
+		if (_Server[0].getFD() > _server_fd_highest)
+			_server_fd_highest = _Server[0].getFD();
+//	}
+}
+
+void	Webserv::server()
+{
+	struct	timeval_t	timeout;
+	int		select_fd;
+
+	while (1)
+	{
+		_fd_set_set();
+		timeout.tv_sec = 1;
+		timeout.tv_usec = 0;
+		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
+		{
+			std::cout << "error" << std::endl;
+			exit(1);
+		}
+		if (!select_fd)
 			std::cout << "waiting" << std::endl;
 		else
-			handle_fd_set(server_fd, tmp_listen, read_fd, write_fd);
+			_handle_fd_set();
 	}
 }
 
-int		main(int argc, char **argv)
+void	Webserv::_fd_set_set()
 {
-	(void)argv; //
-	if (argc != 2)
+	FD_ZERO(&read_fd);
+	FD_ZERO(&write_fd);
+	for (int i = 0; _Server[i]; i++)
 	{
-		std::cout << "error" << std::endl;
-		return (1);
+		FD_SET(_Server[i].getFD(), &read_fd);
+		FD_SET(_Server[i].getFD(), &write_fd);
+		for (int j = 0; j < 10; j++) //
+			if (_Server[i].getConnecting(j))
+			{
+				FD_SET(_Server[i].getConnecting(j), &read_fd);
+				FD_SET(_Server[i].getConnecting(j), &write_fd);
+				if (_Server[i].getConnecting(j) > server_fd_highest)
+					server_fd_highest = _Server[i].getConnecting(j);
+			}
 	}
-	//parse
-	webserv();
+}
+
+void	Webserv::_handle_fd_set()
+{
+	for (int i = 0; _Server[i]; i++)
+	{
+		if (FD_ISSET(_Server[i].getFD(), &read_fd) || FD_ISSET(_Server[i].getFD(), &write_fd))
+			_Server[i].new_fd();
+		for (int j = 0; j < 10; j++)
+			if (FD_ISSET(_Server[i].getConnecting(j), &read_fd) || FD_ISSET(_Server[i].getConnecting(j), &write_fd))
+				_Server[i].handle_fd(j);
+	}
 }
