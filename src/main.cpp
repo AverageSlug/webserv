@@ -9,4 +9,5 @@ int		main(int argc, char **argv)
 	}
 	Webserv Webserv;
 	Webserv.setup();
+	Webserv.server();
 }
