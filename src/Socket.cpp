@@ -68,7 +68,7 @@ int		Socket::getFD()
 	return (_Socket_fd);
 }
 
-std::vector<int>	Socket::getConnecting()
+std::vector<int>	&Socket::getConnecting()
 {
 	return (_connecting);
 }

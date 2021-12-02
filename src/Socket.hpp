@@ -25,7 +25,7 @@ class Socket
 		Socket &operator=(const Socket &a);
 		int		setup();
 		int		getFD();
-		std::vector<int>	getConnecting();
+		std::vector<int>	&getConnecting();
 		void	new_fd();
 	private:
 		int		_Socket_fd;

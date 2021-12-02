@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
+/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 12:05:53 by nlaurids          #+#    #+#             */
-/*   Updated: 2021/12/02 13:09:24 by nlaurids         ###   ########.fr       */
+/*   Updated: 2021/12/02 21:02:59 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,7 @@
 # include <vector>
 # include <list>
 # include <algorithm>
+
+#include "utils.hpp"
 
 #endif

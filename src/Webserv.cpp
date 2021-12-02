@@ -19,7 +19,10 @@ Webserv::Webserv(all_servers all_servers)
 
 Webserv::Webserv() {}
 
-Webserv::~Webserv() {}
+Webserv::~Webserv()
+{
+	delete [] _Socket;
+}
 
 Webserv::Webserv(const Webserv &cpy)
 {

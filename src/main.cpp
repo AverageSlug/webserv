@@ -15,14 +15,21 @@
 
 int		main(int argc, char **argv)
 {
-	if (argc > 2)
+	if (argc != 2)
 	{
 		std::cout << "error" << std::endl;
 		return (1);
 	}
 	all_servers all_servers;
-	all_servers.parser(argv[1]);
-
+	try
+	{
+		all_servers.parser(argv[1]);
+	}
+	catch (const char* & e)
+	{
+		std::cerr << e << std::endl;
+		exit(1);
+	}
 	Webserv Webserv(all_servers);
 	Webserv.setup();
 	Webserv.server();

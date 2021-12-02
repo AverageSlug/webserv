@@ -1,0 +1,290 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/02 20:49:22 by igor              #+#    #+#             */
+/*   Updated: 2021/12/02 20:50:51 by igor             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "Server.hpp"
+
+Server::Server() :
+	_port(8000),
+	_ip("127.0.0.1"),
+	_clientMaxBodySize(1000000)
+{}
+
+Server::~Server() {
+	for (size_t i = 0; i < this->_locations.size(); i++)
+		delete this->_locations[i];
+	this->_locations.clear();
+}
+
+Server::Server(const Server &x)
+{
+	*this = x;
+}
+
+Server&	Server::operator=(const Server &x)
+{
+	if (this == &x)
+		return *this;
+	this->_port = x._port;
+	this->_name = x._name;
+	this->_errorPages = x._errorPages;
+	this->_clientMaxBodySize = x._clientMaxBodySize;
+	this->_locations = x._locations;
+	return *this;
+}
+
+const int&	Server::port()	const
+{
+	return this->_port;
+}
+
+const std::string&	Server::ip()	const
+{
+	return this->_ip;
+}
+
+const std::vector<std::string>&	Server::name()	const
+{
+	return this->_name;
+}
+
+const std::map<int, std::string>&	Server::errorPages()	const
+{
+	return this->_errorPages;
+}
+
+const int&							Server::clientMaxBodySize()	const
+{
+	return this->_clientMaxBodySize;
+}
+
+const t_location&	Server::locations(int i)	const
+{
+	return *(this->_locations[i]);
+}
+
+const std::vector<t_location *>&	Server::locations(void)	const
+{
+	return this->_locations;
+}
+
+size_t	Server::nLoc()	const
+{
+	return this->_locations.size();
+}
+
+/*
+**  Setters
+*/
+
+void	Server::setName(const data_type &data)
+{
+	this->_name.assign(data.begin() + 1, data.end());
+}
+
+void	Server::setSocket(const data_type &data)
+{
+	(void)data;
+}
+
+void	Server::setErrorPages(const data_type &data)
+{
+	(void)data;
+}
+
+void	Server::setClientMaxBodySize(const data_type &data)
+{
+	 if (data.size() != 2)
+		throw "Error while reading configuration file";
+	if (!ft_isNumeric(data[1]))
+		throw "Error while reading configuration file";
+	std::stringstream(data[1]) >> this->_clientMaxBodySize;
+}
+
+void	Server::setCgi(t_location  *loc, const data_type &data) {
+	 if (data.size() != 3)
+		throw "Error while reading configuration file";
+	loc->cgi.first = data[1];
+	loc->cgi.second = data[2];
+}
+
+void	Server::setIndex(t_location  *loc, const data_type &data)
+{
+	loc->index.assign(data.begin() + 1, data.end());
+}
+
+void	Server::setAutoIndex(t_location  *loc, const data_type &data)
+{
+	if (data.size() != 2)
+		throw "Error while reading configuration file";
+	if (data[1] == "on")
+		loc->autoindex = true;
+	else if (data[1] != "off")
+		throw "Error while reading configuration file";
+}
+
+void	Server::setRedirection(t_location  *loc, const data_type &data) {
+	 if (data.size() != 3 || !ft_isNumeric(data[1]))
+		throw "Error while reading configuration file";
+	std::stringstream(data[1]) >> loc->redirection.first;
+	if (loc->redirection.first != 307 && loc->redirection.first != 308
+		&& (loc->redirection.first < 300 || loc->redirection.first > 304))
+		throw "Error while reading configuration file";
+	loc->redirection.second = data[2];
+}
+
+void	Server::setRoot(t_location  *loc, const data_type &data) {
+	if (data.size() != 2)
+		throw "Error while reading configuration file";
+	if (data[1][0] != '/')
+		loc->root = loc->path + data[1];
+	else
+		loc->root = data[1];
+}
+
+void	Server::setUploadStore(t_location  *loc, const data_type &data)
+{
+	(void)data;(void)loc;
+}
+
+void	Server::newLocation(const data_type &data)
+{
+	t_location	*loc;
+
+	if (data.size() != 2 || data[1].find(';') != std::string::npos)
+		throw "Error while reading configuration file";
+	loc = new t_location;
+	loc->path = data[1];
+	loc->autoindex = false;
+	loc->redirection = std::make_pair(0, "");
+	loc->cgi = std::make_pair("", "");
+	this->_locations.push_back(loc);
+}
+
+/* Adds the new directive to the location */
+void	Server::newLocationDirective(const data_type &data)
+{
+	std::string				directives[] = {
+		"allow",
+		"return",
+		"root",
+		"index",
+		"autoindex",
+		"cgi_pass",
+		"upload_store",
+		""
+	};
+	static method_function1	method_ptr[] = {
+		&Server::setRedirection,
+		&Server::setRoot,
+		&Server::setIndex,
+		&Server::setAutoIndex,
+		&Server::setCgi,
+		&Server::setUploadStore
+	};
+	t_location				*loc = this->_locations.back();
+
+	if (data.size() < 2)
+		throw "Error while reading configuration file";
+	for (size_t i = 0; !directives[i].empty(); ++i)
+	{
+		if (data[0] == directives[i])
+		{
+			method_function1 func = method_ptr[i];
+			(this->*func)(loc, data);
+			return ;
+		}
+	}
+	throw "Error while reading configuration file";
+}
+
+void	Server::newDirective(const data_type &datas)
+{
+	if (datas.empty())
+		return ;
+	
+	static std::string		directives[] = {
+		"listen",
+		"server_name",
+		"error_page",
+		"client_max_body_size",
+		""
+	};
+	static method_function	method_ptr[] = {
+		&Server::setSocket,
+		&Server::setName,
+		&Server::setErrorPages,
+		&Server::setClientMaxBodySize
+	};
+
+	for (size_t i = 0; !directives[i].empty(); ++i)
+	{
+		if (datas[0] == directives[i])
+		{
+			method_function func = method_ptr[i];
+			(this->*func)(datas);
+			return ;
+		}
+	}
+	throw "Error while reading configuration file";
+}
+
+std::ostream& operator<<(std::ostream& os, const t_location& loc)
+{
+	os << "\tlocation " << loc.path << std::endl << "\t{" << std::endl;
+	if (loc.autoindex == true)
+		os << "\t\tautoindex on" << std::endl;
+	if (!loc.cgi.first.empty())
+		os << "\t\tcgi " << loc.cgi.first << " " << loc.cgi.second << std::endl;
+	if (!loc.index.empty())
+	{
+		os << "\t\tindex";
+		for (size_t k = 0; k < loc.index.size(); k++)
+			os << " " << loc.index[k];
+		os << std::endl;
+	}
+	if (!loc.redirection.second.empty())
+			os << "\t\t" << "return " << loc.redirection.first << " " << loc.redirection.second << std::endl;
+	if (!loc.root.empty())
+			os << "\t\t" << "root " << loc.root << std::endl;
+	if (!loc.uploadStore.empty())
+			os << "\t\t" << "upload_store " << loc.uploadStore << std::endl;
+	os << "\t}" << std::endl;
+	return os;
+}
+
+/* Display server block like the config file */
+std::ostream& operator<<(std::ostream& os, const Server& server)
+{
+	os << "server\n" << "{" << std::endl;
+	if (server.port() != -1)
+		os << "\tlisten " << server.ip() << ":" << server.port() << std::endl;
+	if (!server.name().empty())
+	{
+		os << "\tserver_name";
+		for (std::vector<std::string>::const_iterator it = server.name().begin();
+			it != server.name().end(); it++)
+			os << "  " << *it;
+		os << std::endl;
+	}
+	if (!server.errorPages().empty())
+	{
+		for (std::map<int, std::string>::const_iterator it = server.errorPages().begin();
+			it != server.errorPages().end(); it++)
+			os << "\terror_page " << it->first << " " << it->second << std::endl;
+	}
+	if (server.clientMaxBodySize() != 1000000)
+		os << "\tclient_max_body_size " << server.clientMaxBodySize() << std::endl;
+	for (size_t j = 0; j < server.nLoc(); j++)
+		os << server.locations(j);
+	os << "}" << std::endl;
+	return os;
+}

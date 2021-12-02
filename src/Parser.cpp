@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
+/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 20:40:33 by igor              #+#    #+#             */
-/*   Updated: 2021/12/02 13:08:39 by nlaurids         ###   ########.fr       */
+/*   Updated: 2021/12/02 21:04:51 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ std::string    ft_strcut(const std::string& str, char cut_char)
 std::vector<std::string>	ft_vectorcut(const std::vector<std::string>& vect, char cut_char)
 {
 	std::vector<std::string>					newVect(vect);
-	std::vector<std::string>::const_iterator	it;
+	std::vector<std::string>::iterator			it;
 	size_t										pos = 0;
 
 	for(it = newVect.begin(); it != newVect.end(); ++it, ++pos)
@@ -99,7 +99,7 @@ void	all_servers::parse_line(std::string str)
 }
 
 
-void	all_servers::parser(const std::string &path)
+void	all_servers::parser(const char *path)
 {
 	std::fstream	config_file;
 	std::string		str;
