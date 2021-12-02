@@ -6,7 +6,7 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 12:06:02 by nlaurids          #+#    #+#             */
-/*   Updated: 2021/12/02 21:01:37 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/02 22:22:36 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ class all_servers
 
 		Server*				last() const;
 
-		void	parser(const char *path);
+		void	parser(const std::string &path);
 		void	parse_line(std::string str);
 
 

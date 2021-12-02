@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   all_servers.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
+/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 00:21:38 by igor              #+#    #+#             */
-/*   Updated: 2021/12/02 13:05:42 by nlaurids         ###   ########.fr       */
+/*   Updated: 2021/12/02 21:17:54 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,14 @@ void	all_servers::newParserLine(Server *server, const data_type &data)
 	else if (_bracket[IN_SERVER] == IN_BRACKS)
 		server->newDirective(data);
 	else
-		throw "Error while reading configuration file";
+		throw "Error while reading configuration file0";
 }
 
 void	all_servers::openBlock(const data_type &data)
 {
+			std::cout << "here3\n";
 	if (data.size() != 1)
-		throw "Error while reading configuration file";
+		throw "Error while reading configuration file1";
 	if (_bracket[IN_SERVER] == WAIT_BRACKS)
 	{
 		_bracket[IN_SERVER] = IN_BRACKS;
@@ -89,13 +90,14 @@ void	all_servers::openBlock(const data_type &data)
 	else if (_bracket[IN_LOCA] == WAIT_BRACKS)
 		_bracket[IN_LOCA] = IN_BRACKS;
 	else
-		throw "Error while reading configuration file";
+		throw "Error while reading configuration file2";
 }
 
 void	all_servers::closeBlock(const data_type &data)
 {
+			std::cout << "here2\n";
 	if (data.size() != 1)
-		throw "Error while reading configuration file";
+		throw "Error while reading configuration file3";
 
 	if (_bracket[IN_LOCA] == IN_BRACKS)
 		_bracket[IN_LOCA] = NONE;
@@ -105,7 +107,7 @@ void	all_servers::closeBlock(const data_type &data)
 		_bracket[OUTSIDE] = WAIT_BRACKS;
 	}
 	else
-		throw "Error while reading configuration file";
+		throw "Error while reading configuration file4";
 }
 
 std::ostream&	operator<<(std::ostream& os, const all_servers& servers)

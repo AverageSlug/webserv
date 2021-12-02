@@ -6,7 +6,7 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 20:40:33 by igor              #+#    #+#             */
-/*   Updated: 2021/12/02 21:04:51 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/02 23:30:09 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,15 +72,17 @@ void	all_servers::parse_line(std::string str)
 	{
 		if (data[0] == "server")
 		{
+			std::cout << "here\n";
 			if (_bracket[IN_SERVER] != NONE || _bracket[OUTSIDE] != WAIT_BRACKS)
-				throw "Error while reading configuration file";
+				throw "Error while reading configuration file5";
 			_servers.push_back(new Server);
 			_bracket[IN_SERVER] = WAIT_BRACKS;
 		}
 		else if (data[0] == "location")
 		{
+			std::cout << "here2\n";
 			if (_bracket[IN_LOCA] != NONE || _bracket[IN_SERVER] != IN_BRACKS)
-				throw "Error while reading configuration file";
+				throw "Error while reading configuration file6";
 			last()->newLocation(data);
 			_bracket[IN_LOCA] = WAIT_BRACKS;
 		}
@@ -90,16 +92,17 @@ void	all_servers::parse_line(std::string str)
 			closeBlock(data);
 		else
 		{
+			std::cout << "here5\n";
 			data = ft_vectorcut(data, ';');
 			if (size() == 0)
-				throw "Error while reading configuration file";
+				throw "Error while reading configuration file7";
 			newParserLine(last(), data);
 		}
 	}
 }
 
 
-void	all_servers::parser(const char *path)
+void	all_servers::parser(const std::string &path)
 {
 	std::fstream	config_file;
 	std::string		str;
@@ -109,6 +112,8 @@ void	all_servers::parser(const char *path)
 	if (!config_file)
 		throw "open error";
 	while (std::getline(config_file, str)) //gnl du fichier de config
+	{
 		parse_line(str);
+	}
 	config_file.close();
 }
