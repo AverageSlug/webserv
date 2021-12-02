@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 20:40:33 by igor              #+#    #+#             */
-/*   Updated: 2021/12/01 21:34:10 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/02 13:08:39 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#include <all_servers.hpp>
-#include <includes.hpp>
+#include "all_servers.hpp"
+#include "includes.hpp"
 
 static Server::data_type	getdata(std::string str)
 {

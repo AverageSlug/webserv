@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   all_servers.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 00:21:38 by igor              #+#    #+#             */
-/*   Updated: 2021/12/02 02:15:54 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/02 13:05:42 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ Server*	all_servers::last()            const
 
 void	all_servers::newServer(const data_type &data)
 {
+	(void)data; // !
 	this->_servers.push_back(new Server());
 }
 
@@ -86,7 +87,7 @@ void	all_servers::openBlock(const data_type &data)
 		_bracket[OUTSIDE] = NONE;
 	}
 	else if (_bracket[IN_LOCA] == WAIT_BRACKS)
-		_bracket[IN_LOCA] == IN_BRACKS;
+		_bracket[IN_LOCA] = IN_BRACKS;
 	else
 		throw "Error while reading configuration file";
 }

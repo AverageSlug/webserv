@@ -1,3 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/02 12:05:42 by nlaurids          #+#    #+#             */
+/*   Updated: 2021/12/02 12:05:42 by nlaurids         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "all_servers.hpp"
 #include "Webserv.hpp"
 
 int		main(int argc, char **argv)
@@ -7,7 +20,10 @@ int		main(int argc, char **argv)
 		std::cout << "error" << std::endl;
 		return (1);
 	}
-	Webserv Webserv;
+	all_servers all_servers;
+	all_servers.parser(argv[1]);
+
+	Webserv Webserv(all_servers);
 	Webserv.setup();
 	Webserv.server();
 }

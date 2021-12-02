@@ -1,38 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Webserv.hpp                                        :+:      :+:    :+:   */
+/*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/02 12:06:30 by nlaurids          #+#    #+#             */
-/*   Updated: 2021/12/02 12:06:30 by nlaurids         ###   ########.fr       */
+/*   Created: 2021/12/02 12:06:17 by nlaurids          #+#    #+#             */
+/*   Updated: 2021/12/02 12:06:17 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_HPP
-# define WEBSERV_HPP
+#ifndef SOCKET_HPP
+# define SOCKET_HPP
+# include "includes.hpp"
+# include "all_servers.hpp"
 
-# include "Socket.hpp"
-
-class Webserv
+class Socket
 {
 	public:
-		Webserv(all_servers all_servers);
-		Webserv();
-		~Webserv();
-		Webserv(const Webserv &cpy);
-		Webserv &operator=(const Webserv &a);
-		void	setup();
-		void	server();
+		Socket(const all_servers &all_servers, int i);
+		Socket();
+		~Socket();
+		Socket(const Socket &cpy);
+		Socket &operator=(const Socket &a);
+		int		setup();
+		int		getFD();
+		std::vector<int>	getConnecting();
+		void	new_fd();
 	private:
-		all_servers	_all_servers;
-		Socket	*_Socket;
-		int		_server_fd_highest;
-		fd_set	_read_fd;
-		fd_set	_write_fd;
-		void	_fd_set_set();
-		void	_handle_fd_set();
+		int		_Socket_fd;
+		int		_reuse_addr;
+		struct	sockaddr_in	_val;
+		std::vector<int>	_connecting;
 };
 
 #endif
