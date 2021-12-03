@@ -6,11 +6,10 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 20:40:33 by igor              #+#    #+#             */
-/*   Updated: 2021/12/03 13:45:33 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/03 13:53:32 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "all_servers.hpp"
 #include "includes.hpp"
 
 static Server::data_type	getdata(std::string str)
@@ -99,7 +98,7 @@ void	all_servers::parse_line(std::string str)
 }
 
 
-void	all_servers::parser(const std::string &path)
+void	all_servers::parser(const char *path)
 {
 	std::fstream	config_file;
 	std::string		str;

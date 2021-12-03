@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 12:05:53 by nlaurids          #+#    #+#             */
-/*   Updated: 2021/12/02 21:02:59 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/03 11:47:39 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,11 @@
 # include <list>
 # include <algorithm>
 
-#include "utils.hpp"
+# include "all_servers.hpp"
+# include "Server.hpp"
+# include "Webserv.hpp"
+# include "Socket.hpp"
+# include "CGI.hpp"
+# include "utils.hpp"
 
 #endif

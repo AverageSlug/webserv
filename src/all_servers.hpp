@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   all_servers.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 12:06:02 by nlaurids          #+#    #+#             */
-/*   Updated: 2021/12/02 22:22:36 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/03 11:48:29 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define ALL_SERVERS_HPP
 
 # include "includes.hpp"
-# include "Server.hpp"
 
 # define OUTSIDE 0
 # define IN_SERVER 1
@@ -40,7 +39,7 @@ class all_servers
 
 		Server*				last() const;
 
-		void	parser(const std::string &path);
+		void	parser(const char *path);
 		void	parse_line(std::string str);
 
 
