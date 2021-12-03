@@ -30,7 +30,17 @@ int		main(int argc, char **argv)
 		std::cerr << e << std::endl;
 		exit(1);
 	}
-	Webserv Webserv(all_servers);
-	Webserv.setup();
-	Webserv.server();
+	std::cout << "here\n";
+	try
+	{
+		Webserv Webserv(all_servers);
+		Webserv.setup();
+		Webserv.server();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	
+	std::cout << "here2\n";
 }

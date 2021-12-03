@@ -6,7 +6,7 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 20:49:22 by igor              #+#    #+#             */
-/*   Updated: 2021/12/02 21:16:01 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/03 13:43:13 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,15 +103,15 @@ void	Server::setErrorPages(const data_type &data)
 void	Server::setClientMaxBodySize(const data_type &data)
 {
 	 if (data.size() != 2)
-		throw "Error while reading configuration file8";
+		throw "Error while reading configuration file";
 	if (!ft_isNumeric(data[1]))
-		throw "Error while reading configuration file9";
+		throw "Error while reading configuration file";
 	std::stringstream(data[1]) >> this->_clientMaxBodySize;
 }
 
 void	Server::setCgi(t_location  *loc, const data_type &data) {
 	 if (data.size() != 3)
-		throw "Error while reading configuration fileq";
+		throw "Error while reading configuration file";
 	loc->cgi.first = data[1];
 	loc->cgi.second = data[2];
 }
@@ -124,26 +124,33 @@ void	Server::setIndex(t_location  *loc, const data_type &data)
 void	Server::setAutoIndex(t_location  *loc, const data_type &data)
 {
 	if (data.size() != 2)
-		throw "Error while reading configuration filew";
+		throw "Error while reading configuration file";
 	if (data[1] == "on")
 		loc->autoindex = true;
 	else if (data[1] != "off")
-		throw "Error while reading configuration filee";
+		throw "Error while reading configuration file";
 }
 
-void	Server::setRedirection(t_location  *loc, const data_type &data) {
-	 if (data.size() != 3 || !ft_isNumeric(data[1]))
-		throw "Error while reading configuration filer";
+void	Server::setMethod(t_location *loc, const data_type &data)
+{
+	(void)loc;
+	(void)data;
+}
+
+void	Server::setRedirection(t_location  *loc, const data_type &data)
+{
+	if (data.size() != 3 || !ft_isNumeric(data[1]))
+		throw "Error while reading configuration file";
 	std::stringstream(data[1]) >> loc->redirection.first;
 	if (loc->redirection.first != 307 && loc->redirection.first != 308
 		&& (loc->redirection.first < 300 || loc->redirection.first > 304))
-		throw "Error while reading configuration filet";
+		throw "Error while reading configuration file";
 	loc->redirection.second = data[2];
 }
 
 void	Server::setRoot(t_location  *loc, const data_type &data) {
 	if (data.size() != 2)
-		throw "Error while reading configuration filey";
+		throw "Error while reading configuration file";
 	if (data[1][0] != '/')
 		loc->root = loc->path + data[1];
 	else
@@ -160,7 +167,7 @@ void	Server::newLocation(const data_type &data)
 	t_location	*loc;
 
 	if (data.size() != 2 || data[1].find(';') != std::string::npos)
-		throw "Error while reading configuration fileu";
+		throw "Error while reading configuration file";
 	loc = new t_location;
 	loc->path = data[1];
 	loc->autoindex = false;
@@ -183,6 +190,7 @@ void	Server::newLocationDirective(const data_type &data)
 		""
 	};
 	static method_function1	method_ptr[] = {
+		&Server::setMethod,
 		&Server::setRedirection,
 		&Server::setRoot,
 		&Server::setIndex,
@@ -193,7 +201,7 @@ void	Server::newLocationDirective(const data_type &data)
 	t_location				*loc = this->_locations.back();
 
 	if (data.size() < 2)
-		throw "Error while reading configuration filei";
+		throw "Error while reading configuration file";
 	for (size_t i = 0; !directives[i].empty(); ++i)
 	{
 		if (data[0] == directives[i])
@@ -203,7 +211,7 @@ void	Server::newLocationDirective(const data_type &data)
 			return ;
 		}
 	}
-	throw "Error while reading configuration fileo";
+	throw "Error while reading configuration file";
 }
 
 void	Server::newDirective(const data_type &datas)
@@ -234,7 +242,7 @@ void	Server::newDirective(const data_type &datas)
 			return ;
 		}
 	}
-	throw "Error while reading configuration filep";
+	throw "Error while reading configuration file";
 }
 
 std::ostream& operator<<(std::ostream& os, const t_location& loc)

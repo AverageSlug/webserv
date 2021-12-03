@@ -6,7 +6,7 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 20:40:33 by igor              #+#    #+#             */
-/*   Updated: 2021/12/02 23:30:09 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/03 13:45:33 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,17 +72,15 @@ void	all_servers::parse_line(std::string str)
 	{
 		if (data[0] == "server")
 		{
-			std::cout << "here\n";
 			if (_bracket[IN_SERVER] != NONE || _bracket[OUTSIDE] != WAIT_BRACKS)
-				throw "Error while reading configuration file5";
+				throw "Error while reading configuration file";
 			_servers.push_back(new Server);
 			_bracket[IN_SERVER] = WAIT_BRACKS;
 		}
 		else if (data[0] == "location")
 		{
-			std::cout << "here2\n";
 			if (_bracket[IN_LOCA] != NONE || _bracket[IN_SERVER] != IN_BRACKS)
-				throw "Error while reading configuration file6";
+				throw "Error while reading configuration file";
 			last()->newLocation(data);
 			_bracket[IN_LOCA] = WAIT_BRACKS;
 		}
@@ -92,10 +90,9 @@ void	all_servers::parse_line(std::string str)
 			closeBlock(data);
 		else
 		{
-			std::cout << "here5\n";
 			data = ft_vectorcut(data, ';');
 			if (size() == 0)
-				throw "Error while reading configuration file7";
+				throw "Error while reading configuration file";
 			newParserLine(last(), data);
 		}
 	}

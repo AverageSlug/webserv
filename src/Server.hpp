@@ -6,7 +6,7 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 17:16:53 by igor              #+#    #+#             */
-/*   Updated: 2021/12/02 21:07:21 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/03 13:36:34 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ class Server
 		void	setErrorPages(const data_type &);
 		void	setClientMaxBodySize(const data_type &);
 		void	setRedirection(t_location *, const data_type &);
+		void	setMethod(t_location *, const data_type &);
 		void	setRoot(t_location *, const data_type &);
 		void	setIndex(t_location *, const data_type &);
 		void	setAutoIndex(t_location *, const data_type &);
