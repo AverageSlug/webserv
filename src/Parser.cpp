@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 20:40:33 by igor              #+#    #+#             */
-/*   Updated: 2021/12/02 23:30:09 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/03 11:48:16 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "all_servers.hpp"
 #include "includes.hpp"
 
 static Server::data_type	getdata(std::string str)
@@ -80,7 +79,7 @@ void	all_servers::parse_line(std::string str)
 		}
 		else if (data[0] == "location")
 		{
-			std::cout << "here2\n";
+			std::cout << "here4\n";
 			if (_bracket[IN_LOCA] != NONE || _bracket[IN_SERVER] != IN_BRACKS)
 				throw "Error while reading configuration file6";
 			last()->newLocation(data);
@@ -102,7 +101,7 @@ void	all_servers::parse_line(std::string str)
 }
 
 
-void	all_servers::parser(const std::string &path)
+void	all_servers::parser(const char *path)
 {
 	std::fstream	config_file;
 	std::string		str;
