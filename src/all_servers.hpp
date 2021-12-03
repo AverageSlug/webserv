@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   all_servers.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
+/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 12:06:02 by nlaurids          #+#    #+#             */
-/*   Updated: 2021/12/03 11:48:29 by nlaurids         ###   ########.fr       */
+/*   Updated: 2021/12/03 15:58:02 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define ALL_SERVERS_HPP
 
 # include "includes.hpp"
+# include "Server.hpp"
 
 # define OUTSIDE 0
 # define IN_SERVER 1

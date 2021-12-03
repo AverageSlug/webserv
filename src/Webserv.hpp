@@ -14,6 +14,7 @@
 # define WEBSERV_HPP
 
 # include "includes.hpp"
+# include "Socket.hpp"
 
 class Webserv
 {

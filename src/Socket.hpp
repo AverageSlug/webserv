@@ -13,6 +13,7 @@
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 # include "includes.hpp"
+# include "all_servers.hpp"
 
 class Socket
 {

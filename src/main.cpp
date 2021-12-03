@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes.hpp"
+#include "all_servers.hpp"
+#include "Webserv.hpp"
 
 int		main(int argc, char **argv)
 {

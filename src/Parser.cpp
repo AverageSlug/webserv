@@ -6,11 +6,12 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 20:40:33 by igor              #+#    #+#             */
-/*   Updated: 2021/12/03 13:53:32 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/03 15:59:00 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes.hpp"
+#include "all_servers.hpp"
 
 static Server::data_type	getdata(std::string str)
 {
