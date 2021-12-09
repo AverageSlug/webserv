@@ -6,7 +6,7 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 20:49:22 by igor              #+#    #+#             */
-/*   Updated: 2021/12/03 13:43:13 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/09 12:20:52 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,22 +85,43 @@ size_t	Server::nLoc()	const
 **  Setters
 */
 
-void	Server::setName(const data_type &data)
+void	Server::setName(const data_type &data) // server_name keyword
 {
 	this->_name.assign(data.begin() + 1, data.end());
 }
 
-void	Server::setSocket(const data_type &data)
+void	Server::setSocket(const data_type &data) // listen keyword
 {
-	(void)data;
+	if (data.size() != 2)
+		throw "Error while reading configuration file";
+	
+	size_t pos = data[1].find(':');
+	std::string temp_port;
+	std::string temp_ip;
+
+	if (pos == std::string::npos)
+		temp_port = data[1];
+	else
+	{
+		temp_ip = data[1].substr(0, pos);
+		temp_port = data[1].substr(pos + 1);
+	}
+	if (!ft_CheckIP(temp_ip) || !ft_isNumeric(temp_port))
+		throw "Error while reading configuration file";
+	std::stringstream(temp_port) >> _port;
+	if (_port > 65535 || _port < 1)
+		throw "Error while reading configuration file";
+	_ip = temp_ip;
 }
 
-void	Server::setErrorPages(const data_type &data)
+void	Server::setErrorPages(const data_type &data) // error_page keyword
 {
-	(void)data;
+	if (data.size() != 3 || !(ft_isNumeric(data[1])))
+		throw "Error while reading configuration file";
+	//jsp quoi faire avec le path -> todo later
 }
 
-void	Server::setClientMaxBodySize(const data_type &data)
+void	Server::setClientMaxBodySize(const data_type &data) // client_max_body_size keyword
 {
 	 if (data.size() != 2)
 		throw "Error while reading configuration file";
@@ -109,19 +130,20 @@ void	Server::setClientMaxBodySize(const data_type &data)
 	std::stringstream(data[1]) >> this->_clientMaxBodySize;
 }
 
-void	Server::setCgi(t_location  *loc, const data_type &data) {
+void	Server::setCgi(t_location  *loc, const data_type &data) // cgi_pass keyword
+{
 	 if (data.size() != 3)
 		throw "Error while reading configuration file";
 	loc->cgi.first = data[1];
 	loc->cgi.second = data[2];
 }
 
-void	Server::setIndex(t_location  *loc, const data_type &data)
+void	Server::setIndex(t_location  *loc, const data_type &data) // index keyword
 {
 	loc->index.assign(data.begin() + 1, data.end());
 }
 
-void	Server::setAutoIndex(t_location  *loc, const data_type &data)
+void	Server::setAutoIndex(t_location  *loc, const data_type &data) // autoindex keyword
 {
 	if (data.size() != 2)
 		throw "Error while reading configuration file";
@@ -131,13 +153,18 @@ void	Server::setAutoIndex(t_location  *loc, const data_type &data)
 		throw "Error while reading configuration file";
 }
 
-void	Server::setMethod(t_location *loc, const data_type &data)
+void	Server::setMethod(t_location *loc, const data_type &data) // Allow keyword
 {
-	(void)loc;
-	(void)data;
+	for (data_type::const_iterator ite = data.begin() + 1; ite != data.end(); ite++)
+	{
+		if (*ite == "GET" || *ite == "DELETE" || *ite == "POST")
+			loc->methods.push_back(*ite);
+		else
+			throw "Error while reading configuration file";
+	}
 }
 
-void	Server::setRedirection(t_location  *loc, const data_type &data)
+void	Server::setRedirection(t_location  *loc, const data_type &data) // return keyword
 {
 	if (data.size() != 3 || !ft_isNumeric(data[1]))
 		throw "Error while reading configuration file";
@@ -148,7 +175,8 @@ void	Server::setRedirection(t_location  *loc, const data_type &data)
 	loc->redirection.second = data[2];
 }
 
-void	Server::setRoot(t_location  *loc, const data_type &data) {
+void	Server::setRoot(t_location  *loc, const data_type &data) // root keyword
+{
 	if (data.size() != 2)
 		throw "Error while reading configuration file";
 	if (data[1][0] != '/')
@@ -157,9 +185,13 @@ void	Server::setRoot(t_location  *loc, const data_type &data) {
 		loc->root = data[1];
 }
 
-void	Server::setUploadStore(t_location  *loc, const data_type &data)
+void	Server::setUploadStore(t_location  *loc, const data_type &data) // upload_store keyword
 {
-	(void)data;(void)loc;
+	if (data.size() != 2 || !ft_checkDir("." + data[1]))
+		throw "Error while reading configuration file";
+	loc->uploadStore = data[1];
+	if (loc->uploadStore.back() != '/')
+		loc->uploadStore += "/";
 }
 
 void	Server::newLocation(const data_type &data)
@@ -269,7 +301,6 @@ std::ostream& operator<<(std::ostream& os, const t_location& loc)
 	return os;
 }
 
-/* Display server block like the config file */
 std::ostream& operator<<(std::ostream& os, const Server& server)
 {
 	os << "server\n" << "{" << std::endl;

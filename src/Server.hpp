@@ -6,7 +6,7 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 17:16:53 by igor              #+#    #+#             */
-/*   Updated: 2021/12/03 13:36:34 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/09 12:12:50 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct s_location
 	bool						autoindex;   // turn on or off directory listing
 	cgi_type					cgi;         // execute the cgi program
 	std::string					uploadStore; // execute the cgi program
+	std::vector<std::string>	methods;     // list of accepted HTTP Methods for the root
 }	t_location;
 
 class Server
