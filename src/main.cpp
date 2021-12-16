@@ -15,22 +15,30 @@
 
 int		main(int argc, char **argv)
 {
-	if (argc != 2)
-	{
-		std::cout << "error" << std::endl;
-		return (1);
-	}
-	all_servers all_servers;
-	try
-	{
-		all_servers.parser(argv[1]);
-	}
+    char const *config_file;
+    if (argc == 2)
+    {
+        config_file = argv[1];
+    }
+    else if (argc == 1)
+    {
+        config_file = "src/conf/default.conf";
+    }
+    else
+    {
+        std::cout << "error" << std::endl;
+        return (1);
+    }
+    all_servers all_servers;
+    try
+    {
+        all_servers.parser(config_file);
+    }
 	catch (const char* & e)
 	{
 		std::cerr << e << std::endl;
 		exit(1);
 	}
-	std::cout << "here\n";
 	try
 	{
 		Webserv Webserv(all_servers);
@@ -41,6 +49,4 @@ int		main(int argc, char **argv)
 	{
 		std::cerr << e.what() << '\n';
 	}
-	
-	std::cout << "here2\n";
 }

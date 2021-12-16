@@ -1,38 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Socket.hpp                                         :+:      :+:    :+:   */
+/*   CGI.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/02 12:06:17 by nlaurids          #+#    #+#             */
-/*   Updated: 2021/12/02 12:06:17 by nlaurids         ###   ########.fr       */
+/*   Created: 2021/12/03 13:09:52 by nlaurids          #+#    #+#             */
+/*   Updated: 2021/12/03 13:09:52 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SOCKET_HPP
-# define SOCKET_HPP
-# include "includes.hpp"
-# include "all_servers.hpp"
+#ifndef CGI_HPP
+# define CGI_HPP
 
-class Socket
+# include "includes.hpp"
+
+class CGI
 {
 	public:
-		Socket(const all_servers &all_servers, int i);
-		Socket();
-		~Socket();
-		Socket(const Socket &cpy);
-		Socket &operator=(const Socket &a);
-		int		setup();
-		int		getFD();
-		struct	sockaddr_in	&getVal();
-		std::vector<long>	&getConnecting();
-		void	new_fd();
+		CGI();
+		~CGI();
+		CGI(const CGI &cpy);
+		CGI &operator=(const CGI &a);
+		std::string	exec(const std::string &script);
 	private:
-		int		_Socket_fd;
-		int		_reuse_addr;
-		struct	sockaddr_in	_val;
-		std::vector<long>	_connecting;
+//		void	_setup();
+		char	**_envtoa();
+		std::map<std::string, std::string>	_env;
 };
 
 #endif

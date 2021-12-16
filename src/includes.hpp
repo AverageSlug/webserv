@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 12:05:53 by nlaurids          #+#    #+#             */
-/*   Updated: 2021/12/03 15:58:18 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/15 15:14:08 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <unistd.h>
 # include <sys/stat.h>
 # include <signal.h>
+# include <sys/wait.h>
 
 # include <string>
 # include <cstring>

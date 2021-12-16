@@ -16,7 +16,7 @@ Socket::Socket(const all_servers &all_servers, int i) : _reuse_addr(1)
 {
 	memset((char *)&_val, 0, sizeof(_val));
 	_val.sin_family = AF_INET;
-	_val.sin_addr.s_addr = htonl(INADDR_ANY);
+	_val.sin_addr.s_addr = htonl(INADDR_ANY); //
 	_val.sin_port = all_servers[i]->port();
 }
 
@@ -68,7 +68,13 @@ int		Socket::getFD()
 	return (_Socket_fd);
 }
 
-std::vector<int>	&Socket::getConnecting()
+struct	sockaddr_in	&Socket::getVal()
+{
+	return (_val);
+}
+
+
+std::vector<long>	&Socket::getConnecting()
 {
 	return (_connecting);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 20:49:22 by igor              #+#    #+#             */
-/*   Updated: 2021/12/09 12:20:52 by igor             ###   ########.fr       */
+/*   Updated: 2021/12/16 09:54:24 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ void	Server::setUploadStore(t_location  *loc, const data_type &data) // upload_s
 	if (data.size() != 2 || !ft_checkDir("." + data[1]))
 		throw "Error while reading configuration file";
 	loc->uploadStore = data[1];
-	if (loc->uploadStore.back() != '/')
+	if (loc->uploadStore[loc->uploadStore.size() - 1] != '/')
 		loc->uploadStore += "/";
 }
 
