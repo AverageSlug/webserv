@@ -26,6 +26,11 @@ class Webserv
 		Webserv &operator=(const Webserv &a);
 		void	setup();
 		void	server();
+		all_servers	&getAllServers();
+		Socket		*getSocket();
+		int			getHighestFD();
+		fd_set		getReadFD();
+		fd_set		getWriteFD();
 	private:
 		all_servers	_all_servers;
 		Socket	*_Socket;

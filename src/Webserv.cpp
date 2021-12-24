@@ -60,7 +60,7 @@ void	Webserv::server()
 	while (1)
 	{
 		_fd_set_set();
-		timeout.tv_sec = 1;
+		timeout.tv_sec = 3;
 		timeout.tv_usec = 0;
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
 		{
@@ -82,7 +82,7 @@ void	Webserv::_fd_set_set()
 	{
 		FD_SET(_Socket[i].getFD(), &_read_fd);
 		FD_SET(_Socket[i].getFD(), &_write_fd);
-		for (std::vector<int>::iterator it = _Socket[i].getConnecting().begin(); it < _Socket[i].getConnecting().end(); it++)
+		for (std::vector<long>::iterator it = _Socket[i].getConnecting().begin(); it < _Socket[i].getConnecting().end(); it++)
 			if (*it)
 			{
 				FD_SET(*it, &_read_fd);
@@ -99,7 +99,32 @@ void	Webserv::_handle_fd_set()
 	{
 		if (FD_ISSET(_Socket[i].getFD(), &_read_fd) || FD_ISSET(_Socket[i].getFD(), &_write_fd))
 			_Socket[i].new_fd();
-		for (std::vector<int>::iterator it = _Socket[i].getConnecting().begin(); it < _Socket[i].getConnecting().end(); it++)
+		for (std::vector<long>::iterator it = _Socket[i].getConnecting().begin(); it < _Socket[i].getConnecting().end(); it++)
 			if (FD_ISSET(*it, &_read_fd) || FD_ISSET(*it, &_write_fd)) {}
 	}
+}
+
+all_servers	&Webserv::getAllServers()
+{
+	return (_all_servers);
+}
+
+Socket		*Webserv::getSocket()
+{
+	return (_Socket);
+}
+
+int			Webserv::getHighestFD()
+{
+	return (_server_fd_highest);
+}
+
+fd_set		Webserv::getReadFD()
+{
+	return (_read_fd);
+}
+
+fd_set		Webserv::getWriteFD()
+{
+	return (_write_fd);
 }
