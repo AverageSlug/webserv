@@ -15,7 +15,16 @@
 
 int		main(int argc, char **argv)
 {
-	if (argc != 2)
+	char const *config_file;
+	if (argc == 2)
+	{
+		config_file = argv[1];
+	}
+	else if (argc == 1)
+	{
+		config_file = "src/conf/default.conf";
+	}
+	else
 	{
 		std::cout << "error" << std::endl;
 		return (1);
@@ -23,7 +32,7 @@ int		main(int argc, char **argv)
 	all_servers all_servers;
 	try
 	{
-		all_servers.parser(argv[1]);
+		all_servers.parser(config_file);
 	}
 	catch (const char* & e)
 	{

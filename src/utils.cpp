@@ -51,3 +51,32 @@ bool	ft_checkDir(const std::string str)
 	}
 	return (false);
 }
+
+bool	ft_checkPath(const std::string str)
+{
+	std::ifstream test(str);
+
+	return (test.fail() == 0);
+}
+
+std::vector<std::string>	ft_strtovec(const std::string s, const std::string delim)
+{
+	std::vector<std::string>	vect;
+	std::string					tmp(s);
+	size_t						pos = tmp.find(delim);
+
+	if (s.empty())
+		return vect;
+	if (delim[0] != '\0')
+	{
+		while (pos != std::string::npos)
+		{
+			vect.push_back(tmp.substr(0, pos));
+			tmp.erase(0, pos + delim.length());
+			pos = tmp.find(delim);
+		}
+	}
+	if (!tmp.empty())
+		vect.push_back(tmp);
+	return vect;
+}
