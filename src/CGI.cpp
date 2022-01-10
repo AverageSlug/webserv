@@ -53,7 +53,7 @@ void	CGI::_setup(const Request &request)
 	_env["SERVER_NAME"] = ""; //'Host' || REMOTE_ADDR
 	_env["SERVER_PORT"] = ""; //
 	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
-	_env["SERVER_SOFTWARE"] = "webserv"; //custom
+	_env["SERVER_SOFTWARE"] = "webigornulserv"; //custom
 }
 */
 

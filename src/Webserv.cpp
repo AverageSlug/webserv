@@ -100,7 +100,7 @@ void	Webserv::_handle_fd_set()
 		if (FD_ISSET(_Socket[i].getFD(), &_read_fd) || FD_ISSET(_Socket[i].getFD(), &_write_fd))
 			_Socket[i].new_fd();
 		for (std::vector<long>::iterator it = _Socket[i].getConnecting().begin(); it < _Socket[i].getConnecting().end(); it++)
-			if (FD_ISSET(*it, &_read_fd) || FD_ISSET(*it, &_write_fd)) {}
+			if (FD_ISSET(*it, &_read_fd) || FD_ISSET(*it, &_write_fd)) {} //handle fd...!
 	}
 }
 

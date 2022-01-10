@@ -54,7 +54,7 @@ bool	ft_checkDir(const std::string str)
 
 bool	ft_checkPath(const std::string str)
 {
-	std::ifstream test(str);
+	std::ifstream test(str.c_str());
 
 	return (test.fail() == 0);
 }
