@@ -6,7 +6,7 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 20:49:22 by igor              #+#    #+#             */
-/*   Updated: 2021/12/24 23:55:03 by igor             ###   ########.fr       */
+/*   Updated: 2022/01/20 02:59:13 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ void	Server::setRoot(t_location  *loc, const data_type &data) // root keyword
 
 void	Server::setUploadStore(t_location  *loc, const data_type &data) // upload_store keyword
 {
-	if (data.size() != 2 || !ft_checkDir("." + data[1]))
+	if (data.size() != 2 || !ft_checkDir("./all_data" + data[1]))
 		throw "Error while reading configuration file";
 	loc->uploadStore = data[1];
 	if (loc->uploadStore[loc->uploadStore.size() - 1] != '/')

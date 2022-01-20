@@ -15,6 +15,8 @@ class Request
 		Request&	operator=(const Request &);
 
 		const t_location*	getLocation() const;
+		std::string			getMethod();
+		std::string			getConstructPath();
 		bool				setRequestUri(const std::string &);
 		void				setConstructPath();
 		void				setConstructPath(const std::string &);
@@ -24,6 +26,12 @@ class Request
 		void				setServer(const Server *);
 		int					reqParser();
 		const Server*		getReqServ(const std::string name) const;
+		const Server*		getServ();
+		std::string			getContent();
+
+		bool				parseFile();
+
+		const std::map<std::string, std::string>&	getFileInfo(void) const;
 
 
 		typedef std::vector<std::string>							vector_type;
@@ -45,7 +53,7 @@ class Request
 		value_type			_data;
 		std::string			_request_method;
 		std::string			_uri; // 2nd part of the url
-		std::string			_content; // complete request converted to string from `buf'
+		std::string			_content; // complete request converted to string
 		bool				_chunked;
 		all_servers			_all_serv;
 	

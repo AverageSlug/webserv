@@ -1,21 +1,48 @@
 #ifndef RESPONSE_HPP
 # define RESPONSE_HPP
 
-# include "Response_header.hpp"
+# include "includes.hpp"
+# include "Request.hpp"
 
 class Response {
 	public:
-		Response();
+		Response(Request *req);
 		~Response();
 		Response(const Response &cpy);
-		Response	&operator=(const Response &a);
-		void		call_method();
-		void		get_method();
-		void		post_method();
-		void		delete_method();
+		Response		&operator=(const Response &a);
+		std::string			header();
+		void				setStatus(int status_code);
+		void				setContent(const std::string file_content);
+		void				ft_get(const std::string content);
+		void				ft_post();
+		void				ft_delete();
+		bool				checkMethod(const std::string method);
+		const std::string	setIndex(std::string const path) const;
+		bool				uploadFile();
+		off_t				getFileLength(std::string file);
+
+
+
 	private:
-		void	(Response::*_methods[3])(void);
-		std::string	_header;
+		Response();
+		void		_init();
+		void		_set_headers(const std::string lang, int size, const std::string location, const std::string type, const std::string path, int status);
+		std::string	_get_headers();
+		std::string	_allow;
+		std::string	_content_language;
+		std::string	_content_length;
+		std::string	_content_location;
+		std::string	_content_type;
+		std::string	_date;
+		std::string	_last_modified;
+		std::string	_location;
+		std::string	_retry_after;
+		std::string	_server;
+		std::string	_transfer_encoding;
+		std::string	_www_authenticate;
+		std::pair<int, std::string>	_status;
+		Request		*_request;
+		std::string _content;
 };
 
 #endif

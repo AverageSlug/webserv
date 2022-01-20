@@ -6,7 +6,7 @@
 /*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2021/12/24 23:52:36 by igor             ###   ########.fr       */
+/*   Updated: 2022/01/20 08:22:31 by igor             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 // }
 
 Request::Request(std::string content, all_servers servs) :
-	_constructPath("./data"),
+	_constructPath("./all_data"),
 	_status(200),
 	_data(),
 	_request_method(),
@@ -74,6 +74,31 @@ const Server*	Request::getReqServ(const std::string name) const
 		}
 	}
 	return _all_serv[0];
+}
+
+std::string			Request::getMethod()
+{
+	return _request_method;
+}
+
+std::string			Request::getConstructPath()
+{
+	return _constructPath;
+}
+
+const Server*		Request::getServ()
+{
+	return _server;
+}
+
+const std::map<std::string, std::string>&	Request::getFileInfo(void) const
+{
+	return _fileInfo;
+}
+
+std::string			Request::getContent()
+{
+	return _content;
 }
 
 const t_location*	Request::getLocation() const
@@ -175,7 +200,7 @@ void	Request::setConstructPath()
 			for (idx = loc->index.begin(); idx != loc->index.end(); ++idx)
 			{
 				index_tmp = path_tmp + *idx;
-				if (ft_checkPath(index_tmp))
+				if (ft_checkPath("./all_data" + index_tmp))
 				{
 					path_tmp = index_tmp;
 					break ;
