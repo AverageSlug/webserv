@@ -15,6 +15,7 @@
 
 # include "includes.hpp"
 # include "Socket.hpp"
+# include "Request.hpp"
 
 class Webserv
 {
@@ -33,13 +34,16 @@ class Webserv
 		fd_set		getWriteFD();
 	private:
 		all_servers	_all_servers;
+		std::vector<Request>	_request;
 		std::vector<Socket>	_Socket;
 		long	_server_fd_highest;
 		fd_set	_set;
 		int		_size;
 		fd_set	_read_fd;
 		fd_set	_write_fd;
-//		void	_handle_fd_set();
+		std::vector<long>	_connecting;
+		std::vector<long>	_connected;
+		void	_handle_fd_set();
 };
 
 #endif

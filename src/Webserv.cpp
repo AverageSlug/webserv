@@ -61,34 +61,67 @@ void	Webserv::server()
 	while (1)
 	{
 		memcpy(&_read_fd, &_set, _size);
-//		FD_ZERO(&_write_fd);
-//		for (std::vector<long>::iterator it = _Socket[i].getConnecting().begin(); it < _Socket[i].getConnecting().end(); it++)
-//			FD_SET(*it, &_write_fd);
+		FD_ZERO(&_write_fd);
+		for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
+			FD_SET(*it, &_write_fd);
 		timeout.tv_sec = 1;
 		timeout.tv_usec = 0;
-		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, NULL, NULL, &timeout)) < 0)
+		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
 		{
 			std::cout << "error" << std::endl;
 			exit(1);
 		}
 		if (!select_fd)
-			std::cout << "." << std::flush;
+			std::cout << "\r..." << std::flush;
 		else
-			printf("\rconnection acquired");//_handle_fd_set();
+			_handle_fd_set();
 	}
 }
-/*
+
 void	Webserv::_handle_fd_set()
 {
 	for (unsigned int i = 0; i < _all_servers.size(); i++)
 	{
-		if (FD_ISSET(_Socket[i].getFD(), &_write_fd)) {}
-		printf("connection acquired\n");
-		for (std::vector<long>::iterator it = _Socket[i].getConnecting().begin(); it < _Socket[i].getConnecting().end(); it++)
-			if (FD_ISSET(*it, &_read_fd)) {}
+		if (FD_ISSET(_Socket[i].getFD(), &_read_fd))
+		{
+			std::cout << "\nnew connection" << std::endl;
+			long	new_socket = accept(_Socket[i].getFD(), NULL, NULL);
+			if (new_socket < 0)
+			{
+				std::cout << "erroreee" << std::endl;
+				exit(1);
+			}
+			fcntl(new_socket, F_SETFL, O_NONBLOCK);
+			FD_SET(new_socket, &_set);
+			_connecting.push_back(new_socket);
+			if (new_socket > _server_fd_highest)
+				_server_fd_highest = new_socket;
+		}
 	}
+	for (std::vector<long>::iterator it = _connecting.begin(); it < _connecting.end(); it++)
+	{
+		if (FD_ISSET(*it, &_read_fd))
+		{
+			char buff[65536];
+			if (recv(*it, buff, 65535, 0) <= 0)
+			{
+				std::cout << "error lol" << std::endl;
+				exit(1);
+			}
+			Request request(buff, _all_servers);
+			FD_CLR(*it, &_set);
+			FD_CLR(*it, &_read_fd);
+			_connecting.erase(it);
+			it = _connecting.begin();
+		}
+	}
+	for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
+		if (FD_ISSET(*it, &_read_fd))
+		{
+			std::cout << "jsptest" << std::endl;
+		}
 }
-*/
+
 all_servers	&Webserv::getAllServers()
 {
 	return (_all_servers);

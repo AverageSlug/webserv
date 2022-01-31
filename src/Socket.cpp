@@ -21,7 +21,10 @@ Socket::Socket(const Server &server)
 
 Socket::Socket() {}
 
-Socket::~Socket() {}
+Socket::~Socket()
+{
+	close(_Socket_fd);
+}
 
 Socket::Socket(const Socket &cpy)
 {
@@ -52,15 +55,12 @@ int		Socket::setup()
 	}
 	printf("%s %i\n", _server.ip().c_str(), _server.port());
 	_setaddr();
-	/*
-	int		reuse_addr = 1;
-	if (setsockopt(_Socket_fd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr)) < 0)
+	int	reuseaddr = 1;
+	if (setsockopt(_Socket_fd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr)) < 0)
 	{
 		std::cout << "errorb" << std::endl;
 		return (1);
 	}
-	fcntl(_Socket_fd, F_SETFL, O_NONBLOCK);
-	*/
 	if (bind(_Socket_fd, (struct sockaddr*)&_val, sizeof(_val)) < 0)
 	{
 		std::cout << "errorc" << std::endl;
