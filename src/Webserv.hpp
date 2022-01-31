@@ -20,7 +20,7 @@
 class Webserv
 {
 	public:
-		Webserv(all_servers all_servers);
+		Webserv(const all_servers &all_servers);
 		Webserv();
 		~Webserv();
 		Webserv(const Webserv &cpy);

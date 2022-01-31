@@ -50,7 +50,7 @@ int		Socket::setup()
 {
 	if ((_Socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		std::cout << "errora" << std::endl;
+		std::cout << "Error: socket" << std::endl;
 		return (1);
 	}
 	printf("%s %i\n", _server.ip().c_str(), _server.port());
@@ -58,17 +58,17 @@ int		Socket::setup()
 	int	reuseaddr = 1;
 	if (setsockopt(_Socket_fd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr)) < 0)
 	{
-		std::cout << "errorb" << std::endl;
+		std::cout << "Error: setsockopt" << std::endl;
 		return (1);
 	}
 	if (bind(_Socket_fd, (struct sockaddr*)&_val, sizeof(_val)) < 0)
 	{
-		std::cout << "errorc" << std::endl;
+		std::cout << "Error: bind" << std::endl;
 		return (1);
 	}
-	if (listen(_Socket_fd, 1000) < 0) //
+	if (listen(_Socket_fd, 1000) < 0)
 	{
-		std::cout << "errord" << std::endl;
+		std::cout << "Error: listen" << std::endl;
 		return (1);
 	}
 	return (0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/01/20 08:22:31 by igor             ###   ########.fr       */
+/*   Updated: 2022/01/31 15:15:44 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 // {
 // }
 
-Request::Request(std::string content, all_servers servs) :
+Request::Request(const std::string content, const all_servers &servs) :
 	_constructPath("./all_data"),
 	_status(200),
 	_data(),
@@ -35,6 +35,7 @@ Request::Request(std::string content, all_servers servs) :
 	_chunked(false),
 	_all_serv(servs)
 {
+	printf("REQUEST CONSTRUCTOR\n");
 }
 
 Request&			Request::operator=(const Request &x)

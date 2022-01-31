@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 17:16:53 by igor              #+#    #+#             */
-/*   Updated: 2022/01/24 13:34:05 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/01/31 15:28:43 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ class Server
 		Server(void);
 		~Server();
 
-		Server(const Server &); //!
-		Server&		operator=(const Server &); //!
+		Server(const Server &);
+		Server&		operator=(const Server &);
 
 		const int&							port(void)				const;
 		const std::string&					ip(void)				const;

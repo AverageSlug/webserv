@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 20:49:22 by igor              #+#    #+#             */
-/*   Updated: 2022/01/20 02:59:13 by igor             ###   ########.fr       */
+/*   Updated: 2022/01/31 15:31:19 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ Server&	Server::operator=(const Server &x)
 	this->_name = x._name;
 	this->_errorPages = x._errorPages;
 	this->_clientMaxBodySize = x._clientMaxBodySize;
-	this->_locations = x._locations;
+	this->_locations = x._locations; //noob
 	return *this;
 }
 

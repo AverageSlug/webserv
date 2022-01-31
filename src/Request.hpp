@@ -10,7 +10,7 @@ class Request
 {
 	public:
 		Request(const Request &);
-		Request(const std::string content, all_servers servs);
+		Request(const std::string content, const all_servers &servs);
 		~Request();
 		Request&	operator=(const Request &);
 

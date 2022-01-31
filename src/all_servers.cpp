@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   all_servers.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 00:21:38 by igor              #+#    #+#             */
-/*   Updated: 2021/12/03 15:37:21 by igor             ###   ########.fr       */
+/*   Updated: 2022/01/31 15:07:11 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ all_servers::all_servers()
 
 all_servers::~all_servers()
 {
+	printf("DESTROY SERVER\n");
 	for (size_t i = 0; i < this->_servers.size(); i++)
 		delete this->_servers[i];
 	this->_servers.clear();
