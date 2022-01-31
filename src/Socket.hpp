@@ -18,21 +18,19 @@
 class Socket
 {
 	public:
-		Socket(const all_servers &all_servers, int i);
+		Socket(const Server &server);
 		Socket();
 		~Socket();
 		Socket(const Socket &cpy);
 		Socket &operator=(const Socket &a);
 		int		setup();
-		int		getFD();
+		long	getFD();
 		struct	sockaddr_in	&getVal();
-		std::vector<long>	&getConnecting();
-		void	new_fd();
 	private:
-		int		_Socket_fd;
-		int		_reuse_addr;
+		void	_setaddr();
+		long	_Socket_fd;
+		Server	_server;
 		struct	sockaddr_in	_val;
-		std::vector<long>	_connecting;
 };
 
 #endif

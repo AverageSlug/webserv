@@ -12,19 +12,18 @@
 
 #include "Socket.hpp"
 
-Socket::Socket(const all_servers &all_servers, int i) : _reuse_addr(1)
+Socket::Socket(const Server &server)
 {
-	memset((char *)&_val, 0, sizeof(_val));
-	_val.sin_family = AF_INET;
-	_val.sin_addr.s_addr = htonl(INADDR_ANY); //
-	_val.sin_port = all_servers[i]->port();
+	_server = server;
+	_setaddr();
+	_Socket_fd = -1;
 }
 
 Socket::Socket() {}
 
 Socket::~Socket() {}
 
-Socket::Socket(const Socket &cpy) : _reuse_addr(1)
+Socket::Socket(const Socket &cpy)
 {
 	*this = cpy;
 }
@@ -33,37 +32,49 @@ Socket &Socket::operator=(const Socket &a)
 {
 	_Socket_fd = a._Socket_fd;
 	_val = a._val;
-	_connecting = a._connecting;
 	return (*this);
+}
+
+void	Socket::_setaddr()
+{
+	memset((char *)&_val, 0, sizeof(_val));
+	_val.sin_family = AF_INET;
+	_val.sin_addr.s_addr = inet_addr(_server.ip().c_str());
+	_val.sin_port = htons(_server.port());
 }
 
 int		Socket::setup()
 {
 	if ((_Socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		std::cout << "error" << std::endl;
+		std::cout << "errora" << std::endl;
 		return (1);
 	}
-	if (setsockopt(_Socket_fd, SOL_SOCKET, SO_REUSEADDR, &_reuse_addr, sizeof(_reuse_addr)) < 0)
+	printf("%s %i\n", _server.ip().c_str(), _server.port());
+	_setaddr();
+	/*
+	int		reuse_addr = 1;
+	if (setsockopt(_Socket_fd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr)) < 0)
 	{
-		std::cout << "error" << std::endl;
+		std::cout << "errorb" << std::endl;
 		return (1);
 	}
 	fcntl(_Socket_fd, F_SETFL, O_NONBLOCK);
+	*/
 	if (bind(_Socket_fd, (struct sockaddr*)&_val, sizeof(_val)) < 0)
 	{
-		std::cout << "error" << std::endl;
+		std::cout << "errorc" << std::endl;
 		return (1);
 	}
-	if (listen(_Socket_fd, 500) < 0) //
+	if (listen(_Socket_fd, 1000) < 0) //
 	{
-		std::cout << "error" << std::endl;
+		std::cout << "errord" << std::endl;
 		return (1);
 	}
 	return (0);
 }
 
-int		Socket::getFD()
+long	Socket::getFD()
 {
 	return (_Socket_fd);
 }
@@ -71,22 +82,4 @@ int		Socket::getFD()
 struct	sockaddr_in	&Socket::getVal()
 {
 	return (_val);
-}
-
-
-std::vector<long>	&Socket::getConnecting()
-{
-	return (_connecting);
-}
-
-void	Socket::new_fd()
-{
-	int	connect;
-	if ((connect = accept(_Socket_fd, NULL, NULL)) < 0)
-	{
-		std::cout << "error" << std::endl;
-		exit(1);
-	}
-	fcntl(connect, F_SETFL, O_NONBLOCK);
-	_connecting.push_back(connect);
 }

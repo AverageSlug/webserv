@@ -28,17 +28,18 @@ class Webserv
 		void	server();
 		all_servers	&getAllServers();
 		Socket		*getSocket();
-		int			getHighestFD();
+		long		getHighestFD();
 		fd_set		getReadFD();
 		fd_set		getWriteFD();
 	private:
 		all_servers	_all_servers;
 		Socket	*_Socket;
-		int		_server_fd_highest;
+		long	_server_fd_highest;
+		fd_set	_set;
+		int		_size;
 		fd_set	_read_fd;
 		fd_set	_write_fd;
-		void	_fd_set_set();
-		void	_handle_fd_set();
+//		void	_handle_fd_set();
 };
 
 #endif

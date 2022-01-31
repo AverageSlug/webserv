@@ -37,16 +37,21 @@ Webserv &Webserv::operator=(const Webserv &a)
 
 void	Webserv::setup()
 {
-	_Socket = new Socket[_all_servers.size()];
-	for (unsigned int i = 0; i < _all_servers.size(); i++)
+	std::vector<Server *>	servs = _all_servers.getservs();
+	FD_ZERO(&_set);
+	_size = _all_servers.size();
+	_Socket = new Socket[_size];
+	_server_fd_highest = 0;
+	for (int i = 0; i < _size; i++)
 	{
-		Socket	Socket(_all_servers, i);
-		if (Socket.setup())
+		Socket	Socket(*servs[i]);
+		_Socket[i] = Socket;
+		if (_Socket[i].setup())
 		{
-			std::cout << "error" << std::endl;
+			std::cout << "erroroo" << std::endl;
 			exit(1);
 		}
-		_Socket[i] = Socket;
+		FD_SET(_Socket[i].getFD(), &_set);
 		if (_Socket[i].getFD() > _server_fd_highest)
 			_server_fd_highest = _Socket[i].getFD();
 	}
@@ -59,51 +64,35 @@ void	Webserv::server()
 
 	while (1)
 	{
-		_fd_set_set();
-		timeout.tv_sec = 3;
+		memcpy(&_read_fd, &_set, _size);
+//		FD_ZERO(&_write_fd);
+//		for (std::vector<long>::iterator it = _Socket[i].getConnecting().begin(); it < _Socket[i].getConnecting().end(); it++)
+//			FD_SET(*it, &_write_fd);
+		timeout.tv_sec = 1;
 		timeout.tv_usec = 0;
-		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
+		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, NULL, NULL, &timeout)) < 0)
 		{
 			std::cout << "error" << std::endl;
 			exit(1);
 		}
 		if (!select_fd)
-			std::cout << "waiting" << std::endl;
+			std::cout << "." << std::flush;
 		else
-			_handle_fd_set();
+			printf("\rconnection acquired");//_handle_fd_set();
 	}
 }
-
-void	Webserv::_fd_set_set()
-{
-	FD_ZERO(&_read_fd);
-	FD_ZERO(&_write_fd);
-	for (unsigned int i = 0; i < _all_servers.size(); i++)
-	{
-		FD_SET(_Socket[i].getFD(), &_read_fd);
-		FD_SET(_Socket[i].getFD(), &_write_fd);
-		for (std::vector<long>::iterator it = _Socket[i].getConnecting().begin(); it < _Socket[i].getConnecting().end(); it++)
-			if (*it)
-			{
-				FD_SET(*it, &_read_fd);
-				FD_SET(*it, &_write_fd);
-				if (*it > _server_fd_highest)
-					_server_fd_highest = *it;
-			}
-	}
-}
-
+/*
 void	Webserv::_handle_fd_set()
 {
 	for (unsigned int i = 0; i < _all_servers.size(); i++)
 	{
-		if (FD_ISSET(_Socket[i].getFD(), &_read_fd) || FD_ISSET(_Socket[i].getFD(), &_write_fd))
-			_Socket[i].new_fd();
+		if (FD_ISSET(_Socket[i].getFD(), &_write_fd)) {}
+		printf("connection acquired\n");
 		for (std::vector<long>::iterator it = _Socket[i].getConnecting().begin(); it < _Socket[i].getConnecting().end(); it++)
-			if (FD_ISSET(*it, &_read_fd) || FD_ISSET(*it, &_write_fd)) {} //handle fd...!
+			if (FD_ISSET(*it, &_read_fd)) {}
 	}
 }
-
+*/
 all_servers	&Webserv::getAllServers()
 {
 	return (_all_servers);
@@ -114,7 +103,7 @@ Socket		*Webserv::getSocket()
 	return (_Socket);
 }
 
-int			Webserv::getHighestFD()
+long		Webserv::getHighestFD()
 {
 	return (_server_fd_highest);
 }

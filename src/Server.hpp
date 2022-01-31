@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: igor <igor@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nlaurids <nlaurids@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 17:16:53 by igor              #+#    #+#             */
-/*   Updated: 2021/12/09 12:12:50 by igor             ###   ########.fr       */
+/*   Updated: 2022/01/24 13:34:05 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,14 @@ class Server
 		std::map<int, std::string>	_errorPages;        // default error pages
 		int							_clientMaxBodySize; // client max body size (bytes)
 		std::vector<t_location *>	_locations;         // routes with rules
-
-		Server(const Server &);
-		Server&		operator=(const Server &);
 	
 	public:
 		typedef std::vector<std::string>                       data_type;
 		Server(void);
 		~Server();
+
+		Server(const Server &); //!
+		Server&		operator=(const Server &); //!
 
 		const int&							port(void)				const;
 		const std::string&					ip(void)				const;

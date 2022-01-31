@@ -150,8 +150,8 @@ const std::string	Response::setIndex(std::string const path) const
 			content += "<td>";
 			if (S_ISDIR(statStruct.st_mode))
 				content += "--";
-			else
-				content += std::to_string(statStruct.st_size);
+//			else
+//				content += std::to_string(statStruct.st_size);   !!!!!!!!!
 			content += "</td></tr>\n";
 			contentBuf.clear();
 			fileName.clear();
@@ -206,7 +206,7 @@ bool	Response::uploadFile()
 			setStatus(413);
 			return false;
 		}
-		std::ofstream	ofs(toUploadPath, std::ofstream::out);
+		std::ofstream	ofs;//(toUploadPath, std::ofstream::out); !!!!
 		if (!ofs.is_open())
 		{
 			setStatus(403);
