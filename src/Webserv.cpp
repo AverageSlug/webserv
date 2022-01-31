@@ -19,10 +19,7 @@ Webserv::Webserv(all_servers all_servers)
 
 Webserv::Webserv() {}
 
-Webserv::~Webserv()
-{
-	delete [] _Socket;
-}
+Webserv::~Webserv() {}
 
 Webserv::Webserv(const Webserv &cpy)
 {
@@ -40,12 +37,11 @@ void	Webserv::setup()
 	std::vector<Server *>	servs = _all_servers.getservs();
 	FD_ZERO(&_set);
 	_size = _all_servers.size();
-	_Socket = new Socket[_size];
 	_server_fd_highest = 0;
 	for (int i = 0; i < _size; i++)
 	{
 		Socket	Socket(*servs[i]);
-		_Socket[i] = Socket;
+		_Socket.push_back(Socket);
 		if (_Socket[i].setup())
 		{
 			std::cout << "erroroo" << std::endl;
@@ -98,7 +94,7 @@ all_servers	&Webserv::getAllServers()
 	return (_all_servers);
 }
 
-Socket		*Webserv::getSocket()
+std::vector<Socket>	Webserv::getSocket()
 {
 	return (_Socket);
 }
