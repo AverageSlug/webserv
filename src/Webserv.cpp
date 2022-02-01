@@ -19,7 +19,11 @@ Webserv::Webserv(const all_servers &all_servers)
 
 Webserv::Webserv() {}
 
-Webserv::~Webserv() {}
+Webserv::~Webserv()
+{
+	delete [] _Socket;
+	delete _Request;
+}
 
 Webserv::Webserv(const Webserv &cpy)
 {
@@ -34,19 +38,19 @@ Webserv &Webserv::operator=(const Webserv &a)
 
 void	Webserv::setup()
 {
-	std::vector<Server *>	servs = _all_servers.getservs();
 	FD_ZERO(&_set);
 	_size = _all_servers.size();
 	_server_fd_highest = 0;
+	_Socket = new Socket[_size];
 	for (int i = 0; i < _size; i++)
 	{
-		Socket	Socket(*servs[i]);
-		_Socket.push_back(Socket);
+		_Socket[i] = Socket(*_all_servers.getservs()[i]);
 		if (_Socket[i].setup())
 			throw "Socket setup failed";
 		FD_SET(_Socket[i].getFD(), &_set);
 		if (_Socket[i].getFD() > _server_fd_highest)
 			_server_fd_highest = _Socket[i].getFD();
+		
 	}
 }
 
@@ -74,6 +78,12 @@ void	Webserv::server()
 
 void	Webserv::_handle_fd_set()
 {
+	for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
+		if (FD_ISSET(*it, &_write_fd))
+		{
+			std::cout << "connected" << std::endl;
+			sleep(55);
+		}
 	for (std::vector<long>::iterator it = _connecting.begin(); it < _connecting.end(); it++)
 	{
 		if (FD_ISSET(*it, &_read_fd))
@@ -81,28 +91,14 @@ void	Webserv::_handle_fd_set()
 			char buff[65536];
 			if (recv(*it, buff, 65535, 0) <= 0)
 				throw "Error: recv";
-			printf("HERE1\n");
-			Request request("lo", _all_servers);
-			printf("HERE2\n");
+			_Request = new Request(std::string(buff), _all_servers);
 			_connected.push_back(*it);
-			printf("HERE3\n");
 			FD_CLR(*it, &_set);
-			printf("HERE4\n");
 			FD_CLR(*it, &_read_fd);
-			printf("HERE5\n");
 			_connecting.erase(it);
-			printf("HERE6\n");
 			it = _connecting.begin();
-			printf("HERE7\n");
 		}
 	}
-	printf("HEREn\n");
-	for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
-		if (FD_ISSET(*it, &_read_fd))
-		{
-			std::cout << "jsptest" << std::endl;
-		}
-	printf("HEREm\n");
 	for (unsigned int i = 0; i < _all_servers.size(); i++)
 	{
 		if (FD_ISSET(_Socket[i].getFD(), &_read_fd))
@@ -117,7 +113,6 @@ void	Webserv::_handle_fd_set()
 			if (new_socket > _server_fd_highest)
 				_server_fd_highest = new_socket;
 		}
-		printf("HERE0\n");
 	}
 }
 
@@ -126,7 +121,7 @@ all_servers	&Webserv::getAllServers()
 	return (_all_servers);
 }
 
-std::vector<Socket>	Webserv::getSocket()
+Socket	*Webserv::getSocket()
 {
 	return (_Socket);
 }

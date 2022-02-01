@@ -45,8 +45,8 @@ int		main(int argc, char **argv)
 		Webserv.setup();
 		Webserv.server();
 	}
-	catch(const std::exception& e)
+	catch(const char* e)
 	{
-		std::cerr << e.what() << '\n';
+		std::cerr << e << '\n';
 	}
 }

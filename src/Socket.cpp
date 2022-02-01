@@ -33,8 +33,9 @@ Socket::Socket(const Socket &cpy)
 
 Socket &Socket::operator=(const Socket &a)
 {
+	_server = a._server;
+	_setaddr();
 	_Socket_fd = a._Socket_fd;
-	_val = a._val;
 	return (*this);
 }
 

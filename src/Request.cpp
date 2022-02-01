@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/01/31 15:15:44 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/01 11:49:48 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ Request::Request(const std::string content, const all_servers &servs) :
 	_chunked(false),
 	_all_serv(servs)
 {
-	printf("REQUEST CONSTRUCTOR\n");
 }
 
 Request&			Request::operator=(const Request &x)

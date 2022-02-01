@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 20:49:22 by igor              #+#    #+#             */
-/*   Updated: 2022/01/31 15:31:19 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/01/31 18:24:47 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Server::Server() :
 
 Server::~Server() {
 	for (size_t i = 0; i < this->_locations.size(); i++)
-		delete this->_locations[i];
+	 	delete this->_locations[i];
 	this->_locations.clear();
 }
 
@@ -37,7 +37,7 @@ Server&	Server::operator=(const Server &x)
 	this->_name = x._name;
 	this->_errorPages = x._errorPages;
 	this->_clientMaxBodySize = x._clientMaxBodySize;
-	this->_locations = x._locations; //noob
+	this->_locations = x._locations;
 	return *this;
 }
 

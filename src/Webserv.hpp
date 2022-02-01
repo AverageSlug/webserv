@@ -28,14 +28,14 @@ class Webserv
 		void	setup();
 		void	server();
 		all_servers	&getAllServers();
-		std::vector<Socket>	getSocket();
+		Socket		*getSocket();
 		long		getHighestFD();
 		fd_set		getReadFD();
 		fd_set		getWriteFD();
 	private:
 		all_servers	_all_servers;
-		std::vector<Request>	_request;
-		std::vector<Socket>	_Socket;
+		Request	*_Request;
+		Socket	*_Socket;
 		long	_server_fd_highest;
 		fd_set	_set;
 		int		_size;
