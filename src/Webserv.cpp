@@ -44,13 +44,12 @@ void	Webserv::setup()
 	_Socket = new Socket[_size];
 	for (int i = 0; i < _size; i++)
 	{
-		_Socket[i] = Socket(*_all_servers.getservs()[i]);
+		_Socket[i].set_Socket(*_all_servers.getservs()[i]);
 		if (_Socket[i].setup())
 			throw "Socket setup failed";
 		FD_SET(_Socket[i].getFD(), &_set);
 		if (_Socket[i].getFD() > _server_fd_highest)
 			_server_fd_highest = _Socket[i].getFD();
-		
 	}
 }
 
@@ -81,29 +80,39 @@ void	Webserv::_handle_fd_set()
 	for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
 		if (FD_ISSET(*it, &_write_fd))
 		{
-			std::cout << "connected" << std::endl;
-			sleep(55);
+			_Response = new Response(_Request);
+			if (send(*it, _Response->header().c_str(), _Response->header().length(), 0) < 0)
+				throw "Error: send";
+			FD_CLR(*it, &_write_fd);
+			FD_SET(*it, &_set);
+			_connected.erase(it);
+			it = _connected.begin();
 		}
 	for (std::vector<long>::iterator it = _connecting.begin(); it < _connecting.end(); it++)
 	{
 		if (FD_ISSET(*it, &_read_fd))
 		{
 			char buff[65536];
-			if (recv(*it, buff, 65535, 0) <= 0)
+			int	ret;
+			ret = recv(*it, buff, 65535, 0);
+			if (ret < 0)
 				throw "Error: recv";
-			_Request = new Request(std::string(buff), _all_servers);
-			_connected.push_back(*it);
-			FD_CLR(*it, &_set);
-			FD_CLR(*it, &_read_fd);
-			_connecting.erase(it);
-			it = _connecting.begin();
+			if (ret > 0)
+			{
+				_Request = new Request(std::string(buff), _all_servers);
+				_Request->reqParser();
+				_connected.push_back(*it);
+				FD_CLR(*it, &_set);
+				FD_CLR(*it, &_read_fd);
+				_connecting.erase(it);
+				it = _connecting.begin();
+			}
 		}
 	}
 	for (unsigned int i = 0; i < _all_servers.size(); i++)
 	{
 		if (FD_ISSET(_Socket[i].getFD(), &_read_fd))
 		{
-			std::cout << "\nnew connection" << std::endl;
 			long	new_socket = accept(_Socket[i].getFD(), NULL, NULL);
 			if (new_socket < 0)
 				throw "Error: accept";

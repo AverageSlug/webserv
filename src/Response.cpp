@@ -14,7 +14,7 @@ Response::Response(const Response &cpy)
 
 Response &Response::operator=(const Response &a)
 {
-	(void)a;
+	(void)a; //toudou
 	return (*this);
 }
 
@@ -257,29 +257,31 @@ void	Response::ft_delete()
 	_content += "<html><body><h1>File deleted.</h1></body></html>";
 }
 
-void	Response::_set_headers(const std::string lang, int size, const std::string location, const std::string type, const std::string path, int status)
+void	Response::_set_headers()
 {
-	_allow = "";
-	_content_language = lang;
-	std::stringstream(_content_length) << size;
-	_content_location = location;
-	(void)type;
+	_allow = "GET";
+	_content_language = "en";
+	std::stringstream(_content_length) << _request->getContent().length();
+	_content_location = _request->getLocation()->path;
 	{} //content-type
 	{} //date
 	{} //last-modified
-	if (status == 201 || (status >= 300 && status <= 308))
+	if (_status.first == 201 || (_status.first >= 300 && _status.first <= 308))
 	{
-		_location = path;
+		_location = _request->getLocation()->root;
 	}
-	if (status == 301 || status == 429 || status == 503)
+	if (_status.first == 301 || _status.first == 429 || _status.first == 503)
 	{
 		std::stringstream(_retry_after) << 3;
 	}
 	_server = "webigornulserv/4.2.0";
-	_transfer_encoding = "identity";
-	if (status == 401)
+	if (_request->getChunked())
+		_transfer_encoding = "chunked";
+	else
+		_transfer_encoding = "identity";
+	if (_status.first == 401)
 	{
-		_www_authenticate = "Basic realm=\"\", charset=\"UTF-8\""; //idk
+		_www_authenticate = "Basic";
 	}
 }
 
@@ -318,10 +320,12 @@ std::string	Response::header()
 	std::string	header;
 	std::string	tmp;
 	_init();
-	//_set_headers(lang, size, location, type, path, status);
-	//std::stringstream(tmp) << status;
-	//header = "HTTP/1.1 " + tmp + _status_codes[status] + " \r\n";
+	std::string tmp2 = setIndex(_request->getConstructPath());
+	_set_headers();
+	std::stringstream(tmp) << _status.first;
+	header = "HTTP/1.1 " + tmp + _status.second + " \r\n";
 	header += _get_headers();
+	header += "\r\n" + tmp2;
 	return (header);
 }
 

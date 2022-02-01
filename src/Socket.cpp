@@ -12,7 +12,7 @@
 
 #include "Socket.hpp"
 
-Socket::Socket(const Server &server)
+void	Socket::set_Socket(const Server &server)
 {
 	_server = server;
 	_setaddr();
@@ -62,6 +62,7 @@ int		Socket::setup()
 		std::cout << "Error: setsockopt" << std::endl;
 		return (1);
 	}
+	fcntl(_Socket_fd, F_SETFL, O_NONBLOCK);
 	if (bind(_Socket_fd, (struct sockaddr*)&_val, sizeof(_val)) < 0)
 	{
 		std::cout << "Error: bind" << std::endl;

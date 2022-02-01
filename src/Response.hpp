@@ -26,7 +26,7 @@ class Response {
 	private:
 		Response();
 		void		_init();
-		void		_set_headers(const std::string lang, int size, const std::string location, const std::string type, const std::string path, int status);
+		void		_set_headers();
 		std::string	_get_headers();
 		std::string	_allow;
 		std::string	_content_language;

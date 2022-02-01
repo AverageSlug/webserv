@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/01 11:49:48 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/01 13:27:49 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,11 @@ std::string			Request::getContent()
 	return _content;
 }
 
+bool				Request::getChunked()
+{
+	return _chunked;
+}
+
 const t_location*	Request::getLocation() const
 {
 	location_type		serv_loc;
@@ -113,8 +118,10 @@ const t_location*	Request::getLocation() const
 	{
 		for (location_type::const_iterator it = serv_loc.begin(); it != serv_loc.end(); ++it)
 		{
-			if (path == (*it)->path)
+			if (path == (*it)->path) //!!
+			{
 				return *it;
+			}
 			if (path == (*it)->path + "/")
 				return *it;
 		}

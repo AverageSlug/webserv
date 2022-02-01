@@ -18,7 +18,7 @@
 class Socket
 {
 	public:
-		Socket(const Server &server);
+		void	set_Socket(const Server &server);
 		Socket();
 		~Socket();
 		Socket(const Socket &cpy);

@@ -16,6 +16,7 @@
 # include "includes.hpp"
 # include "Socket.hpp"
 # include "Request.hpp"
+# include "Response.hpp"
 
 class Webserv
 {
@@ -34,8 +35,9 @@ class Webserv
 		fd_set		getWriteFD();
 	private:
 		all_servers	_all_servers;
-		Request	*_Request;
-		Socket	*_Socket;
+		Request		*_Request;
+		Socket		*_Socket;
+		Response	*_Response;
 		long	_server_fd_highest;
 		fd_set	_set;
 		int		_size;
