@@ -10,7 +10,7 @@ class Response {
 		~Response();
 		Response(const Response &cpy);
 		Response		&operator=(const Response &a);
-		std::string			header();
+		void				header();
 		void				setStatus(int status_code);
 		void				setContent(const std::string file_content);
 		void				ft_get(const std::string content);
@@ -20,7 +20,7 @@ class Response {
 		const std::string	setIndex(std::string const path) const;
 		bool				uploadFile();
 		off_t				getFileLength(std::string file);
-
+		std::string			get_header();
 
 
 	private:
@@ -43,6 +43,7 @@ class Response {
 		std::pair<int, std::string>	_status;
 		Request		*_request;
 		std::string _content;
+		std::string	_header;
 };
 
 #endif

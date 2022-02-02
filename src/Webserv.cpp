@@ -69,47 +69,46 @@ void	Webserv::server()
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
 			throw "Error: select";
 		if (!select_fd)
-			std::cout << "\r..." << std::flush;
+			std::cout << "..." << std::flush;
 		else
+		{
+			std::cout << "\r";
 			_handle_fd_set();
+		}
 	}
 }
 
 void	Webserv::_handle_fd_set()
 {
+	int v = 1;
 	for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
+	{
 		if (FD_ISSET(*it, &_write_fd))
 		{
 			_Response = new Response(_Request);
-			if (send(*it, _Response->header().c_str(), _Response->header().length(), 0) < 0)
+			_Response->header();
+			if (send(*it, _Response->get_header().c_str(), _Response->get_header().length(), 0) < 0)
 				throw "Error: send";
-			FD_CLR(*it, &_write_fd);
-			FD_SET(*it, &_set);
 			_connected.erase(it);
-			it = _connected.begin();
+			v = 0;
+			break ;
 		}
-	for (std::vector<long>::iterator it = _connecting.begin(); it < _connecting.end(); it++)
+	}
+	for (std::vector<long>::iterator it = _connecting.begin(); v && it < _connecting.end(); it++)
 	{
 		if (FD_ISSET(*it, &_read_fd))
 		{
 			char buff[65536];
-			int	ret;
-			ret = recv(*it, buff, 65535, 0);
-			if (ret < 0)
+			if (recv(*it, buff, 65535, 0) < 0)
 				throw "Error: recv";
-			if (ret > 0)
-			{
-				_Request = new Request(std::string(buff), _all_servers);
-				_Request->reqParser();
-				_connected.push_back(*it);
-				FD_CLR(*it, &_set);
-				FD_CLR(*it, &_read_fd);
-				_connecting.erase(it);
-				it = _connecting.begin();
-			}
+			_Request = new Request(std::string(buff), _all_servers);
+			_Request->reqParser();
+			_connected.push_back(*it);
+			_connecting.erase(it);
+			break ;
 		}
 	}
-	for (unsigned int i = 0; i < _all_servers.size(); i++)
+	for (unsigned int i = 0; v && i < _all_servers.size(); i++)
 	{
 		if (FD_ISSET(_Socket[i].getFD(), &_read_fd))
 		{
@@ -121,6 +120,7 @@ void	Webserv::_handle_fd_set()
 			_connecting.push_back(new_socket);
 			if (new_socket > _server_fd_highest)
 				_server_fd_highest = new_socket;
+			break ;
 		}
 	}
 }

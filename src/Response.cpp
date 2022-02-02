@@ -261,11 +261,13 @@ void	Response::_set_headers()
 {
 	_allow = "GET";
 	_content_language = "en";
-	std::stringstream(_content_length) << _request->getContent().length();
+	std::stringstream ss;
+	ss << _request->getConstructPath().length();
+	_content_length = ss.str();
 	_content_location = _request->getLocation()->path;
-	{} //content-type
-	{} //date
-	{} //last-modified
+	_content_type = "text/html"; //content-type !!
+	_date = "Wed, 02 Feb 2022 12:05:59"; //date !!
+	_last_modified = "Mon, 29 Jun 2000"; //last-modified !!
 	if (_status.first == 201 || (_status.first >= 300 && _status.first <= 308))
 	{
 		_location = _request->getLocation()->root;
@@ -298,6 +300,7 @@ std::string	Response::_get_headers()
 		header += "Content-Location: " + _content_location + "\r\n";
 	if (_content_type != "")
 		header += "Content-Type: " + _content_type + "\r\n";
+	header += "Connection: Closed\r\n";
 	if (_date != "")
 		header += "Date: " + _date + "\r\n";
 	if (_last_modified != "")
@@ -315,17 +318,22 @@ std::string	Response::_get_headers()
 	return (header);
 }
 
-std::string	Response::header()
+void	Response::header()
 {
 	std::string	header;
-	std::string	tmp;
+	//std::string	tmp;
 	_init();
 	std::string tmp2 = setIndex(_request->getConstructPath());
 	_set_headers();
-	std::stringstream(tmp) << _status.first;
-	header = "HTTP/1.1 " + tmp + _status.second + " \r\n";
+	//std::stringstream(tmp) << 200;//_status.first;
+	header = "HTTP/1.1 200 OK\r\n";// + _status.second + "\r\n";
 	header += _get_headers();
 	header += "\r\n" + tmp2;
-	return (header);
+	//std::cout << _get_headers() << "\r\n" << _request->getContent() << std::flush;
+	_header = header;
 }
 
+std::string	Response::get_header()
+{
+	return (_header);
+}
