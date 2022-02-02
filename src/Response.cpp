@@ -2,6 +2,7 @@
 
 Response::Response(Request *request)
 {
+	setStatus(200);
 	_request = request;
 }
 
@@ -129,7 +130,6 @@ const std::string	Response::setIndex(std::string const path) const
 				contentBuf += fileName;
 			else
 				contentBuf = fileName;
-		
 			stat(contentBuf.c_str(), &statStruct);
 			modifTime = ctime(&statStruct.st_mtime);
 			modifTime.erase(modifTime.end() - 1);
@@ -150,8 +150,13 @@ const std::string	Response::setIndex(std::string const path) const
 			content += "<td>";
 			if (S_ISDIR(statStruct.st_mode))
 				content += "--";
-//			else
-//				content += std::to_string(statStruct.st_size);   !!!!!!!!!
+			else
+			{
+				std::stringstream ss;
+				ss << statStruct.st_size;
+				content += ss.str();
+			}
+//				content += std::to_string(statStruct.st_size);
 			content += "</td></tr>\n";
 			contentBuf.clear();
 			fileName.clear();
@@ -168,18 +173,24 @@ const std::string	Response::setIndex(std::string const path) const
 
 void	Response::ft_get(const std::string content)
 {
+	std::cout << "here\n";
 	 if (_status.first != 200)
 	 	return ;
 		 
 	if (ft_checkDir(_request->getConstructPath())) // if directory
 	{
+		
+		std::cout << "HERE2 : \n\n\n" << std::endl;
 		if (_request->getLocation() && _request->getLocation()->autoindex == true)
 			_content = setIndex(_request->getConstructPath());
 		else
 			setStatus(403);
 	}
 	else
+	{
 		_content = content;
+		std::cout << "HERE : \n\n\n" << content << std::endl;
+	}
 }
 
 off_t	Response::getFileLength(std::string file)

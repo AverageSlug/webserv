@@ -80,3 +80,24 @@ std::vector<std::string>	ft_strtovec(const std::string s, const std::string deli
 		vect.push_back(tmp);
 	return vect;
 }
+
+std::string	getContent(const std::string& file)
+{
+	std::ifstream	ifs(file, std::ios::in);
+	std::string		content;
+	std::string		gline;
+
+	if (ifs.is_open())
+	{
+		while (1)
+		{
+			std::getline(ifs, gline);
+			content += gline;
+			if (ifs.eof())
+				break ;
+			content += "\n";
+		}
+	}
+	ifs.close();
+	return content;
+}

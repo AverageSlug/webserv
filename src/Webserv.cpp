@@ -87,6 +87,7 @@ void	Webserv::_handle_fd_set()
 			FD_SET(*it, &_set);
 			_connected.erase(it);
 			it = _connected.begin();
+			_Response->setContent(getContent(_Request->getConstructPath()));
 		}
 	for (std::vector<long>::iterator it = _connecting.begin(); it < _connecting.end(); it++)
 	{
@@ -99,6 +100,7 @@ void	Webserv::_handle_fd_set()
 				throw "Error: recv";
 			if (ret > 0)
 			{
+				std::cout << std::string(buff) << std::endl;
 				_Request = new Request(std::string(buff), _all_servers);
 				_Request->reqParser();
 				_connected.push_back(*it);
