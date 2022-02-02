@@ -81,14 +81,17 @@ void	Webserv::server()
 void	Webserv::_handle_fd_set()
 {
 	int v = 1;
+	std::string to_send;
 	for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
 	{
 		if (FD_ISSET(*it, &_write_fd))
 		{
 			_Response = new Response(_Request);
+			_Response->setContent(getContent(_Request->getConstructPath()));
 			_Response->header();
-			//_Response->setContent(getContent(_Request->getConstructPath()));
-			if (send(*it, _Response->get_header().c_str(), _Response->get_header().length(), 0) < 0)
+			to_send = _Response->get_header();
+			to_send += _Response->getContent();
+			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 				throw "Error: send";
 			_connected.erase(it);
 			v = 0;

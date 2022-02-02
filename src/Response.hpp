@@ -21,6 +21,8 @@ class Response {
 		bool				uploadFile();
 		off_t				getFileLength(std::string file);
 		std::string			get_header();
+		std::string 		getContent();
+
 
 
 	private:

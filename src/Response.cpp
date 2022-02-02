@@ -19,6 +19,11 @@ Response &Response::operator=(const Response &a)
 	return (*this);
 }
 
+std::string Response::getContent()
+{
+	return _content;
+}
+
 void	Response::_init()
 {
 	_allow = "";
@@ -87,7 +92,9 @@ void    Response::setContent(const std::string file_content)
 		checkMethod(_request->getMethod());
 	
 	// check cgi to do
-	if (_request->getMethod() == "GET")
+	if (ft_checkDir(_request->getConstructPath()))
+		_content = setIndex(_request->getConstructPath());
+	else if (_request->getMethod() == "GET")
 		ft_get(file_content);
 	else if (_request->getMethod() == "POST")
 		ft_post();
@@ -173,14 +180,11 @@ const std::string	Response::setIndex(std::string const path) const
 
 void	Response::ft_get(const std::string content)
 {
-	//std::cout << "here\n";
 	 if (_status.first != 200)
 	 	return ;
 		 
 	if (ft_checkDir(_request->getConstructPath())) // if directory
 	{
-		
-		//std::cout << "HERE2 : \n\n\n" << std::endl;
 		if (_request->getLocation() && _request->getLocation()->autoindex == true)
 			_content = setIndex(_request->getConstructPath());
 		else
@@ -189,7 +193,6 @@ void	Response::ft_get(const std::string content)
 	else
 	{
 		_content = content;
-		//std::cout << "HERE : \n\n\n" << content << std::endl;
 	}
 }
 
@@ -273,10 +276,10 @@ void	Response::_set_headers()
 	_allow = "GET";
 	_content_language = "en";
 	std::stringstream ss;
-	ss << setIndex(_request->getConstructPath()).length();
+	ss << _content.length();
 	_content_length = ss.str();
 	_content_location = _request->getLocation()->path;
-	_content_type = "text/html"; //content-type !!
+	_content_type = "image/jpg"; //content-type !!
 	_date = "Wed, 02 Feb 2022 12:05:59"; //date !!
 	_last_modified = "Mon, 29 Jun 2000"; //last-modified !!
 	if (_status.first == 201 || (_status.first >= 300 && _status.first <= 308))
@@ -334,12 +337,12 @@ void	Response::header()
 	std::string	header;
 	//std::string	tmp;
 	_init();
-	std::string tmp2 = setIndex(_request->getConstructPath());
+	//std::string tmp2 = setIndex(_request->getConstructPath());
 	_set_headers();
 	//std::stringstream(tmp) << 200;//_status.first;
 	header = "HTTP/1.1 200 OK\r\n";// + _status.second + "\r\n";
-	header += _get_headers();
-	header += "\r\n" + tmp2;
+	header += _get_headers() + "\r\n";
+	//header += "\r\n" + tmp2;
 	_header = header;
 }
 
