@@ -173,14 +173,14 @@ const std::string	Response::setIndex(std::string const path) const
 
 void	Response::ft_get(const std::string content)
 {
-	std::cout << "here\n";
+	//std::cout << "here\n";
 	 if (_status.first != 200)
 	 	return ;
 		 
 	if (ft_checkDir(_request->getConstructPath())) // if directory
 	{
 		
-		std::cout << "HERE2 : \n\n\n" << std::endl;
+		//std::cout << "HERE2 : \n\n\n" << std::endl;
 		if (_request->getLocation() && _request->getLocation()->autoindex == true)
 			_content = setIndex(_request->getConstructPath());
 		else
@@ -189,7 +189,7 @@ void	Response::ft_get(const std::string content)
 	else
 	{
 		_content = content;
-		std::cout << "HERE : \n\n\n" << content << std::endl;
+		//std::cout << "HERE : \n\n\n" << content << std::endl;
 	}
 }
 
@@ -273,7 +273,7 @@ void	Response::_set_headers()
 	_allow = "GET";
 	_content_language = "en";
 	std::stringstream ss;
-	ss << _request->getConstructPath().length();
+	ss << setIndex(_request->getConstructPath()).length();
 	_content_length = ss.str();
 	_content_location = _request->getLocation()->path;
 	_content_type = "text/html"; //content-type !!
@@ -340,7 +340,6 @@ void	Response::header()
 	header = "HTTP/1.1 200 OK\r\n";// + _status.second + "\r\n";
 	header += _get_headers();
 	header += "\r\n" + tmp2;
-	//std::cout << _get_headers() << "\r\n" << _request->getContent() << std::flush;
 	_header = header;
 }
 

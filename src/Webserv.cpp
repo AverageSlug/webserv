@@ -87,7 +87,7 @@ void	Webserv::_handle_fd_set()
 		{
 			_Response = new Response(_Request);
 			_Response->header();
-			_Response->setContent(getContent(_Request->getConstructPath()));
+			//_Response->setContent(getContent(_Request->getConstructPath()));
 			if (send(*it, _Response->get_header().c_str(), _Response->get_header().length(), 0) < 0)
 				throw "Error: send";
 			_connected.erase(it);
