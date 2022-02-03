@@ -60,7 +60,7 @@ void	Webserv::server()
 
 	while (1)
 	{
-		memcpy(&_read_fd, &_set, _size);
+		memcpy(&_read_fd, &_set, sizeof(_set));
 		FD_ZERO(&_write_fd);
 		for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
 			FD_SET(*it, &_write_fd);
@@ -91,7 +91,7 @@ void	Webserv::_handle_fd_set()
 			_Response->header();
 			to_send = _Response->get_header();
 			to_send += _Response->getContent();
-			std::cout << _Response->get_header();
+			//std::cout << _Response->get_header();
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 				throw "Error: send";
 			_connected.erase(it);
@@ -106,10 +106,16 @@ void	Webserv::_handle_fd_set()
 			char buff[65536];
 			if (recv(*it, buff, 65535, 0) < 0)
 				throw "Error: recv";
+			if (!*buff)
+			{
+				FD_CLR(*it, &_set);
+				FD_CLR(*it, &_read_fd);
+				_connecting.erase(it);
+				break ;
+			}
 			_Request = new Request(std::string(buff), _all_servers);
 			_Request->reqParser();
 			_connected.push_back(*it);
-			std::cout << buff << std::endl;
 			bzero(&buff, 65536);
 			break ;
 		}
