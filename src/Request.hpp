@@ -27,6 +27,7 @@ class Request
 		int					reqParser();
 		const Server*		getReqServ(const std::string name) const;
 		const Server*		getServ();
+		std::string			getUri();
 		std::string			getContent();
 		bool				getChunked();
 
@@ -39,6 +40,8 @@ class Request
 		typedef std::vector<t_location *>							location_type;
 		typedef std::pair<std::string, std::string>					pair_type;
 		typedef std::map<std::string, std::vector<std::string> >	value_type;
+
+		value_type			getData();
 
 	private:
 

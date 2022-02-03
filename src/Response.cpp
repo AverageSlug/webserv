@@ -15,7 +15,7 @@ Response::Response(const Response &cpy)
 
 Response &Response::operator=(const Response &a)
 {
-	(void)a; //toudou
+	(void)a; //toudoudou
 	return (*this);
 }
 
@@ -38,16 +38,6 @@ void	Response::_init()
 	_server = "";
 	_transfer_encoding = "";
 	_www_authenticate = "";
-	// _status_codes[100] = "Continue";
-	// _status_codes[200] = "OK";
-	// _status_codes[201] = "Created";
-	// _status_codes[204] = "No Content";
-	// _status_codes[400] = "Bad Request";
-	// _status_codes[403] = "Forbidden";
-	// _status_codes[404] = "Not Found";
-	// _status_codes[405] = "Method Not Allowed";
-	// _status_codes[413] = "Payload Too Large";
-	// _status_codes[500] = "Internal Server Error";
 }
 
 void	Response::setStatus(int status_code)
@@ -90,8 +80,11 @@ void    Response::setContent(const std::string file_content)
 {
 	if (_status.first < 400)
 		checkMethod(_request->getMethod());
-	
+
 	// check cgi to do
+	// std::cout << _request->getLocation()[1].cgi.first << std::endl;//comment that I can find if I type this
+	// if (ft_checkPath(_request->getLocation()->path))//
+	// 	{}//
 	if (ft_checkDir(_request->getConstructPath()))
 		_content = setIndex(_request->getConstructPath());
 	else if (_request->getMethod() == "GET")
@@ -273,13 +266,15 @@ void	Response::ft_delete()
 
 void	Response::_set_headers()
 {
-	_allow = "GET";
+	_allow = _request->getMethod(); //this is supposed to be the list of allowed methods
 	_content_language = "en";
 	std::stringstream ss;
 	ss << _content.length();
 	_content_length = ss.str();
 	_content_location = _request->getLocation()->path;
-	_content_type = "image/jpg"; //content-type !!
+	std::cout << _request->getLocation()->path << std::endl;
+	//std::cout << _request->getData()["Content-Type"][0] << std::endl;
+	_content_type = "";//_request->getData()["Content-Type"][0];
 	_date = "Wed, 02 Feb 2022 12:05:59"; //date !!
 	_last_modified = "Mon, 29 Jun 2000"; //last-modified !!
 	if (_status.first == 201 || (_status.first >= 300 && _status.first <= 308))
@@ -314,7 +309,6 @@ std::string	Response::_get_headers()
 		header += "Content-Location: " + _content_location + "\r\n";
 	if (_content_type != "")
 		header += "Content-Type: " + _content_type + "\r\n";
-	header += "Connection: Closed\r\n";
 	if (_date != "")
 		header += "Date: " + _date + "\r\n";
 	if (_last_modified != "")

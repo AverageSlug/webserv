@@ -14,12 +14,10 @@
 
 CGI::CGI() {}
 
-/*
-CGI::CGI(const Request &request)
+CGI::CGI(Request &request)
 {
 	_setup(request);
 }
-*/
 
 CGI::~CGI() {}
 
@@ -34,28 +32,26 @@ CGI &CGI::operator=(const CGI &a)
 	return (*this);
 }
 
-/*
-void	CGI::_setup(const Request &request)
+void	CGI::_setup(Request &request)
 {
-	_env["AUTH_TYPE"] = ""; //"" || 'Authorization'
-	_env["CONTENT_LENGTH"] = ""; //request get
-	_env["CONTENT_TYPE"] = ""; //'Content-Type'
+	_env["AUTH_TYPE"] = ""; //request.getData()["Authorization"][0]; !?
+	_env["CONTENT_LENGTH"] = request.getContent().length();
+	_env["CONTENT_TYPE"] = ""; //request.getData()["Content-Type"][0];
 	_env["GATEWAY_INTERFACE"] = "CGI/1.1";
-	_env["PATH_INFO"] = ""; //
-	_env["PATH_TRANSLATED"] = ""; //
-	_env["QUERY_STRING"] = ""; //
-	_env["REMOTE_ADDR"] = ""; //client network address
-	_env["REMOTE_HOST"] = ""; //
-	_env["REMOTE_IDENT"] = ""; //'Authorization'
-	_env["REMOTE_USER"] = ""; //'Authorization'
-	_env["REQUEST_METHOD"] = ""; //GET POST DELETE
-	_env["SCRIPT_NAME"] = ""; //
-	_env["SERVER_NAME"] = ""; //'Host' || REMOTE_ADDR
-	_env["SERVER_PORT"] = ""; //
+	_env["PATH_INFO"] = request.getLocation()->path; //
+	_env["PATH_TRANSLATED"] = request.getLocation()->path; //
+	_env["QUERY_STRING"] = request.getUri();
+	_env["REMOTE_ADDR"] = ""; //where do I get user data???
+	_env["REMOTE_HOST"] = ""; //where do I get user data???
+	_env["REMOTE_IDENT"] = ""; //request.getData()["Authorization"][0]; !?
+	_env["REMOTE_USER"] = ""; //request.getData()["Authorization"][0]; !?
+	_env["REQUEST_METHOD"] = request.getMethod();
+	_env["SCRIPT_NAME"] = request.getLocation()->path; //
+	_env["SERVER_NAME"] = request.getData()["Host"][0].substr(request.getData()["Host"][0].find(":") - 1);
+	_env["SERVER_PORT"] = request.getData()["Host"][0].substr(request.getData()["Host"][0].find(":") + 1, request.getData()["Host"][0].length());
 	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
-	_env["SERVER_SOFTWARE"] = "webigornulserv"; //custom
+	_env["SERVER_SOFTWARE"] = "webigornulserv/4.2.0";
 }
-*/
 
 char		**CGI::_envtoa()
 {

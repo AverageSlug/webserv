@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/01 17:14:50 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/03 12:12:23 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,11 @@ const std::map<std::string, std::string>&	Request::getFileInfo(void) const
 	return _fileInfo;
 }
 
+std::string			Request::getUri()
+{
+	return _uri;
+}
+
 std::string			Request::getContent()
 {
 	return _content;
@@ -104,6 +109,11 @@ std::string			Request::getContent()
 bool				Request::getChunked()
 {
 	return _chunked;
+}
+
+Request::value_type		Request::getData()
+{
+	return _data;
 }
 
 const t_location*	Request::getLocation() const
@@ -229,6 +239,7 @@ void	Request::setHeaderData(const std::string& header_str)
 	if (pos == std::string::npos)
 		return ;
 
+//	std::cout << header_str << std::endl;
 	static pair_type	header_line[] = {
 		std::make_pair("Host", ""),
 		std::make_pair("Origin", ""),
