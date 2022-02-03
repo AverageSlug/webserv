@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/03 12:12:23 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/03 12:15:16 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,8 @@ const t_location*	Request::getLocation() const
 		serv_loc = _server->locations();
 	std::string				path = _uri;
 	size_t					pos;
+
+	std::cout << "HERE URI : " << _uri << std::endl;
 
 	while (1)
 	{

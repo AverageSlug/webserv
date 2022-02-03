@@ -91,7 +91,7 @@ void	Webserv::_handle_fd_set()
 			_Response->header();
 			to_send = _Response->get_header();
 			to_send += _Response->getContent();
-			std::cout << to_send << std::endl;
+			std::cout << _Response->get_header();
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 				throw "Error: send";
 			FD_CLR(*it, &_set);

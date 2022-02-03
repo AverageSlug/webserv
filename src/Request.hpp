@@ -31,6 +31,7 @@ class Request
 		std::string			getContent();
 		bool				getChunked();
 
+
 		bool				parseFile();
 
 		const std::map<std::string, std::string>&	getFileInfo(void) const;
