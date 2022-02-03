@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ijacquet <ijacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/01 17:14:50 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/03 12:10:10 by ijacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,11 @@ bool				Request::getChunked()
 	return _chunked;
 }
 
+std::string			Request::getUri()
+{
+	return _uri;
+}
+
 const t_location*	Request::getLocation() const
 {
 	location_type		serv_loc;
@@ -113,6 +118,8 @@ const t_location*	Request::getLocation() const
 		serv_loc = _server->locations();
 	std::string				path = _uri;
 	size_t					pos;
+
+	std::cout << "HERE URI : " << _uri << std::endl;
 
 	while (1)
 	{

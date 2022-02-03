@@ -29,6 +29,8 @@ class Request
 		const Server*		getServ();
 		std::string			getContent();
 		bool				getChunked();
+		std::string			getUri();
+
 
 		bool				parseFile();
 

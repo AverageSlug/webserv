@@ -163,7 +163,6 @@ const std::string	Response::setIndex(std::string const path) const
 				ss << statStruct.st_size;
 				content += ss.str();
 			}
-//				content += std::to_string(statStruct.st_size);
 			content += "</td></tr>\n";
 			contentBuf.clear();
 			fileName.clear();
@@ -278,8 +277,8 @@ void	Response::_set_headers()
 	std::stringstream ss;
 	ss << _content.length();
 	_content_length = ss.str();
-	_content_location = _request->getLocation()->path;
-	_content_type = "image/jpg"; //content-type !!
+	_content_location = _request->getUri();
+	_content_type = "text/html"; //content-type !!
 	_date = "Wed, 02 Feb 2022 12:05:59"; //date !!
 	_last_modified = "Mon, 29 Jun 2000"; //last-modified !!
 	if (_status.first == 201 || (_status.first >= 300 && _status.first <= 308))
