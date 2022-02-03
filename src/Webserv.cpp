@@ -94,7 +94,6 @@ void	Webserv::_handle_fd_set()
 			std::cout << _Response->get_header();
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 				throw "Error: send";
-			FD_CLR(*it, &_set);
 			_connected.erase(it);
 			v = 0;
 			break ;
@@ -110,8 +109,8 @@ void	Webserv::_handle_fd_set()
 			_Request = new Request(std::string(buff), _all_servers);
 			_Request->reqParser();
 			_connected.push_back(*it);
-			_connecting.erase(it);
 			std::cout << buff << std::endl;
+			bzero(&buff, 65536);
 			break ;
 		}
 	}
