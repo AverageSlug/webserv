@@ -48,7 +48,7 @@ void	CGI::_setup(Request &request)
 	_env["REMOTE_IDENT"] = ""; //request.getData()["Authorization"][0]; !?
 	_env["REMOTE_USER"] = ""; //request.getData()["Authorization"][0]; !?
 	_env["REQUEST_METHOD"] = request.getMethod();
-	_env["SCRIPT_NAME"] = request.getLocation()->cgi.second.substr(6, request.getLocation()->cgi.second.length());
+	_env["SCRIPT_NAME"] = "./bin/php-cgi"; //!!!!!!!!!!!!
 	_env["SERVER_NAME"] = request.getData()["Host"][0].substr(request.getData()["Host"][0].find(":") - 1);
 	_env["SERVER_PORT"] = request.getData()["Host"][0].substr(request.getData()["Host"][0].find(":") + 1, request.getData()["Host"][0].length());
 	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
@@ -79,8 +79,7 @@ std::string	CGI::exec(const std::string &script)
 	char *const *n = NULL;
 	char		**env = _envtoa();
 	if (!env)
-		std::cout << "error or something" << std::endl;
-	//printf("HERE\n");
+		std::cout << "error or something0" << std::endl;
 	int		in = dup(0);
 	int		out = dup(1);
 	FILE	*IFile = tmpfile();
@@ -88,35 +87,33 @@ std::string	CGI::exec(const std::string &script)
 	long	IFD = fileno(IFile);
 	long	OFD = fileno(OFile);
 
-	//printf("H1ERE\n");
+	std::cout << script.c_str() << std::endl;
 	write(IFD, _req_cont.c_str(), _req_cont.size());
 	lseek(IFD, 0, 0);
-	//printf("HER2E\n");
 	pid = fork();
 	if (pid < 0)
-		std::cout << "error or something" << std::endl;
+		std::cout << "error or something1" << std::endl;
 	else if (!pid)
 	{
-		//printf("HER3E\n");
 		if (dup2(IFD, 0) < 0)
-			std::cout << "error or something" << std::endl;
+			std::cout << "error or something2" << std::endl;
 		if (dup2(OFD, 1) < 0)
-			std::cout << "error or something" << std::endl;
+			std::cout << "error or something3" << std::endl;
+		std::cout << script.c_str() << std::endl;
 		if (execve(script.c_str(), n, env) < 0)
-			std::cout << "error or something" << std::endl;
+			std::cout << "error or something4" << std::endl;
 		exit(0);
 	}
 	waitpid(pid, NULL, 0);
-	//printf("H4ERE\n");
+	lseek(OFD, 0, 0);
 	char buff[65536] = {0};
 	int read = 1;
 	while (read > 0)
 	{
 		bzero(buff, 65536);
-		read = ::read(OFD, buff, 65535);
+		read = ::read(OFD, buff, 65536);
 		ret += buff;
 	}
-	//printf("HERE5\n");
 	dup2(in, 0);
 	dup2(out, 1);
 	fclose(IFile);
@@ -125,7 +122,6 @@ std::string	CGI::exec(const std::string &script)
 	close(OFD);
 	close(in);
 	close(out);
-	//printf("HER56E\n");
 	for (int i = 0; env[i]; i++)
 		delete [] env[i];
 	delete env;

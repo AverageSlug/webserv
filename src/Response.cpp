@@ -80,16 +80,10 @@ void    Response::setContent(const std::string file_content)
 {
 	if (_status.first < 400)
 		checkMethod(_request->getMethod());
-	std::cout << _request->getLocation()->cgi.first << std::endl;
-	std::cout << _request->getLocation()->cgi.second << std::endl;
 	if (_request->getLocation()->cgi.first.length())
 	{
-//		printf("HERhahahahaE\n");
 		CGI cgi(*_request);
-//		printf("HERE123ww\n");
-		_content = cgi.exec(_request->getLocation()->cgi.second.substr(6, _request->getLocation()->cgi.second.length()));
-//		printf("HEwwwzzzRE\n");
-//		std::cout << "|" << _content << "|" << std::endl;
+		_content = cgi.exec("./bin/php-cgi");//_request->getLocation()->cgi.second.substr(6, _request->getLocation()->cgi.second.length()));
 	}
 	else if (ft_checkDir(_request->getConstructPath()))
 		_content = setIndex(_request->getConstructPath());

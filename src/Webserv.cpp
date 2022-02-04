@@ -144,7 +144,7 @@ void	Webserv::_handle_fd_set()
 				_connecting.erase(it);
 				break ;
 			}
-//			printf("mdwwwwr\n");
+			std::cout << buff << std::endl;
 			_Request = new Request(std::string(buff), _all_servers);
 			size_t reqLen = requestLen(_Request->getContent());
 			if (reqLen > 2500 && reqLen != std::string::npos)

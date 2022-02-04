@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/04 17:07:54 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/04 17:35:22 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,6 @@ bool	Request::setRequestUri(const std::string &first_line)
 {
 	const vector_type	line = ft_strtovec(first_line, " ");
 
-//	std::cout << first_line <<std::endl;
 	if (line.size() != 3)
 		return false;
 	_request_method = line[0];
@@ -250,7 +249,6 @@ void	Request::setHeaderData(const std::string& header_str)
 	if (pos == std::string::npos)
 		return ;
 
-	//std::cout << header_str << std::endl; //printf
 	static pair_type	header_line[] = {
 		std::make_pair("Host", ""),
 		std::make_pair("Origin", ""),
