@@ -80,12 +80,18 @@ void    Response::setContent(const std::string file_content)
 {
 	if (_status.first < 400)
 		checkMethod(_request->getMethod());
-
-	// check cgi to do
-	// std::cout << _request->getLocation()[1].cgi.first << std::endl;//comment that I can find if I type this
-	// if (ft_checkPath(_request->getLocation()->path))//
-	// 	{}//
-	if (ft_checkDir(_request->getConstructPath()))
+	std::cout << _request->getLocation()->cgi.first << std::endl;
+	std::cout << _request->getLocation()->cgi.second << std::endl;
+	if (_request->getLocation()->cgi.first.length())
+	{
+//		printf("HERhahahahaE\n");
+		CGI cgi(*_request);
+//		printf("HERE123ww\n");
+		_content = cgi.exec(_request->getLocation()->cgi.second.substr(6, _request->getLocation()->cgi.second.length()));
+//		printf("HEwwwzzzRE\n");
+//		std::cout << "|" << _content << "|" << std::endl;
+	}
+	else if (ft_checkDir(_request->getConstructPath()))
 		_content = setIndex(_request->getConstructPath());
 	else if (_request->getMethod() == "GET")
 		ft_get(file_content);

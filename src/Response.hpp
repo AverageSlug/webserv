@@ -3,6 +3,7 @@
 
 # include "includes.hpp"
 # include "Request.hpp"
+# include "CGI.hpp"
 
 class Response {
 	public:

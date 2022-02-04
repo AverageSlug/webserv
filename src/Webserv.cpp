@@ -69,7 +69,7 @@ void	Webserv::server()
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
 			throw "Error: select";
 		if (!select_fd)
-			std::cout << "..." << std::flush;
+			std::cout << "\r..." << std::flush;
 		else
 		{
 			std::cout << "\r";
@@ -91,7 +91,7 @@ void	Webserv::_handle_fd_set()
 			_Response->header();
 			to_send = _Response->get_header();
 			to_send += _Response->getContent();
-			//std::cout << _Response->get_header();
+			//std::cout << to_send << std::endl; //printf
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 				throw "Error: send";
 			_connected.erase(it);
@@ -103,9 +103,14 @@ void	Webserv::_handle_fd_set()
 	{
 		if (FD_ISSET(*it, &_read_fd))
 		{
-			char buff[65536];
-			if (recv(*it, buff, 65535, 0) < 0)
-				throw "Error: recv";
+			char *buff = new char[65536];
+//			printf("m787897899dr\n");
+			bzero(buff, 65536);
+//			printf("m123123dr\n");
+			if (recv(*it, buff, 65536, 0) < 0)
+				printf("recv e\n");
+//			printf("12lolmdr\n");
+//			std::cout << buff << std::endl;
 			if (!*buff)
 			{
 				FD_CLR(*it, &_set);
@@ -113,10 +118,13 @@ void	Webserv::_handle_fd_set()
 				_connecting.erase(it);
 				break ;
 			}
+//			printf("mdwwwwr\n");
 			_Request = new Request(std::string(buff), _all_servers);
+//			printf("mdwowowowowowzr\n");
 			_Request->reqParser();
+//			printf("mdrhahahaha\n");
 			_connected.push_back(*it);
-			bzero(&buff, 65536);
+			delete [] buff;
 			break ;
 		}
 	}
