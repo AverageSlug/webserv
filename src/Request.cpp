@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/03 17:27:12 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/04 17:07:54 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ Request::Request(const std::string content, const all_servers &servs) :
 	_chunked(false),
 	_all_serv(servs)
 {
+	std::cout << "New request!\n";
 }
 
 Request&			Request::operator=(const Request &x)
@@ -45,7 +46,6 @@ Request&			Request::operator=(const Request &x)
 	_content = x._content;
 	_server = x._server;
 	_fileInfo = x._fileInfo;
-	_boundary = x._boundary;
 	_status = x._status;
 	_data = x._data;
 	_request_method = x._request_method;
@@ -116,6 +116,11 @@ Request::value_type		Request::getData()
 	return _data;
 }
 
+int					Request::getStatus()
+{
+	return _status;
+}
+
 const t_location*	Request::getLocation() const
 {
 	location_type		serv_loc;
@@ -148,10 +153,16 @@ const t_location*	Request::getLocation() const
 	return NULL;
 }
 
+void	Request::setStatus(int status)
+{
+	_status = status;
+}
+
 bool	Request::setRequestUri(const std::string &first_line)
 {
 	const vector_type	line = ft_strtovec(first_line, " ");
 
+//	std::cout << first_line <<std::endl;
 	if (line.size() != 3)
 		return false;
 	_request_method = line[0];
@@ -280,13 +291,75 @@ void	Request::setChunked()
 	}
 }
 
+bool	Request::setFileInfo()
+{
+	std::string	toFind[] = {"POST", "multipart/form-data", "boundary", "filename", ""};
+	std::string	headerBuf(_content);
+	size_t		pos;
+
+	for (size_t i = 0; toFind[i].empty() == false; ++i)
+		if ((pos = headerBuf.find(toFind[i])) == std::string::npos)
+			return false;
+	std::string	boundary = "boundary=";
+	std::string buff = headerBuf;
+	if ((pos = buff.find(boundary)) != std::string::npos)
+	{
+		buff.erase(0, pos + boundary.length());
+		if ((pos = buff.find("\r\n")) != std::string::npos)
+		{
+			buff.erase(pos);
+			buff.insert(0, "--");
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+
+	std::string toParse = this->getContent();
+	std::string index[] = {"filename=\"", "\"", "Content-Type", "\r\n", "\r\n\r\n", buff + "--\n\r"};
+
+	std::string fileName;
+	std::string fileContent;
+
+	size_t begin;
+	size_t end;
+
+	while (true)
+	{
+		if ((begin = toParse.find(index[0])) != std::string::npos)
+			toParse.erase(0, begin + index[0].length());
+		if ((end = toParse.find(index[1])) != std::string::npos)
+			fileName = toParse.substr(0, end);
+
+		if ((begin = toParse.find(index[2])) != std::string::npos)
+			toParse.erase(0, begin + index[2].length());
+		if ((begin = toParse.find(index[4])) != std::string::npos)
+			toParse.erase(0, begin + index[4].length());
+		if ((end = toParse.find(index[3])) != std::string::npos)
+			fileContent = toParse.substr(0, end);
+
+		if(false == fileName.empty())
+			_fileInfo.insert(std::make_pair(fileName, fileContent));
+		toParse.erase(0, fileContent.length() + index[3].length());
+		if (toParse == index[5])
+			break ;
+		else
+			toParse.erase(0, buff.length() + index[3].length());
+	}
+	return true;
+}
+
 int		Request::reqParser()
 {
 	vector_type				buffer = ft_strtovec(_content, "\n");
 	vector_type::iterator	line = buffer.begin();
 
 	if (setRequestUri(*line++) == false)
-		throw "Error : bad uri";
+	{
+		setServer(_server);
+		return 0;
+	}
 	for ( ; line != buffer.end() && !(*line).empty(); ++line)
 		setHeaderData(*line);
 	setServer(getReqServ(_data["Host"][0]));

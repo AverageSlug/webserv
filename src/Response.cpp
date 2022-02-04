@@ -2,7 +2,7 @@
 
 Response::Response(Request *request)
 {
-	setStatus(200);
+	setStatus(request->getStatus());
 	_request = request;
 }
 
@@ -99,8 +99,8 @@ void    Response::setContent(const std::string file_content)
 		ft_post();
 	else if (_request->getMethod() == "DELETE")
 		ft_delete();
-//	if (_status.first >= 400)
-		//gestion d'erreur
+	if (_status.first >= 400)
+		setErrorContent();
 }
 
 
@@ -176,6 +176,55 @@ const std::string	Response::setIndex(std::string const path) const
 	return content;
 }
 
+
+void	Response::setErrorContent()
+{
+	std::map<int, std::string>::const_iterator	it;
+	it = _request->getServ()->errorPages().find(_status.first);
+	/* Default error page setup case */
+	if (it != _request->getServ()->errorPages().end() &&
+		ft_checkPath(it->second))
+	{
+		_content = getFileContent(it->second);
+		return ;
+	}
+	
+	/* Default case */
+	std::string content = "<!DOCTYPE html>\r\n";
+	content += "<html lang=\"en\">\r\n";
+	content += "<head>\r\n";
+	content += "<meta charset=\"utf-8\" /><meta http-equiv=\"X-UA-Compatible\" ";
+	content += "content=\"IE=edge\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\r\n";
+	content += "<title>";
+	content += _status.second;
+	content += " | ";
+	content += std::to_string(_status.first);
+	content += "</title>\r\n";
+	content += "<style type=\"text/css\">";
+    content += "body{margin:0}sub{bottom:-.25em}sup{top:-.5em}body,";
+	content += "html{width:100%;height:100%;background-color:#21232a}";
+	content += "body{color:#fff;text-align:center;text-shadow:0 2px 4px rgba(0,0,0,.5);padding:0;min-height:100%;";
+	content += "-webkit-box-shadowinset 0 0 100px rgba(0,0,0,.8);box-shadow:inset 0 0 100px rgba(0,0,0,.8);display:";
+	content += "table;font-family:\"Open Sans\",Arial,sans-serif}";
+	content += "h1{font-family:inherit;font-weight:500;line-height:1.1;color:inherit;font-size:36px}";
+	content += "h1 small{font-size:68%;font-weight:400;line-height:1;color:#777}";
+	content += "a{text-decoration:none;color:#fff;font-size:inherit;border-bottom:dotted 1px #707070}";
+	content += ".lead{color:silver;font-size:21px;line-height:1.4}";
+	content += ".cover{display:table-cell;vertical-align:middle;padding:0 20px}";
+	content += "</style>\r\n";
+	content += "</head>\r\n";
+	content += "<body>\r\n";
+	content += "<body>\r\n";
+	content += "<div class=\"cover\"><h1>";
+	content += _status.second;
+	content += " <small>";
+	content += std::to_string(_status.first);
+	content += "</small></h1></div>\r\n";
+	content += "</body>\r\n";
+	
+	_content = content;
+}
+
 void	Response::ft_get(const std::string content)
 {
 	 if (_status.first != 200)
@@ -207,18 +256,22 @@ off_t	Response::getFileLength(std::string file)
 
 bool	Response::uploadFile()
 {
+	if (false == _request->setFileInfo())
+		return false;
+
 	std::map<std::string, std::string>	fileInfo = _request->getFileInfo();
 
 	for (std::map<std::string, std::string>::iterator	it = fileInfo.begin(); it != fileInfo.end(); ++it)
 	{
 		std::string	toUploadPath = "./all_data" + _request->getLocation()->uploadStore + it->first;
+	// std::cout << "UPLOADFILE PRINT HERE\nTouploadpath :" << toUploadPath << " File length : " << getFileLength(toUploadPath);
 		if (_request->getServ()->clientMaxBodySize() &&
 			getFileLength(toUploadPath) > _request->getServ()->clientMaxBodySize())
 		{
 			setStatus(413);
 			return false;
 		}
-		std::ofstream	ofs;//(toUploadPath, std::ofstream::out); !!!!
+		std::ofstream	ofs(toUploadPath, std::ofstream::out);// !!!!
 		if (!ofs.is_open())
 		{
 			setStatus(403);
@@ -342,7 +395,6 @@ void	Response::header()
 	ss << _status.first;
 	header += ss.str() + " " + _status.second + "\r\n"; //200 OK\r\n";// + _status.second + "\r\n";
 	header += _get_headers() + "\r\n";
-	std::cout << header << std::endl;
 	//header += "\r\n" + tmp2;
 	_header = header;
 }

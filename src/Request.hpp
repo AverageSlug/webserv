@@ -16,6 +16,7 @@ class Request
 
 		const t_location*	getLocation() const;
 		std::string			getMethod();
+		int					getStatus();
 		std::string			getConstructPath();
 		bool				setRequestUri(const std::string &);
 		void				setConstructPath();
@@ -23,7 +24,9 @@ class Request
 		void				setContent();
 		void				setHeaderData(const std::string &);
 		void				setChunked();
+		void				setStatus(int status);
 		void				setServer(const Server *);
+		bool				setFileInfo();
 		int					reqParser();
 		const Server*		getReqServ(const std::string name) const;
 		const Server*		getServ();
@@ -52,7 +55,6 @@ class Request
 		const Server		*_server;
 	
 		std::map<std::string, std::string>			_fileInfo;
-		std::string			_boundary;
 		int					_status;
 
 		value_type			_data;
