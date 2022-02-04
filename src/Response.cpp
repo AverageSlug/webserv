@@ -265,15 +265,15 @@ void	Response::ft_delete()
 
 void	Response::_set_headers()
 {
-	_allow = _request->getMethod(); //this is supposed to be the list of allowed methods
-	_content_language = "en";
+//	_allow = _request->getMethod(); //this is supposed to be the list of allowed methods
+//	_content_language = "en";
 	std::stringstream ss;
 	ss << _content.length();
 	_content_length = ss.str();
-	_content_location = _request->getUri();
-	_content_type = ""; //content-type !!
-	_date = "Wed, 02 Feb 2022 12:05:59"; //date !!
-	_last_modified = "Mon, 29 Jun 2000"; //last-modified !!
+//	_content_location = _request->getUri();
+//	_content_type = ""; //content-type !!
+//	_date = "Wed, 02 Feb 2022 12:05:59"; //date !!
+//	_last_modified = "Mon, 29 Jun 2000"; //last-modified !!
 	if (_status.first == 201 || (_status.first >= 300 && _status.first <= 308))
 	{
 		_location = _request->getLocation()->root;
@@ -282,44 +282,44 @@ void	Response::_set_headers()
 	{
 		std::stringstream(_retry_after) << 3;
 	}
-	_server = "webigornulserv/4.2.0";
-	if (_request->getChunked())
-		_transfer_encoding = "chunked";
-	else
-		_transfer_encoding = "identity";
-	if (_status.first == 401)
-	{
-		_www_authenticate = "Basic";
-	}
+//	_server = "webigornulserv/4.2.0";
+//	if (_request->getChunked())
+//		_transfer_encoding = "chunked";
+//	else
+//		_transfer_encoding = "identity";
+//	if (_status.first == 401)
+//	{
+//		_www_authenticate = "Basic";
+//	}
 }
 
 std::string	Response::_get_headers()
 {
-	std::string	header;
-	if (_allow != "")
-		header += "Allow: " + _allow + "\r\n";
-	if (_content_language != "")
-		header += "Content-Language: " + _content_language + "\r\n";
+	 std::string	header;
+	// if (_allow != "")
+	// 	header += "Allow: " + _allow + "\r\n";
+	// if (_content_language != "")
+	// 	header += "Content-Language: " + _content_language + "\r\n";
 	if (_content_length != "")
 		header += "Content-Length: " + _content_length + "\r\n";
-	if (_content_location != "")
-		header += "Content-Location: " + _content_location + "\r\n";
-	if (_content_type != "")
-		header += "Content-Type: " + _content_type + "\r\n";
-	if (_date != "")
-		header += "Date: " + _date + "\r\n";
-	if (_last_modified != "")
-		header += "Last-Modified: " + _last_modified + "\r\n";
-	if (_location != "")
-		header += "Location: " + _location + "\r\n";
-	if (_retry_after != "")
-		header += "Retry-After: " + _retry_after + "\r\n";
-	if (_server != "")
-		header += "Server: " + _server + "\r\n";
-	if (_transfer_encoding != "")
-		header += "Transfer-Encoding: " + _transfer_encoding + "\r\n";
-	if (_www_authenticate != "")
-		header += "WWW-Authenticate: " + _www_authenticate + "\r\n";
+	// if (_content_location != "")
+	// 	header += "Content-Location: " + _content_location + "\r\n";
+	// if (_content_type != "")
+	// 	header += "Content-Type: " + _content_type + "\r\n";
+	// if (_date != "")
+	// 	header += "Date: " + _date + "\r\n";
+	// if (_last_modified != "")
+	// 	header += "Last-Modified: " + _last_modified + "\r\n";
+	// if (_location != "")
+	// 	header += "Location: " + _location + "\r\n";
+	// if (_retry_after != "")
+	// 	header += "Retry-After: " + _retry_after + "\r\n";
+	// if (_server != "")
+	// 	header += "Server: " + _server + "\r\n";
+	// if (_transfer_encoding != "")
+	// 	header += "Transfer-Encoding: " + _transfer_encoding + "\r\n";
+	// if (_www_authenticate != "")
+	// 	header += "WWW-Authenticate: " + _www_authenticate + "\r\n";
 	return (header);
 }
 
@@ -331,8 +331,12 @@ void	Response::header()
 	//std::string tmp2 = setIndex(_request->getConstructPath());
 	_set_headers();
 	//std::stringstream(tmp) << 200;//_status.first;
-	header = "HTTP/1.1 200 OK\r\n";// + _status.second + "\r\n";
+	header = "HTTP/1.1 ";
+	std::stringstream ss;
+	ss << _status.first;
+	header += ss.str() + " " + _status.second + "\r\n"; //200 OK\r\n";// + _status.second + "\r\n";
 	header += _get_headers() + "\r\n";
+	std::cout << header << std::endl;
 	//header += "\r\n" + tmp2;
 	_header = header;
 }
