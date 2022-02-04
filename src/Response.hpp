@@ -4,7 +4,8 @@
 # include "includes.hpp"
 # include "Request.hpp"
 
-class Response {
+class Response
+{
 	public:
 		Response(Request *req);
 		~Response();
@@ -22,6 +23,7 @@ class Response {
 		off_t				getFileLength(std::string file);
 		std::string			get_header();
 		std::string 		getContent();
+		void				setErrorContent();
 
 
 

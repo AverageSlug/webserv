@@ -81,7 +81,7 @@ std::vector<std::string>	ft_strtovec(const std::string s, const std::string deli
 	return vect;
 }
 
-std::string	getContent(const std::string& file)
+std::string	getFileContent(const std::string& file)
 {
 	std::ifstream	ifs(file, std::ios::in);
 	std::string		content;

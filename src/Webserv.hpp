@@ -28,6 +28,7 @@ class Webserv
 		Webserv &operator=(const Webserv &a);
 		void	setup();
 		void	server();
+		size_t	requestLen(std::string const & content);
 		all_servers	&getAllServers();
 		Socket		*getSocket();
 		long		getHighestFD();

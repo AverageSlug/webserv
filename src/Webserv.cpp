@@ -78,20 +78,46 @@ void	Webserv::server()
 	}
 }
 
+size_t	Webserv::requestLen(std::string const & content)
+{
+	size_t pos = content.find("Content-Length: ");
+
+	if (pos == std::string::npos)
+		return std::string::npos;
+	
+	pos += std::string("Content-Length: ").length();
+
+	std::string getLen;
+
+	for (size_t i = pos; i < content.length() - pos; i++)
+	{
+		if (std::isdigit(content[i]))
+			getLen += content[i];
+		else
+			break ;
+	}
+
+	std::stringstream sstream(getLen);
+	size_t ret = 0;
+
+	sstream >> ret;
+	return ret;
+}
+
 void	Webserv::_handle_fd_set()
 {
 	int v = 1;
 	std::string to_send;
+	
 	for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
 	{
 		if (FD_ISSET(*it, &_write_fd))
 		{
 			_Response = new Response(_Request);
-			_Response->setContent(getContent(_Request->getConstructPath()));
+			_Response->setContent(getFileContent(_Request->getConstructPath()));
 			_Response->header();
 			to_send = _Response->get_header();
 			to_send += _Response->getContent();
-			//std::cout << _Response->get_header();
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 				throw "Error: send";
 			_connected.erase(it);
@@ -101,11 +127,16 @@ void	Webserv::_handle_fd_set()
 	}
 	for (std::vector<long>::iterator it = _connecting.begin(); v && it < _connecting.end(); it++)
 	{
+		int ret = 0;
 		if (FD_ISSET(*it, &_read_fd))
 		{
-			char buff[65536];
-			if (recv(*it, buff, 65535, 0) < 0)
-				throw "Error: recv";
+			char *buff = new char[2500];
+			std::memset(buff, 0, 2500);
+			ret = recv(*it, buff, 2500, 0);
+			if (ret == 0)
+				return;
+			else if (ret < 0)
+				std::cout << "ERRNO ALLERTE ALLERTE ALLERTE BUGGGGGGGGGGGGGGGGGGGGGGGGG: " << errno << std::endl;
 			if (!*buff)
 			{
 				FD_CLR(*it, &_set);
@@ -114,9 +145,13 @@ void	Webserv::_handle_fd_set()
 				break ;
 			}
 			_Request = new Request(std::string(buff), _all_servers);
-			_Request->reqParser();
+			size_t reqLen = requestLen(_Request->getContent());
+			if (reqLen > 2500 && reqLen != std::string::npos)
+				_Request->setStatus(413);
+			if (_Request->reqParser() == 0)
+				_Request->setStatus(400);
 			_connected.push_back(*it);
-			bzero(&buff, 65536);
+			delete [] buff;
 			break ;
 		}
 	}

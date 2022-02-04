@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ijacquet <ijacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 20:49:22 by igor              #+#    #+#             */
-/*   Updated: 2022/02/01 12:21:20 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/04 16:05:55 by ijacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ Server::Server() :
 {}
 
 Server::~Server() {
-	for (size_t i = 0; i < this->_locations.size(); i++)
-	 	delete this->_locations[i];
-	this->_locations.clear();
+	for (size_t i = 0; i < _locations.size(); i++)
+	 	delete _locations[i];
+	_locations.clear();
 }
 
 Server::Server(const Server &x)
@@ -33,52 +33,52 @@ Server&	Server::operator=(const Server &x)
 {
 	if (this == &x)
 		return *this;
-	this->_port = x._port;
-	this->_name = x._name;
-	this->_errorPages = x._errorPages;
-	this->_clientMaxBodySize = x._clientMaxBodySize;
-	this->_locations = x._locations;
+	_port = x._port;
+	_name = x._name;
+	_errorPages = x._errorPages;
+	_clientMaxBodySize = x._clientMaxBodySize;
+	_locations = x._locations;
 	return *this;
 }
 
 const int&	Server::port()	const
 {
-	return this->_port;
+	return _port;
 }
 
 const std::string&	Server::ip()	const
 {
-	return this->_ip;
+	return _ip;
 }
 
 const std::vector<std::string>&	Server::name()	const
 {
-	return this->_name;
+	return _name;
 }
 
 const std::map<int, std::string>&	Server::errorPages()	const
 {
-	return this->_errorPages;
+	return _errorPages;
 }
 
 const int&							Server::clientMaxBodySize()	const
 {
-	return this->_clientMaxBodySize;
+	return _clientMaxBodySize;
 }
 
 const t_location&	Server::locations(int i)	const
 {
-	return *(this->_locations[i]);
+	return *(_locations[i]);
 }
 
 const std::vector<t_location *>&	Server::locations(void)	const
 {
-	return this->_locations;
+	return _locations;
 }
 
 size_t	Server::nLoc()	const
 {
-	return this->_locations.size();
+	return _locations.size();
 }
 
 /*
@@ -87,7 +87,7 @@ size_t	Server::nLoc()	const
 
 void	Server::setName(const data_type &data) // server_name keyword
 {
-	this->_name.assign(data.begin() + 1, data.end());
+	_name.assign(data.begin() + 1, data.end());
 }
 
 void	Server::setSocket(const data_type &data) // listen keyword
@@ -118,7 +118,16 @@ void	Server::setErrorPages(const data_type &data) // error_page keyword
 {
 	if (data.size() != 3 || !(ft_isNumeric(data[1])))
 		throw "Error while reading configuration file";
-	//jsp quoi faire avec le path -> todo later
+	for (data_type::const_iterator it = data.begin() + 1; it != data.end() - 1; it++)
+	{
+		int error_code;
+		if (!ft_isNumeric(*it))
+			throw "Error while reading configuration file";
+		std::stringstream(*it) >> error_code;
+		if (_errorPages.find(error_code) != _errorPages.end())
+			_errorPages.erase(error_code);
+		_errorPages[error_code] = "./all_data" + std::string("/") + data.back();
+	}
 }
 
 void	Server::setClientMaxBodySize(const data_type &data) // client_max_body_size keyword
@@ -127,7 +136,7 @@ void	Server::setClientMaxBodySize(const data_type &data) // client_max_body_size
 		throw "Error while reading configuration file";
 	if (!ft_isNumeric(data[1]))
 		throw "Error while reading configuration file";
-	std::stringstream(data[1]) >> this->_clientMaxBodySize;
+	std::stringstream(data[1]) >> _clientMaxBodySize;
 }
 
 void	Server::setCgi(t_location  *loc, const data_type &data) // cgi_pass keyword
@@ -205,7 +214,7 @@ void	Server::newLocation(const data_type &data)
 	loc->autoindex = false;
 	loc->redirection = std::make_pair(0, "");
 	loc->cgi = std::make_pair("", "");
-	this->_locations.push_back(loc);
+	_locations.push_back(loc);
 }
 
 /* Adds the new directive to the location */
@@ -230,7 +239,7 @@ void	Server::newLocationDirective(const data_type &data)
 		&Server::setCgi,
 		&Server::setUploadStore
 	};
-	t_location				*loc = this->_locations.back();
+	t_location				*loc = _locations.back();
 
 	if (data.size() < 2)
 		throw "Error while reading configuration file";
