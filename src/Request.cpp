@@ -6,7 +6,7 @@
 /*   By: ijacquet <ijacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/07 17:23:00 by ijacquet         ###   ########.fr       */
+/*   Updated: 2022/02/07 17:25:29 by ijacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,6 @@ void	Request::setHeaderData(const std::string& header_str)
 	if (pos == std::string::npos)
 		return ;
 
-//	std::cout << header_str << std::endl;
 	static pair_type	header_line[] = {
 		std::make_pair("Host", ""),
 		std::make_pair("Origin", ""),

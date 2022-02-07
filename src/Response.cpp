@@ -88,14 +88,14 @@ void    Response::setContent(const std::string file_content)
 {
 	if (_status.first < 400)
 		checkMethod(_request->getMethod());
-	// if (_location->cgi.first.length())
-	// {
-	// 	CGI cgi(*_request);
-	// 	_content = cgi.exec("./bin/php-cgi");//_location->cgi.second.substr(6, _location->cgi.second.length()));
-	// }
-//	if (ft_checkDir(_request->getConstructPath()))
-//		_content = setIndex(_request->getConstructPath());
-	if (_request->getMethod() == "GET")
+
+	if (!ft_checkDir(_request->getConstructPath()) && _request->getLocation()->cgi.first.length())
+	{
+		CGI cgi(*_request);
+		std::cout << _request->getConstructPath().c_str() << std::endl;
+		_content = cgi.exec(_request->getLocation()->cgi.second);
+	}
+	else if (_request->getMethod() == "GET")
 		ft_get(file_content);
 	else if (_request->getMethod() == "POST")
 		ft_post();
@@ -331,7 +331,10 @@ void	Response::_set_headers()
 //	_allow = _request->getMethod(); //this is supposed to be the list of allowed methods
 //	_content_language = "en";
 	std::stringstream ss;
-	ss << _content.length();
+	if (_request->getLocation()->cgi.first.length())
+		ss << _content.substr(_content.find("\r\n\r\n") + 4, _content.length()).length();
+	else
+		ss << _content.length();
 	_content_length = ss.str();
 //	_content_location = _request->getUri();
 //	_content_type = ""; //content-type !!
@@ -389,17 +392,13 @@ std::string	Response::_get_headers()
 void	Response::header()
 {
 	std::string	header;
-	//std::string	tmp;
 	_init();
-	//std::string tmp2 = setIndex(_request->getConstructPath());
 	_set_headers();
-	//std::stringstream(tmp) << 200;//_status.first;
 	header = "HTTP/1.1 ";
 	std::stringstream ss;
 	ss << _status.first;
-	header += ss.str() + " " + _status.second + "\r\n"; //200 OK\r\n";// + _status.second + "\r\n";
-	header += _get_headers() + "\r\n";
-	//header += "\r\n" + tmp2;
+	header += ss.str() + " " + _status.second + "\r\n";
+	header += _get_headers();
 	_header = header;
 }
 
