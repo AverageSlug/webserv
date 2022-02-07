@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/04 17:35:22 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/07 11:50:21 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Request::Request(const std::string content, const all_servers &servs) :
 	_chunked(false),
 	_all_serv(servs)
 {
-	std::cout << "New request!\n";
+	//std::cout << "New request!\n";
 }
 
 Request&			Request::operator=(const Request &x)
@@ -249,6 +249,7 @@ void	Request::setHeaderData(const std::string& header_str)
 	if (pos == std::string::npos)
 		return ;
 
+	std::cout << header_str << std::endl;
 	static pair_type	header_line[] = {
 		std::make_pair("Host", ""),
 		std::make_pair("Origin", ""),
