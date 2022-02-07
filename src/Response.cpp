@@ -174,7 +174,12 @@ const std::string	Response::setIndex(std::string const path) const
 void	Response::setErrorContent()
 {
 	std::map<int, std::string>::const_iterator	it;
-	it = _request->getServ()->errorPages().find(_status.first);
+	const Server *lol = _request->getServ();
+	std::cout << "set error 1 : status = " << _request->getServ() << std::endl;
+	std::cout << lol->name()[0] << std::endl;
+	std::cout << "set error 1 : status = " << _status.first << std::endl;
+	it = _request->getServ()->errorPages().find(413);
+	std::cout << "set error 2\n";
 	/* Default error page setup case */
 	if (it != _request->getServ()->errorPages().end() &&
 		ft_checkPath(it->second))
@@ -192,7 +197,9 @@ void	Response::setErrorContent()
 	content += "<title>";
 	content += _status.second;
 	content += " | ";
-	content += std::to_string(_status.first);
+	std::stringstream ss;
+	ss << _status.first;
+	content += ss.str();
 	content += "</title>\r\n";
 	content += "<style type=\"text/css\">";
     content += "body{margin:0}sub{bottom:-.25em}sup{top:-.5em}body,";
@@ -212,7 +219,9 @@ void	Response::setErrorContent()
 	content += "<div class=\"cover\"><h1>";
 	content += _status.second;
 	content += " <small>";
-	content += std::to_string(_status.first);
+	std::stringstream ss2;
+	ss2 << _status.first;
+	content += ss2.str();
 	content += "</small></h1></div>\r\n";
 	content += "</body>\r\n";
 	

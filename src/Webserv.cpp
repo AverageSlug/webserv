@@ -120,6 +120,7 @@ void	Webserv::_handle_fd_set()
 			to_send += _Response->getContent();
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 				throw "Error: send";
+			std::cout << "Response sent!" << std::endl;
 			_connected.erase(it);
 			v = 0;
 			break ;
@@ -134,16 +135,15 @@ void	Webserv::_handle_fd_set()
 			std::memset(buff, 0, 2500);
 			ret = recv(*it, buff, 2500, 0);
 			if (ret == 0)
-				return;
-			else if (ret < 0)
-				std::cout << "ERRNO ALLERTE ALLERTE ALLERTE BUGGGGGGGGGGGGGGGGGGGGGGGGG: " << errno << std::endl;
-			if (!*buff)
 			{
 				FD_CLR(*it, &_set);
 				FD_CLR(*it, &_read_fd);
 				_connecting.erase(it);
 				break ;
 			}
+			else if (ret < 0)
+				std::cout << "ERRNO ALLERTE ALLERTE ALLERTE BUGGGGGGGGGGGGGGGGGGGGGGGGG: " << errno << std::endl;
+			std::cout << buff << std::endl;
 			_Request = new Request(std::string(buff), _all_servers);
 			size_t reqLen = requestLen(_Request->getContent());
 			if (reqLen > 2500 && reqLen != std::string::npos)
