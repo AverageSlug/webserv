@@ -30,7 +30,7 @@ NAME		=	$(shell basename $(CURDIR))
 
 CXX			=	clang++
 
-CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
+CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98 -pedantic -g -fsanitize=address
 
 SRCS		=	$(wildcard src/*.cpp)
 

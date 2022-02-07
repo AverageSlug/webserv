@@ -71,10 +71,7 @@ void	Webserv::server()
 		if (!select_fd)
 			std::cout << "\r..." << std::flush;
 		else
-		{
-			std::cout << select_fd << std::endl;
 			_handle_fd_set();
-		}
 	}
 }
 
@@ -113,11 +110,12 @@ void	Webserv::_handle_fd_set()
 	{
 		if (FD_ISSET(*it, &_write_fd))
 		{
-			printf("response\n");
 			_Response = new Response(_Request);
 			_Response->setContent(getFileContent(_Request->getConstructPath()));
 			_Response->header();
 			to_send = _Response->get_header();
+			if (!_Request->getLocation()->cgi.first.length() || ft_checkDir(_Request->getConstructPath()))
+				to_send += "\r\n";
 			to_send += _Response->getContent();
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 				throw "Error: send";
@@ -131,12 +129,9 @@ void	Webserv::_handle_fd_set()
 		int ret = 0;
 		if (FD_ISSET(*it, &_read_fd))
 		{
-			printf("request\n");
 			char *buff = new char[250001];
 			std::memset(buff, 0, 250001);
 			ret = recv(*it, buff, 250000, 0);
-			//buff[ret] = '\0';
-			std::cout << ret << "\n\n" << buff << std::endl;
 			if (ret == 250000)
 				break ;
 			if (ret < 0)
@@ -148,7 +143,6 @@ void	Webserv::_handle_fd_set()
 				_connecting.erase(it);
 				break ;
 			}
-			//std::cout << buff << std::endl;
 			_Request = new Request(std::string(buff), _all_servers);
 			size_t reqLen = requestLen(_Request->getContent());
 			if (reqLen > 250000 && reqLen != std::string::npos)
@@ -164,7 +158,6 @@ void	Webserv::_handle_fd_set()
 	{
 		if (FD_ISSET(_Socket[i].getFD(), &_read_fd))
 		{
-			printf("accept\n");
 			long	new_socket = accept(_Socket[i].getFD(), NULL, NULL);
 			if (new_socket < 0)
 				throw "Error: accept";
