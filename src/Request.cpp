@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ijacquet <ijacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/07 11:50:21 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/07 17:23:00 by ijacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Request::Request(const std::string content, const all_servers &servs) :
 	_chunked(false),
 	_all_serv(servs)
 {
-	//std::cout << "New request!\n";
+	std::cout << "New request!\n";
 }
 
 Request&			Request::operator=(const Request &x)
@@ -138,7 +138,9 @@ const t_location*	Request::getLocation() const
 				return *it;
 			}
 			if (path == (*it)->path + "/")
+			{
 				return *it;
+			}
 		}
 		if (path == "/")
 			return NULL;
@@ -213,7 +215,7 @@ void	Request::setContent()
 
 void	Request::setConstructPath()
 {
-	const t_location	*loc = getLocation();
+	const t_location					*loc = getLocation();
 	std::string							path_tmp(_uri);
 	std::string							index_tmp;
 	Server::data_type::const_iterator	idx;
@@ -249,7 +251,7 @@ void	Request::setHeaderData(const std::string& header_str)
 	if (pos == std::string::npos)
 		return ;
 
-	std::cout << header_str << std::endl;
+//	std::cout << header_str << std::endl;
 	static pair_type	header_line[] = {
 		std::make_pair("Host", ""),
 		std::make_pair("Origin", ""),
@@ -356,7 +358,7 @@ int		Request::reqParser()
 
 	if (setRequestUri(*line++) == false)
 	{
-		setServer(_server);
+		setServer(getReqServ(""));
 		return 0;
 	}
 	for ( ; line != buffer.end() && !(*line).empty(); ++line)

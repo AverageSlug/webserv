@@ -40,7 +40,7 @@ class Response
 		std::string	_content_type;
 		std::string	_date;
 		std::string	_last_modified;
-		std::string	_location;
+		std::string	_location_path;
 		std::string	_retry_after;
 		std::string	_server;
 		std::string	_transfer_encoding;
@@ -49,6 +49,7 @@ class Response
 		Request		*_request;
 		std::string _content;
 		std::string	_header;
+		const t_location	*_location;
 };
 
 #endif

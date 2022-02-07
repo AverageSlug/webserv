@@ -2,8 +2,9 @@
 
 Response::Response(Request *request)
 {
-	setStatus(request->getStatus());
 	_request = request;
+	_location = request->getLocation();
+	setStatus(request->getStatus());
 }
 
 Response::~Response() {}
@@ -33,7 +34,7 @@ void	Response::_init()
 	_content_type = "";
 	_date = "";
 	_last_modified = "";
-	_location = "";
+	_location_path = "";
 	_retry_after = "";
 	_server = "";
 	_transfer_encoding = "";
@@ -42,6 +43,13 @@ void	Response::_init()
 
 void	Response::setStatus(int status_code)
 {
+	if (_location && !_location->redirection.second.empty())
+	{
+		if (ft_checkPath("./all_data" + _location->redirection.second))
+			status_code = _location->redirection.first;
+		else
+			status_code = 404;
+	}
 	if (status_code == 100)
 		_status = std::make_pair(status_code, "Continue");
 	else if (status_code == 200)
@@ -68,9 +76,9 @@ bool	Response::checkMethod(const std::string method)
 {
 	if (method == "GET")
 		return true;
-	if (_request->getLocation())
-		for (size_t i = 0; i < _request->getLocation()->methods.size(); ++i)
-			if (method == _request->getLocation()->methods[i])
+	if (_location)
+		for (size_t i = 0; i < _location->methods.size(); ++i)
+			if (method == _location->methods[i])
 				return true;
 	setStatus(405);
 	return false;
@@ -80,14 +88,14 @@ void    Response::setContent(const std::string file_content)
 {
 	if (_status.first < 400)
 		checkMethod(_request->getMethod());
-	// if (_request->getLocation()->cgi.first.length())
+	// if (_location->cgi.first.length())
 	// {
 	// 	CGI cgi(*_request);
-	// 	_content = cgi.exec("./bin/php-cgi");//_request->getLocation()->cgi.second.substr(6, _request->getLocation()->cgi.second.length()));
+	// 	_content = cgi.exec("./bin/php-cgi");//_location->cgi.second.substr(6, _location->cgi.second.length()));
 	// }
-	if (ft_checkDir(_request->getConstructPath()))
-		_content = setIndex(_request->getConstructPath());
-	else if (_request->getMethod() == "GET")
+//	if (ft_checkDir(_request->getConstructPath()))
+//		_content = setIndex(_request->getConstructPath());
+	if (_request->getMethod() == "GET")
 		ft_get(file_content);
 	else if (_request->getMethod() == "POST")
 		ft_post();
@@ -173,19 +181,12 @@ const std::string	Response::setIndex(std::string const path) const
 
 void	Response::setErrorContent()
 {
-	std::cout << "here0\n" << _status.first << std::endl;
 	std::map<int, std::string>::const_iterator	it;
-	const Server *lol = _request->getServ();
-	std::cout << "set error 1 : status = " << _request->getServ() << std::endl;
-	std::cout << lol->name()[0] << std::endl;
-	std::cout << "set error 1 : status = " << _status.first << std::endl;
 	it = _request->getServ()->errorPages().find(413);
-	std::cout << "set error 2\n";
 	/* Default error page setup case */
 	if (it != _request->getServ()->errorPages().end() &&
 		ft_checkPath(it->second))
 	{
-	std::cout << "here3\n";
 		_content = getFileContent(it->second);
 		return ;
 	}
@@ -234,10 +235,9 @@ void	Response::ft_get(const std::string content)
 {
 	 if (_status.first != 200)
 	 	return ;
-		 
 	if (ft_checkDir(_request->getConstructPath())) // if directory
 	{
-		if (_request->getLocation() && _request->getLocation()->autoindex == true)
+		if (_location && _location->autoindex == true)
 			_content = setIndex(_request->getConstructPath());
 		else
 			setStatus(403);
@@ -268,8 +268,7 @@ bool	Response::uploadFile()
 
 	for (std::map<std::string, std::string>::iterator	it = fileInfo.begin(); it != fileInfo.end(); ++it)
 	{
-		std::string	toUploadPath = "./all_data" + _request->getLocation()->uploadStore + it->first;
-	// std::cout << "UPLOADFILE PRINT HERE\nTouploadpath :" << toUploadPath << " File length : " << getFileLength(toUploadPath);
+		std::string	toUploadPath = "./all_data" + _location->uploadStore + it->first;
 		if (_request->getServ()->clientMaxBodySize() &&
 			getFileLength(toUploadPath) > _request->getServ()->clientMaxBodySize())
 		{
@@ -295,7 +294,7 @@ void	Response::ft_post()
 	
 	bool isUpload = false;
 	/* upload case */
-	if (_request->getLocation() && !_request->getLocation()->uploadStore.empty())
+	if (_location && !_location->uploadStore.empty())
 	{
 		isUpload = uploadFile();
 		if (_status.first != 200)
@@ -340,7 +339,7 @@ void	Response::_set_headers()
 //	_last_modified = "Mon, 29 Jun 2000"; //last-modified !!
 	if (_status.first == 201 || (_status.first >= 300 && _status.first <= 308))
 	{
-		_location = _request->getLocation()->root;
+		_location_path = _location->root;
 	}
 	if (_status.first == 301 || _status.first == 429 || _status.first == 503)
 	{
