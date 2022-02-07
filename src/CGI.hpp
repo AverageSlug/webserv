@@ -28,6 +28,7 @@ class CGI
 	private:
 		void	_setup(Request &request);
 		char	**_envtoa();
+		std::string							_req_cont;
 		std::map<std::string, std::string>	_env;
 };
 

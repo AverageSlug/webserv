@@ -80,11 +80,11 @@ void    Response::setContent(const std::string file_content)
 {
 	if (_status.first < 400)
 		checkMethod(_request->getMethod());
-
-	// check cgi to do
-	// std::cout << _request->getLocation()[1].cgi.first << std::endl;//comment that I can find if I type this
-	// if (ft_checkPath(_request->getLocation()->path))//
-	// 	{}//
+	// if (_request->getLocation()->cgi.first.length())
+	// {
+	// 	CGI cgi(*_request);
+	// 	_content = cgi.exec("./bin/php-cgi");//_request->getLocation()->cgi.second.substr(6, _request->getLocation()->cgi.second.length()));
+	// }
 	if (ft_checkDir(_request->getConstructPath()))
 		_content = setIndex(_request->getConstructPath());
 	else if (_request->getMethod() == "GET")
@@ -173,6 +173,7 @@ const std::string	Response::setIndex(std::string const path) const
 
 void	Response::setErrorContent()
 {
+	std::cout << "here0\n" << _status.first << std::endl;
 	std::map<int, std::string>::const_iterator	it;
 	const Server *lol = _request->getServ();
 	std::cout << "set error 1 : status = " << _request->getServ() << std::endl;
@@ -184,6 +185,7 @@ void	Response::setErrorContent()
 	if (it != _request->getServ()->errorPages().end() &&
 		ft_checkPath(it->second))
 	{
+	std::cout << "here3\n";
 		_content = getFileContent(it->second);
 		return ;
 	}
@@ -274,7 +276,7 @@ bool	Response::uploadFile()
 			setStatus(413);
 			return false;
 		}
-		std::ofstream	ofs(toUploadPath, std::ofstream::out);// !!!!
+		std::ofstream	ofs(toUploadPath.c_str(), std::ofstream::out);// !!!!
 		if (!ofs.is_open())
 		{
 			setStatus(403);

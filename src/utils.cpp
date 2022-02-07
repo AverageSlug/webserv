@@ -83,7 +83,7 @@ std::vector<std::string>	ft_strtovec(const std::string s, const std::string deli
 
 std::string	getFileContent(const std::string& file)
 {
-	std::ifstream	ifs(file, std::ios::in);
+	std::ifstream	ifs(file.c_str(), std::ios::in);
 	std::string		content;
 	std::string		gline;
 
