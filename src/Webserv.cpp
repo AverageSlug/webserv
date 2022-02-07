@@ -119,6 +119,7 @@ void	Webserv::_handle_fd_set()
 			to_send += _Response->getContent();
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 				throw "Error: send";
+			std::cout << "Response sent!" << std::endl;
 			_connected.erase(it);
 			v = 0;
 			break ;

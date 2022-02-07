@@ -6,7 +6,7 @@
 /*   By: ijacquet <ijacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 20:49:22 by igor              #+#    #+#             */
-/*   Updated: 2022/02/04 16:05:55 by ijacquet         ###   ########.fr       */
+/*   Updated: 2022/02/07 11:54:27 by ijacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@ const std::string&	Server::ip()	const
 
 const std::vector<std::string>&	Server::name()	const
 {
+	std::cout << "Server names : \n";
+	for (std::vector<std::string>::const_iterator i = _name.begin(); i != _name.end(); ++i)
+    	std::cout << *i << ' ';
 	return _name;
 }
 
