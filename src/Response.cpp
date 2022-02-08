@@ -312,7 +312,6 @@ void	Response::ft_post()
 
 	if (isUpload == true)
 	{
-	std::cout << "here post3\n";
 		_content = "<html>\n";
 		_content += "<body>\n";
 		_content += "<h1>File uploaded.</h1>\n";
