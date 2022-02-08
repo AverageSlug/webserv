@@ -9,8 +9,6 @@ Response::Response(Request *request)
 
 Response::~Response()
 {
-	//delete _request;
-	std::cout << "delete rsp" << std::endl;
 }
 
 Response::Response(const Response &cpy)
@@ -133,7 +131,7 @@ const std::string	Response::setIndex(std::string const path) const
 	struct stat		statStruct;
 	struct dirent	*dirStruct;
 	
-	content = "<html><head><link rel=\"icon\" href=\"data:,\"></head><body><h1>Directory : ";
+	content = "<html><body><h1>Directory : ";
 	content += path;
 	content += "</h1><hr/>";
 
@@ -212,7 +210,6 @@ void	Response::setErrorContent()
 	std::string content = "<!DOCTYPE html>\r\n";
 	content += "<html lang=\"en\">\r\n";
 	content += "<head>\r\n";
-	content += "<link rel=\"icon\" href=\"data:,\">";
 	content += "<meta charset=\"utf-8\" /><meta http-equiv=\"X-UA-Compatible\" ";
 	content += "content=\"IE=edge\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\r\n";
 	content += "<title>";
@@ -281,7 +278,7 @@ bool	Response::uploadFile()
 {
 	if (false == _request->setFileInfo())
 		return false;
-	std::cout << "uploadfile \n";
+//	std::cout << "uploadfile \n";
 	std::map<std::string, std::string>	fileInfo = _request->getFileInfo();
 
 	for (std::map<std::string, std::string>::iterator	it = fileInfo.begin(); it != fileInfo.end(); ++it)
@@ -293,7 +290,7 @@ bool	Response::uploadFile()
 			setStatus(413);
 			return false;
 		}
-		std::ofstream	ofs(toUploadPath.c_str(), std::ofstream::out);// !!!!
+		std::ofstream	ofs(toUploadPath.c_str(), std::ofstream::out);
 		if (!ofs.is_open())
 		{
 			setStatus(403);
@@ -321,7 +318,6 @@ void	Response::ft_post()
 
 	if (isUpload == true)
 	{
-	std::cout << "here post3\n";
 		_content = "<html>\n";
 		_content += "<body>\n";
 		_content += "<h1>File uploaded.</h1>\n";

@@ -22,7 +22,6 @@ _req_cont(request.getContent())
 
 CGI::~CGI()
 {
-	std::cout << "delete cgi" << std::endl;
 }
 
 CGI::CGI(const CGI &cpy)

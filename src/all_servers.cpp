@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 00:21:38 by igor              #+#    #+#             */
-/*   Updated: 2022/02/08 13:07:09 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/08 16:50:43 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,9 @@ all_servers::all_servers()
 
 all_servers::~all_servers()
 {
-	std::cout << "delete all" << std::endl;
 	// for (size_t i = 0; i < this->_servers.size(); i++)
 	// 	delete this->_servers[i];
-	//this->_servers.clear();
+	// this->_servers.clear();
 }
 
 all_servers::all_servers(const all_servers &x)
@@ -34,8 +33,8 @@ all_servers::all_servers(const all_servers &x)
 
 all_servers&	all_servers::operator=(const all_servers &x)
 {
-	// if (&x == this)
-	// 	return *this;
+	if (&x == this)
+		return *this;
 	this->_servers = x._servers;
 	this->_bracket = x._bracket;
 	return *this;

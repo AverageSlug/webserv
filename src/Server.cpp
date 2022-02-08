@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 20:49:22 by igor              #+#    #+#             */
-/*   Updated: 2022/02/08 13:08:31 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/08 16:48:34 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,9 @@ Server::Server() :
 
 Server::~Server()
 {
-	std::cout << "delete srv" << std::endl;
-	// for (size_t i = 0; i < _locations.size(); i++)
-	//  	delete _locations[i];
-	// _locations.clear();
+	for (size_t i = 0; i < _locations.size(); i++)
+	 	delete _locations[i];
+	_locations.clear();
 }
 
 Server::Server(const Server &x)

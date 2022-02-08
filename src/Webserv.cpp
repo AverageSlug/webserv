@@ -12,8 +12,7 @@
 
 #include "Webserv.hpp"
 
-Webserv::Webserv(const all_servers &all_servers) :
-_reqLen(0)
+Webserv::Webserv(const all_servers &all_servers)
 {
 	_all_servers = all_servers;
 }
@@ -23,7 +22,6 @@ Webserv::Webserv() {}
 Webserv::~Webserv()
 {
 	delete [] _Socket;
-	std::cout << "delete web" << std::endl;
 }
 
 Webserv::Webserv(const Webserv &cpy)
@@ -65,7 +63,7 @@ void	Webserv::server()
 		FD_ZERO(&_write_fd);
 		for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
 			FD_SET(*it, &_write_fd);
-		timeout.tv_sec = 2;
+		timeout.tv_sec = 1;
 		timeout.tv_usec = 0;
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
 			throw "Error: select";
@@ -107,7 +105,7 @@ void	Webserv::_handle_fd_set()
 	int v = 1;
 	std::string to_send;
 	
-	for (std::vector<long>::iterator it = _connected.begin(); it < _connected.end(); it++)
+	for (std::vector<long>::iterator it = _connected.begin(); it != _connected.end(); it++)
 	{
 		if (FD_ISSET(*it, &_write_fd))
 		{
@@ -118,10 +116,12 @@ void	Webserv::_handle_fd_set()
 			if (!_Request->getLocation()->cgi.first.length() || ft_checkDir(_Request->getConstructPath()))
 				to_send += "\r\n";
 			to_send += _Response->getContent();
-			//std::cout << to_send << std::endl;
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
-				throw "Error: send";
-			std::cout << "Response sent!" << std::endl;
+			{
+				FD_CLR(*it, &_set);
+				FD_CLR(*it, &_read_fd);
+				_connecting.erase(*it);
+			}
 			_connected.erase(it);
 			delete _Response;
 			delete _Request;
@@ -132,30 +132,28 @@ void	Webserv::_handle_fd_set()
 	for (std::map<long, long>::iterator it = _connecting.begin(); v && it != _connecting.end(); it++)
 	{
 		int ret = 0;
-		if (FD_ISSET(*it, &_read_fd))
+		long sock = it->first;
+		if (FD_ISSET(sock, &_read_fd))
 		{
-			char *buff = new char[65536];
-			std::memset(buff, 0, 65535);
-			ret = recv(*it, buff, 65535, 0);
-			if (ret <= 0)
+			char buff[65536] = {0};
+			ret = recv(sock, buff, 65535, 0);
+			if (ret <= 0 || *buff < 32 || *buff > 127)
 			{
-				std::cout << "recv error" << std::endl;
-				FD_CLR(*it, &_set);
-				FD_CLR(*it, &_read_fd);
-				_connecting.erase(it);
-				delete [] buff;
+				if (sock > 0)
+					close(sock);
+				FD_CLR(sock, &_set);
+				FD_CLR(sock, &_read_fd);
+				_connecting.erase(sock);
+				it = _connecting.begin();
 				break ;
 			}
-			if (ret > 0)
-				buff[ret] = '\0';
 			_Request = new Request(std::string(buff), _all_servers);
-			_reqLen = requestLen(_Request->getContent());
-			if (_reqLen > 9999 && _reqLen != std::string::npos)
+			size_t reqLen = requestLen(_Request->getContent());
+			if (reqLen > 9999 && reqLen != std::string::npos)
 				_Request->setStatus(413);
 			if (_Request->reqParser() == 0)
 				_Request->setStatus(400);
-			_connected.push_back(*it);
-			delete [] buff;
+			_connected.push_back(sock);
 			break ;
 		}
 	}
@@ -168,7 +166,7 @@ void	Webserv::_handle_fd_set()
 				throw "Error: accept";
 			fcntl(new_socket, F_SETFL, O_NONBLOCK);
 			FD_SET(new_socket, &_set);
-			_connecting.insert(std::make_pair(_Socket[i].getFD(), new_socket));
+			_connecting.insert(std::make_pair(new_socket, _Socket[i].getFD()));
 			if (new_socket > _server_fd_highest)
 				_server_fd_highest = new_socket;
 			break ;

@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/08 15:12:05 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/08 18:24:21 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,6 @@ Request::Request(const std::string content, const all_servers &servs) :
 	_chunked(false),
 	_all_serv(servs)
 {
-	std::cout << "New request!\n";
-//	std::cout << _content << std::endl;
-//	std::cout << "New request end!\n";
 }
 
 Request&			Request::operator=(const Request &x)
@@ -63,7 +60,6 @@ Request::Request(const Request &x)
 
 Request::~Request()
 {
-	std::cout << "delete rq" << std::endl;
 }
 
 const Server*	Request::getReqServ(const std::string name) const
@@ -188,6 +184,7 @@ void	Request::setContent()
 	vector_type::const_iterator	it;
 	std::string					tmp_string("");
 
+//	std::cout << "_content before = " << _content << "end of _content before\n";
 	if (pos == std::string::npos)
 		_content = "";
 	else
@@ -214,6 +211,7 @@ void	Request::setContent()
 			tmp_string = buf;
 		_content = tmp_string;
 	}
+//	std::cout << "_content = " << _content << "end of _content\n";
 }
 
 void	Request::setConstructPath()
@@ -300,7 +298,6 @@ bool	Request::setFileInfo()
 	std::string	headerBuf(_content);
 	size_t		pos;
 
-//	std::cout << "buff = " << headerBuf << std::endl;
 	for (size_t i = 0; toFind[i].empty() == false; ++i)
 	{
 		if ((pos = headerBuf.find(toFind[i])) == std::string::npos)
@@ -322,8 +319,8 @@ bool	Request::setFileInfo()
 	else
 		return false;
 
-	std::string toParse = this->getContent();
-	std::string index[] = {"filename=\"", "\"", "Content-Type", "\r\n", "\r\n\r\n", buff + "--\n\r"};
+	std::string toParse = getContent();
+	std::string index[] = {"filename=\"", "\"", "Content-Type", "\r\n", "\r\n\r\n", buff + "--\r\n"};
 
 	std::string fileName;
 	std::string fileContent;
@@ -337,14 +334,12 @@ bool	Request::setFileInfo()
 			toParse.erase(0, begin + index[0].length());
 		if ((end = toParse.find(index[1])) != std::string::npos)
 			fileName = toParse.substr(0, end);
-
 		if ((begin = toParse.find(index[2])) != std::string::npos)
 			toParse.erase(0, begin + index[2].length());
 		if ((begin = toParse.find(index[4])) != std::string::npos)
 			toParse.erase(0, begin + index[4].length());
 		if ((end = toParse.find(index[3])) != std::string::npos)
 			fileContent = toParse.substr(0, end);
-
 		if(false == fileName.empty())
 			_fileInfo.insert(std::make_pair(fileName, fileContent));
 		toParse.erase(0, fileContent.length() + index[3].length());
@@ -359,7 +354,6 @@ bool	Request::setFileInfo()
 int		Request::reqParser()
 {
 	vector_type				buffer = ft_strtovec(_content, "\n");
-	std::cout << _content << std::endl;
 	vector_type::iterator	line = buffer.begin();
 
 	if (setRequestUri(*line++) == false)
@@ -372,6 +366,6 @@ int		Request::reqParser()
 	setServer(getReqServ(_data["Host"][0]));
 	setConstructPath();
 	setChunked();
-	setContent();
+//	setContent();
 	return 1;
 }
