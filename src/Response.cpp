@@ -58,6 +58,16 @@ void	Response::setStatus(int status_code)
 		_status = std::make_pair(status_code, "Created");
 	else if (status_code == 204)
 		_status = std::make_pair(status_code, "No Content");
+	else if (status_code == 301)
+		_status = std::make_pair(status_code, "Moved Permanently");
+	else if (status_code == 302)
+		_status = std::make_pair(status_code, "Found");
+	else if (status_code == 303)
+		_status = std::make_pair(status_code, "See Other");
+	else if (status_code == 304)
+		_status = std::make_pair(status_code, "Not Modified");
+	else if (status_code == 308)
+		_status = std::make_pair(status_code, "Permanent Redirection");
 	else if (status_code == 400)
 		_status = std::make_pair(status_code, "Bad Request");
 	else if (status_code == 403)
@@ -263,7 +273,7 @@ bool	Response::uploadFile()
 {
 	if (false == _request->setFileInfo())
 		return false;
-
+	std::cout << "uploadfile \n";
 	std::map<std::string, std::string>	fileInfo = _request->getFileInfo();
 
 	for (std::map<std::string, std::string>::iterator	it = fileInfo.begin(); it != fileInfo.end(); ++it)
@@ -291,7 +301,7 @@ void	Response::ft_post()
 {
 	if (_status.first != 200)
 		return ;
-	
+
 	bool isUpload = false;
 	/* upload case */
 	if (_location && !_location->uploadStore.empty())
@@ -300,9 +310,10 @@ void	Response::ft_post()
 		if (_status.first != 200)
 			return ;
 	}
-	
+
 	if (isUpload == true)
 	{
+	std::cout << "here post3\n";
 		_content = "<html>\n";
 		_content += "<body>\n";
 		_content += "<h1>File uploaded.</h1>\n";
@@ -340,11 +351,11 @@ void	Response::_set_headers()
 //	_content_type = ""; //content-type !!
 //	_date = "Wed, 02 Feb 2022 12:05:59"; //date !!
 //	_last_modified = "Mon, 29 Jun 2000"; //last-modified !!
-	if (_status.first == 201 || (_status.first >= 300 && _status.first <= 308))
+	if (_status.first == 201)
 	{
 		_location_path = _location->root;
 	}
-	if (_status.first == 301 || _status.first == 429 || _status.first == 503)
+	if (_status.first == 429 || _status.first == 503)
 	{
 		std::stringstream(_retry_after) << 3;
 	}
@@ -368,6 +379,11 @@ std::string	Response::_get_headers()
 	// 	header += "Content-Language: " + _content_language + "\r\n";
 	if (_content_length != "")
 		header += "Content-Length: " + _content_length + "\r\n";
+	if (_status.first >= 300 && _status.first <= 399)
+	{
+		header += "Location: ";
+		header += _location->redirection.second + "\r\n";
+	}
 	// if (_content_location != "")
 	// 	header += "Content-Location: " + _content_location + "\r\n";
 	// if (_content_type != "")
