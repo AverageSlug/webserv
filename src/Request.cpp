@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/07 17:42:35 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/08 13:55:20 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ Request::Request(const Request &x)
 
 Request::~Request()
 {
+	std::cout << "delete rq" << std::endl;
 }
 
 const Server*	Request::getReqServ(const std::string name) const

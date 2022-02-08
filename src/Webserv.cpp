@@ -12,7 +12,8 @@
 
 #include "Webserv.hpp"
 
-Webserv::Webserv(const all_servers &all_servers)
+Webserv::Webserv(const all_servers &all_servers) :
+_reqLen(0)
 {
 	_all_servers = all_servers;
 }
@@ -22,7 +23,7 @@ Webserv::Webserv() {}
 Webserv::~Webserv()
 {
 	delete [] _Socket;
-	delete _Request;
+	std::cout << "delete web" << std::endl;
 }
 
 Webserv::Webserv(const Webserv &cpy)
@@ -121,6 +122,8 @@ void	Webserv::_handle_fd_set()
 				throw "Error: send";
 			std::cout << "Response sent!" << std::endl;
 			_connected.erase(it);
+			// delete _Response;
+			// delete _Request;
 			v = 0;
 			break ;
 		}
@@ -130,29 +133,27 @@ void	Webserv::_handle_fd_set()
 		int ret = 0;
 		if (FD_ISSET(*it, &_read_fd))
 		{
-			char *buff = new char[250001];
-			std::memset(buff, 0, 250001);
-			ret = recv(*it, buff, 250000, 0);
-			if (ret == 250000)
-				break ;
+			char *buff = new char[65536];
+			std::memset(buff, 0, 65535);
+			ret = recv(*it, buff, 65535, 0);
 			if (ret < 0)
 				std::cout << "ERRNO ALLERTE ALLERTE ALLERTE BUGGGGGGGGGGGGGGGGGGGGGGGGG: " << errno << std::endl;
-			else if (ret == 0)
+			if (ret <= 0)
 			{
 				FD_CLR(*it, &_set);
 				FD_CLR(*it, &_read_fd);
 				_connecting.erase(it);
-				delete [] buff;
+				//delete [] buff;
 				break ;
 			}
 			_Request = new Request(std::string(buff), _all_servers);
-			size_t reqLen = requestLen(_Request->getContent());
-			if (reqLen > 9999 && reqLen != std::string::npos)
+			_reqLen = requestLen(_Request->getContent());
+			if (_reqLen > 9999 && _reqLen != std::string::npos)
 				_Request->setStatus(413);
 			if (_Request->reqParser() == 0)
 				_Request->setStatus(400);
 			_connected.push_back(*it);
-			delete [] buff;
+			//delete [] buff;
 			break ;
 		}
 	}
