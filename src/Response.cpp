@@ -7,7 +7,11 @@ Response::Response(Request *request)
 	setStatus(request->getStatus());
 }
 
-Response::~Response() {}
+Response::~Response()
+{
+	delete _request;
+	std::cout << "delete rsp" << std::endl;
+}
 
 Response::Response(const Response &cpy)
 {
@@ -16,7 +20,9 @@ Response::Response(const Response &cpy)
 
 Response &Response::operator=(const Response &a)
 {
-	(void)a; //toudoudou
+	_request = a._request;
+	_location = a._request->getLocation();
+	setStatus(a._request->getStatus());
 	return (*this);
 }
 
@@ -125,7 +131,7 @@ const std::string	Response::setIndex(std::string const path) const
 	struct stat		statStruct;
 	struct dirent	*dirStruct;
 	
-	content = "<html><body><h1>Directory : ";
+	content = "<html><head><link rel=\"icon\" href=\"data:,\"></head><body><h1>Directory : ";
 	content += path;
 	content += "</h1><hr/>";
 
@@ -204,6 +210,7 @@ void	Response::setErrorContent()
 	std::string content = "<!DOCTYPE html>\r\n";
 	content += "<html lang=\"en\">\r\n";
 	content += "<head>\r\n";
+	content += "<link rel=\"icon\" href=\"data:,\">";
 	content += "<meta charset=\"utf-8\" /><meta http-equiv=\"X-UA-Compatible\" ";
 	content += "content=\"IE=edge\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\r\n";
 	content += "<title>";

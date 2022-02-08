@@ -6,7 +6,7 @@
 /*   By: ijacquet <ijacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/08 15:13:11 by ijacquet         ###   ########.fr       */
+/*   Updated: 2022/02/08 15:24:50 by ijacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ Request::Request(const Request &x)
 
 Request::~Request()
 {
+	std::cout << "delete rq" << std::endl;
 }
 
 const Server*	Request::getReqServ(const std::string name) const

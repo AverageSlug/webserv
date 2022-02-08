@@ -17,11 +17,13 @@ CGI::CGI() {}
 CGI::CGI(Request &request) :
 _req_cont(request.getContent())
 {
-//	printf("H0ERE\n");
 	_setup(request);
 }
 
-CGI::~CGI() {}
+CGI::~CGI()
+{
+	std::cout << "delete cgi" << std::endl;
+}
 
 CGI::CGI(const CGI &cpy)
 {

@@ -23,7 +23,7 @@ Socket::Socket() {}
 
 Socket::~Socket()
 {
-	close(_Socket_fd);
+	std::cout << "delete sock" << std::endl;
 }
 
 Socket::Socket(const Socket &cpy)
