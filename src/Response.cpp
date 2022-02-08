@@ -102,7 +102,6 @@ void    Response::setContent(const std::string file_content)
 	if (!ft_checkDir(_request->getConstructPath()) && _request->getLocation()->cgi.first.length())
 	{
 		CGI cgi(*_request);
-		std::cout << _request->getConstructPath().c_str() << std::endl;
 		_content = cgi.exec(_request->getLocation()->cgi.second);
 	}
 	else if (_request->getMethod() == "GET")
