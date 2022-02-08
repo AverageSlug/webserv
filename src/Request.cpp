@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/08 13:59:24 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/08 15:12:05 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -359,6 +359,7 @@ bool	Request::setFileInfo()
 int		Request::reqParser()
 {
 	vector_type				buffer = ft_strtovec(_content, "\n");
+	std::cout << _content << std::endl;
 	vector_type::iterator	line = buffer.begin();
 
 	if (setRequestUri(*line++) == false)

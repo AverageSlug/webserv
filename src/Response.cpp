@@ -9,7 +9,7 @@ Response::Response(Request *request)
 
 Response::~Response()
 {
-	delete _request;
+	//delete _request;
 	std::cout << "delete rsp" << std::endl;
 }
 
@@ -104,7 +104,11 @@ void    Response::setContent(const std::string file_content)
 {
 	if (_status.first < 400)
 		checkMethod(_request->getMethod());
-
+	if (_status.first >= 400)
+	{
+		setErrorContent();
+		return ;
+	}
 	if (!ft_checkDir(_request->getConstructPath()) && _request->getLocation()->cgi.first.length())
 	{
 		CGI cgi(*_request);
@@ -116,8 +120,6 @@ void    Response::setContent(const std::string file_content)
 		ft_post();
 	else if (_request->getMethod() == "DELETE")
 		ft_delete();
-	if (_status.first >= 400)
-		setErrorContent();
 }
 
 
