@@ -6,7 +6,7 @@
 /*   By: nlaurids <nlaurids@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/08 13:55:20 by nlaurids         ###   ########.fr       */
+/*   Updated: 2022/02/08 13:59:24 by nlaurids         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ Request::Request(const std::string content, const all_servers &servs) :
 	_all_serv(servs)
 {
 	std::cout << "New request!\n";
+//	std::cout << _content << std::endl;
+//	std::cout << "New request end!\n";
 }
 
 Request&			Request::operator=(const Request &x)
@@ -298,9 +300,12 @@ bool	Request::setFileInfo()
 	std::string	headerBuf(_content);
 	size_t		pos;
 
+//	std::cout << "buff = " << headerBuf << std::endl;
 	for (size_t i = 0; toFind[i].empty() == false; ++i)
+	{
 		if ((pos = headerBuf.find(toFind[i])) == std::string::npos)
 			return false;
+	}
 	std::string	boundary = "boundary=";
 	std::string buff = headerBuf;
 	if ((pos = buff.find(boundary)) != std::string::npos)

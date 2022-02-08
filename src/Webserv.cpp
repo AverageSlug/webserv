@@ -118,6 +118,7 @@ void	Webserv::_handle_fd_set()
 			if (!_Request->getLocation()->cgi.first.length() || ft_checkDir(_Request->getConstructPath()))
 				to_send += "\r\n";
 			to_send += _Response->getContent();
+			//std::cout << to_send << std::endl;
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 				throw "Error: send";
 			std::cout << "Response sent!" << std::endl;
