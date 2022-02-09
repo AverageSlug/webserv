@@ -24,6 +24,10 @@ class Response
 		off_t				getFileLength(std::string file);
 		std::string			get_header();
 		std::string 		getContent();
+		
+		
+		std::pair<int, std::string> getStatus();
+
 		void				setErrorContent();
 
 

@@ -42,11 +42,10 @@ class Webserv
 		long	_server_fd_highest;
 		fd_set	_set;
 		int		_size;
-		size_t	_reqLen;
 		fd_set	_read_fd;
 		fd_set	_write_fd;
-		std::vector<long>	_connecting;
-		std::vector<long>	_connected;
+		std::map<long, long>	_connecting;
+		std::vector<long>		_connected;
 		void	_handle_fd_set();
 };
 

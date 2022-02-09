@@ -6,7 +6,7 @@
 /*   By: ijacquet <ijacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/09 12:28:59 by ijacquet         ###   ########.fr       */
+/*   Updated: 2022/02/09 13:25:35 by ijacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,6 @@ Request::Request(const std::string content, const all_servers &servs) :
 	_chunked(false),
 	_all_serv(servs)
 {
-	std::cout << "New request!\n";
-//	std::cout << _content << std::endl;
-//	std::cout << "New request end!\n";
 }
 
 Request&			Request::operator=(const Request &x)
@@ -63,7 +60,6 @@ Request::Request(const Request &x)
 
 Request::~Request()
 {
-	std::cout << "delete rq" << std::endl;
 }
 
 const Server*	Request::getReqServ(const std::string name) const
@@ -188,7 +184,7 @@ void	Request::setContent()
 	vector_type::const_iterator	it;
 	std::string					tmp_string("");
 
-	std::cout << "_content before = " << _content << "end of _content before\n";
+//	std::cout << "_content before = " << _content << "end of _content before\n";
 	if (pos == std::string::npos)
 		_content = "";
 	else
@@ -215,7 +211,7 @@ void	Request::setContent()
 			tmp_string = buf;
 		_content = tmp_string;
 	}
-	std::cout << "_content = " << _content << "end of _content\n";
+//	std::cout << "_content = " << _content << "end of _content\n";
 }
 
 void	Request::setConstructPath()
@@ -302,7 +298,6 @@ bool	Request::setFileInfo()
 	std::string	headerBuf(_content);
 	size_t		pos;
 
-	std::cout << "buff = " << headerBuf << std::endl;
 	for (size_t i = 0; toFind[i].empty() == false; ++i)
 	{
 		if ((pos = headerBuf.find(toFind[i])) == std::string::npos)

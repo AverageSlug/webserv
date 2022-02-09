@@ -45,6 +45,6 @@ clean	:
 			rm -f $(OBJS)
 
 fclean	:	clean
-			rm -f $(NAME)
+			rm -f $(NAME) all_data/uploads/*
 
 re		:	fclean all
