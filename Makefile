@@ -1,4 +1,4 @@
-NAME		=	webserv
+NAME		=	$(shell basename $(CURDIR))
 
 CXX			=	clang++
 
