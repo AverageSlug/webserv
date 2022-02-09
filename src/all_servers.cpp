@@ -9,9 +9,9 @@ all_servers::all_servers()
 
 all_servers::~all_servers()
 {
-	// for (size_t i = 0; i < this->_servers.size(); i++)
-	// 	delete this->_servers[i];
-	// this->_servers.clear();
+	for (size_t i = 0; i < this->_servers.size(); i++)
+		delete this->_servers[i];
+	this->_servers.clear();
 }
 
 all_servers::all_servers(const all_servers &x)

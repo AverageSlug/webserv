@@ -88,6 +88,38 @@ size_t	Webserv::requestLen(std::string const & content)
 	return ret;
 }
 
+const Server*	Webserv::getReqServ(const std::string name) const
+{
+	for (size_t i = 0; i < _all_servers.size(); ++i)
+	{
+		for (size_t j = 0; j < _all_servers[i]->name().size(); ++j)
+		{
+			if (_all_servers[i]->name()[j] == name)
+				return _all_servers[i];
+		}
+	}
+	return _all_servers[0];
+}
+
+int		Webserv::reqParser()
+{
+	std::vector<std::string>				buffer = ft_strtovec(_Request->getContent(), "\n");
+	std::vector<std::string>::iterator		line = buffer.begin();
+
+	if (_Request->setRequestUri(*line++) == false)
+	{
+		_Request->setServer(getReqServ(""));
+		return 0;
+	}
+	for ( ; line != buffer.end() && !(*line).empty(); ++line)
+		_Request->setHeaderData(*line);
+	_Request->setServer(getReqServ(_Request->getData()["Host"][0]));
+	_Request->setConstructPath();
+	_Request->setChunked();
+//	setContent();
+	return 1;
+}
+
 void	Webserv::_handle_fd_set()
 {
 	int v = 1;
@@ -135,11 +167,11 @@ void	Webserv::_handle_fd_set()
 				it = _connecting.begin();
 				break ;
 			}
-			_Request = new Request(std::string(buff), _all_servers);
+			_Request = new Request(std::string(buff));
 			size_t reqLen = requestLen(_Request->getContent());
 			if (reqLen > 9999 && reqLen != std::string::npos)
 				_Request->setStatus(413);
-			if (_Request->reqParser() == 0)
+			if (reqParser() == 0)
 				_Request->setStatus(400);
 			_connected.push_back(sock);
 			break ;

@@ -13,15 +13,14 @@
 // {
 // }
 
-Request::Request(const std::string content, const all_servers &servs) :
+Request::Request(const std::string content) :
 	_constructPath("./all_data"),
 	_status(200),
 	_data(),
 	_request_method(),
 	_uri("/"),
 	_content(content),
-	_chunked(false),
-	_all_serv(servs)
+	_chunked(false)
 {
 }
 
@@ -48,19 +47,6 @@ Request::Request(const Request &x)
 
 Request::~Request()
 {
-}
-
-const Server*	Request::getReqServ(const std::string name) const
-{
-	for (size_t i = 0; i < _all_serv.size(); ++i)
-	{
-		for (size_t j = 0; j < _all_serv[i]->name().size(); ++j)
-		{
-			if (_all_serv[i]->name()[j] == name)
-				return _all_serv[i];
-		}
-	}
-	return _all_serv[0];
 }
 
 std::string			Request::getMethod()
@@ -348,23 +334,4 @@ bool	Request::setFileInfo()
 			toParse.erase(0, buff.length() + index[3].length());
 	}
 	return true;
-}
-
-int		Request::reqParser()
-{
-	vector_type				buffer = ft_strtovec(_content, "\n");
-	vector_type::iterator	line = buffer.begin();
-
-	if (setRequestUri(*line++) == false)
-	{
-		setServer(getReqServ(""));
-		return 0;
-	}
-	for ( ; line != buffer.end() && !(*line).empty(); ++line)
-		setHeaderData(*line);
-	setServer(getReqServ(_data["Host"][0]));
-	setConstructPath();
-	setChunked();
-//	setContent();
-	return 1;
 }

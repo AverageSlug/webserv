@@ -22,6 +22,9 @@ class Webserv
 		long		getHighestFD();
 		fd_set		getReadFD();
 		fd_set		getWriteFD();
+		int			reqParser();
+		const Server*	getReqServ(const std::string name) const;
+
 	private:
 		all_servers	_all_servers;
 		Request		*_Request;

@@ -9,7 +9,7 @@ class Request
 {
 	public:
 		Request(const Request &);
-		Request(const std::string content, const all_servers &servs);
+		Request(const std::string content);
 		~Request();
 		Request&	operator=(const Request &);
 
@@ -60,9 +60,7 @@ class Request
 		std::string			_request_method;
 		std::string			_uri; // 2nd part of the url
 		std::string			_content; // complete request converted to string
-		bool				_chunked;
-		all_servers			_all_serv;
-	
+		bool				_chunked;	
 };
 
 #endif
