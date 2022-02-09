@@ -29,6 +29,11 @@ std::string Response::getContent()
 	return _content;
 }
 
+std::pair<int, std::string> Response::getStatus()
+{
+	return _status;
+}
+
 void	Response::_init()
 {
 	_allow = "";
@@ -278,7 +283,6 @@ bool	Response::uploadFile()
 {
 	if (false == _request->setFileInfo())
 		return false;
-//	std::cout << "uploadfile \n";
 	std::map<std::string, std::string>	fileInfo = _request->getFileInfo();
 
 	for (std::map<std::string, std::string>::iterator	it = fileInfo.begin(); it != fileInfo.end(); ++it)
@@ -306,6 +310,7 @@ void	Response::ft_post()
 {
 	if (_status.first != 200)
 		return ;
+
 
 	bool isUpload = false;
 	/* upload case */

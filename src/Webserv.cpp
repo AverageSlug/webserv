@@ -135,9 +135,11 @@ void	Webserv::_handle_fd_set()
 		long sock = it->first;
 		if (FD_ISSET(sock, &_read_fd))
 		{
-			char buff[65536] = {0};
-			ret = recv(sock, buff, 65535, 0);
-			if (ret <= 0 || *buff < 32 || *buff > 127)
+			char buff[10000] = {0};
+			ret = recv(sock, buff, 9999, 0);
+			std::cout << buff;
+			std::cout << "Test" << std::endl;
+			if (ret <= 6 || (std::string(buff).compare(0, 3, "GET") && std::string(buff).compare(0, 4, "POST") && std::string(buff).compare(0, 6, "DELETE") && std::string(buff).compare(0, 4, "----")))
 			{
 				if (sock > 0)
 					close(sock);
