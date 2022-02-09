@@ -6,7 +6,7 @@
 /*   By: ijacquet <ijacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/08 15:24:50 by ijacquet         ###   ########.fr       */
+/*   Updated: 2022/02/09 12:28:59 by ijacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -302,7 +302,7 @@ bool	Request::setFileInfo()
 	std::string	headerBuf(_content);
 	size_t		pos;
 
-//	std::cout << "buff = " << headerBuf << std::endl;
+	std::cout << "buff = " << headerBuf << std::endl;
 	for (size_t i = 0; toFind[i].empty() == false; ++i)
 	{
 		if ((pos = headerBuf.find(toFind[i])) == std::string::npos)
