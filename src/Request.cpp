@@ -6,7 +6,7 @@
 /*   By: ijacquet <ijacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 16:07:13 by igor              #+#    #+#             */
-/*   Updated: 2022/02/09 13:25:35 by ijacquet         ###   ########.fr       */
+/*   Updated: 2022/02/09 13:52:14 by ijacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,7 +320,7 @@ bool	Request::setFileInfo()
 		return false;
 
 	std::string toParse = getContent();
-	std::string index[] = {"filename=\"", "\"", "Content-Type", "\r\n", "\r\n\r\n", buff + "--\r\n"};
+	std::string index[] = {"filename=\"", "\"", "Content-Type", "\r\n-------", "\r\n\r\n", buff + "--\r\n"};
 
 	std::string fileName;
 	std::string fileContent;
@@ -331,18 +331,29 @@ bool	Request::setFileInfo()
 	while (true)
 	{
 		if ((begin = toParse.find(index[0])) != std::string::npos)
+		{
 			toParse.erase(0, begin + index[0].length());
+		}
 		if ((end = toParse.find(index[1])) != std::string::npos)
+		{
 			fileName = toParse.substr(0, end);
+		}
 		if ((begin = toParse.find(index[2])) != std::string::npos)
+		{
 			toParse.erase(0, begin + index[2].length());
+		}
 		if ((begin = toParse.find(index[4])) != std::string::npos)
+		{
 			toParse.erase(0, begin + index[4].length());
+		}
 		if ((end = toParse.find(index[3])) != std::string::npos)
+		{
 			fileContent = toParse.substr(0, end);
-		if(false == fileName.empty())
+		}
+		if (false == fileName.empty())
 			_fileInfo.insert(std::make_pair(fileName, fileContent));
 		toParse.erase(0, fileContent.length() + index[3].length());
+		break;
 		if (toParse == index[5])
 			break ;
 		else
