@@ -56,7 +56,7 @@ void	Webserv::server()
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
 			throw "Error: select";
 		if (!select_fd)
-			std::cout << "\r..." << std::flush;
+			std::cout << "\r" << std::flush;
 		else
 			_handle_fd_set();
 	}
@@ -136,6 +136,7 @@ void	Webserv::_handle_fd_set()
 			if (!_Request->getLocation()->cgi.first.length() || ft_checkDir(_Request->getConstructPath()))
 				to_send += "\r\n";
 			to_send += _Response->getContent();
+			std::cout << "Method " << _Request->getMethod() << " : " << _Request->getConstructPath() << " sent with status code " << _Response->getStatus().first << " " << _Response->getStatus().second << std::endl << std::endl;
 			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
 			{
 				FD_CLR(*it, &_set);
@@ -155,9 +156,9 @@ void	Webserv::_handle_fd_set()
 		long sock = it->first;
 		if (FD_ISSET(sock, &_read_fd))
 		{
-			char buff[10000] = {0};
-			ret = recv(sock, buff, 9999, 0);
-			if (ret <= 6 || (std::string(buff).compare(0, 3, "GET") && std::string(buff).compare(0, 4, "POST") && std::string(buff).compare(0, 6, "DELETE") && std::string(buff).compare(0, 4, "----")))
+			char buff[6001] = {0};
+			ret = recv(sock, buff, 6000, 0);
+			if (ret <= 6)
 			{
 				if (sock > 0)
 					close(sock);
@@ -168,10 +169,12 @@ void	Webserv::_handle_fd_set()
 				break ;
 			}
 			_Request = new Request(std::string(buff));
-			size_t reqLen = requestLen(_Request->getContent());
-			if (reqLen > 9999 && reqLen != std::string::npos)
+//			size_t reqLen = requestLen(_Request->getContent());
+			if (ret >= 6000)
+			{
 				_Request->setStatus(413);
-			if (reqParser() == 0)
+			}
+			if (reqParser() == 0 || (std::string(buff).compare(0, 3, "GET") && std::string(buff).compare(0, 4, "POST") && std::string(buff).compare(0, 6, "DELETE") && std::string(buff).compare(0, 4, "----")))
 				_Request->setStatus(400);
 			_connected.push_back(sock);
 			break ;

@@ -158,7 +158,7 @@ void	Request::setContent()
 	vector_type::const_iterator	it;
 	std::string					tmp_string("");
 
-//	std::cout << "_content before = " << _content << "end of _content before\n";
+	std::cout << "_content before = " << _content << "end of _content before\n";
 	if (pos == std::string::npos)
 		_content = "";
 	else
@@ -185,7 +185,7 @@ void	Request::setContent()
 			tmp_string = buf;
 		_content = tmp_string;
 	}
-//	std::cout << "_content = " << _content << "end of _content\n";
+	std::cout << "_content = " << _content << "end of _content\n";
 }
 
 void	Request::setConstructPath()
