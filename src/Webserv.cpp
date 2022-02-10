@@ -9,7 +9,6 @@ Webserv::Webserv() {}
 
 Webserv::~Webserv()
 {
-	delete [] _Socket;
 }
 
 Webserv::Webserv(const Webserv &cpy)
@@ -136,12 +135,13 @@ void	Webserv::_handle_fd_set()
 			if (!_Request->getLocation()->cgi.first.length() || ft_checkDir(_Request->getConstructPath()))
 				to_send += "\r\n";
 			to_send += _Response->getContent();
-			if (send(*it, to_send.c_str(), to_send.length(), 0) < 0)
+			if ((v = send(*it, to_send.c_str(), to_send.length(), 0)) < 0)
 			{
 				FD_CLR(*it, &_set);
 				FD_CLR(*it, &_read_fd);
 				_connecting.erase(*it);
 			}
+			close(*it);
 			_connected.erase(it);
 			delete _Response;
 			delete _Request;
@@ -164,7 +164,6 @@ void	Webserv::_handle_fd_set()
 				FD_CLR(sock, &_set);
 				FD_CLR(sock, &_read_fd);
 				_connecting.erase(sock);
-				it = _connecting.begin();
 				break ;
 			}
 			_Request = new Request(std::string(buff));
@@ -192,29 +191,4 @@ void	Webserv::_handle_fd_set()
 			break ;
 		}
 	}
-}
-
-all_servers	&Webserv::getAllServers()
-{
-	return (_all_servers);
-}
-
-Socket	*Webserv::getSocket()
-{
-	return (_Socket);
-}
-
-long		Webserv::getHighestFD()
-{
-	return (_server_fd_highest);
-}
-
-fd_set		Webserv::getReadFD()
-{
-	return (_read_fd);
-}
-
-fd_set		Webserv::getWriteFD()
-{
-	return (_write_fd);
 }

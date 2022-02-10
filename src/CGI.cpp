@@ -30,8 +30,8 @@ void	CGI::_setup(Request &request)
 	_env["CONTENT_LENGTH"] = request.getContent().length();
 	_env["CONTENT_TYPE"] = ""; //request.getData()["Content-Type"][0];
 	_env["GATEWAY_INTERFACE"] = "CGI/1.1";
-	_env["PATH_INFO"] = request.getConstructPath().substr(0, request.getConstructPath().find("?")).c_str();
-	_env["PATH_TRANSLATED"] = request.getConstructPath().substr(0, request.getConstructPath().find("?")).c_str();
+	_env["PATH_INFO"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));// + "?" + request.getContent().substr(request.getContent().find("\r\n\r\n") + 4, request.getContent().length());
+	_env["PATH_TRANSLATED"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));// + "?" + request.getContent().substr(request.getContent().find("\r\n\r\n") + 4, request.getContent().length());
 	_env["QUERY_STRING"] = request.getUri().substr(request.getUri().find("?") + 1, request.getUri().length());
 	_env["REMOTE_ADDR"] = ""; //where do I get user data???
 	_env["REMOTE_HOST"] = ""; //where do I get user data???
@@ -43,6 +43,8 @@ void	CGI::_setup(Request &request)
 	_env["SERVER_PORT"] = request.getData()["Host"][0].substr(request.getData()["Host"][0].find(":") + 1, request.getData()["Host"][0].length());
 	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	_env["SERVER_SOFTWARE"] = request.getServ()->name()[0];
+
+	std::cout << request.getContent().substr(request.getContent().find("\r\n\r\n") + 4, request.getContent().length()) << std::endl;
 }
 
 char		**CGI::_envtoa()
@@ -69,7 +71,7 @@ std::string	CGI::exec(const std::string &script)
 	char *const *n = NULL;
 	char		**env = _envtoa();
 	if (!env)
-		std::cout << "error or something0" << std::endl;
+		throw "Error: CGI";
 	int		in = dup(0);
 	int		out = dup(1);
 	FILE	*IFile = tmpfile();
@@ -81,15 +83,15 @@ std::string	CGI::exec(const std::string &script)
 	lseek(IFD, 0, 0);
 	pid = fork();
 	if (pid < 0)
-		std::cout << "error or something1" << std::endl;
+		throw "Error: CGI";
 	else if (!pid)
 	{
 		if (dup2(IFD, 0) < 0)
-			std::cout << "error or something2" << std::endl;
+			throw "Error: CGI";
 		if (dup2(OFD, 1) < 0)
-			std::cout << "error or something3" << std::endl;
+			throw "Error: CGI";
 		execve(script.c_str(), n, env);
-		std::cout << "error or something4" << std::endl;
+		throw "Error: CGI";
 		exit(0);
 	}
 	waitpid(-1, NULL, 0);

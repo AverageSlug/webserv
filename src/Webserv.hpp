@@ -17,11 +17,6 @@ class Webserv
 		void	setup();
 		void	server();
 		size_t	requestLen(std::string const & content);
-		all_servers	&getAllServers();
-		Socket		*getSocket();
-		long		getHighestFD();
-		fd_set		getReadFD();
-		fd_set		getWriteFD();
 		int			reqParser();
 		const Server*	getReqServ(const std::string name) const;
 

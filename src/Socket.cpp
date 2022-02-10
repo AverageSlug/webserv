@@ -11,6 +11,7 @@ Socket::Socket() {}
 
 Socket::~Socket()
 {
+	close(_Socket_fd);
 }
 
 Socket::Socket(const Socket &cpy)
@@ -51,10 +52,7 @@ int		Socket::setup()
 	}
 	fcntl(_Socket_fd, F_SETFL, O_NONBLOCK);
 	if (bind(_Socket_fd, (struct sockaddr*)&_val, sizeof(_val)) < 0)
-	{
-		std::cout << "Error: bind" << std::endl;
-		return (1);
-	}
+		throw "Error: bind";
 	if (listen(_Socket_fd, 1000) < 0)
 	{
 		std::cout << "Error: listen" << std::endl;
@@ -66,6 +64,11 @@ int		Socket::setup()
 long	Socket::getFD()
 {
 	return (_Socket_fd);
+}
+
+Server	Socket::getserv()
+{
+	return (_server);
 }
 
 struct	sockaddr_in	&Socket::getVal()

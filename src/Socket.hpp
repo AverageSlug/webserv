@@ -13,6 +13,7 @@ class Socket
 		Socket &operator=(const Socket &a);
 		int		setup();
 		long	getFD();
+		Server	getserv();
 		struct	sockaddr_in	&getVal();
 	private:
 		void	_setaddr();
