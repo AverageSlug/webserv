@@ -5,6 +5,8 @@ Response::Response(Request *request)
 	_request = request;
 	_location = request->getLocation();
 	setStatus(request->getStatus());
+	if (!ft_checkPath(_request->getConstructPath()) && _status.first < 400)
+		setStatus(404);
 }
 
 Response::~Response()
@@ -76,7 +78,7 @@ void	Response::setStatus(int status_code)
 	else if (status_code == 304)
 		_status = std::make_pair(status_code, "Not Modified");
 	else if (status_code == 308)
-		_status = std::make_pair(status_code, "Permanent Redirection");
+		_status = std::make_pair(status_code, "Permanent Redirect");
 	else if (status_code == 400)
 		_status = std::make_pair(status_code, "Bad Request");
 	else if (status_code == 403)
@@ -202,7 +204,7 @@ const std::string	Response::setIndex(std::string const path) const
 void	Response::setErrorContent()
 {
 	std::map<int, std::string>::const_iterator	it;
-	it = _request->getServ()->errorPages().find(413);
+	it = _request->getServ()->errorPages().find(_status.first);
 	/* Default error page setup case */
 	if (it != _request->getServ()->errorPages().end() &&
 		ft_checkPath(it->second))
