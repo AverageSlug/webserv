@@ -28,7 +28,7 @@ class Webserv
 		int		_size;
 		fd_set	_read_fd;
 		fd_set	_write_fd;
-		std::map<long, long>	_connecting;
+		std::map<long, Server*>	_connecting;
 		std::vector<long>		_connected;
 		void	_handle_fd_set(all_servers &all_servs);
 };

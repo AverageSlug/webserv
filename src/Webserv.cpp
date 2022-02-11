@@ -143,14 +143,14 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 			break ;
 		}
 	}
-	for (std::map<long, long>::iterator it = _connecting.begin(); v && it != _connecting.end(); it++)
+	for (std::map<long, Server*>::iterator it = _connecting.begin(); v && it != _connecting.end(); it++)
 	{
 		int ret = 0;
 		long sock = it->first;
 		if (FD_ISSET(sock, &_read_fd))
 		{
-			char buff[6000] = {0};
-			ret = read(sock, buff, 6000);
+			char buff[65536] = {0};
+			ret = read(sock, buff, 65535);
 			if (ret <= 6)
 			{
 				if (sock > 0)
@@ -163,7 +163,7 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 			}
 			_Request = Request(std::string(buff));
 //			size_t reqLen = requestLen(_Request.getContent());
-			if (ret >= 6000)
+			if (it->second->clientMaxBodySize() && ret > it->second->clientMaxBodySize())
 			{
 				_Request.setStatus(413);
 			}
@@ -182,7 +182,7 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 				throw "Error: accept";
 			fcntl(new_socket, F_SETFL, O_NONBLOCK);
 			FD_SET(new_socket, &_set);
-			_connecting.insert(std::make_pair(new_socket, _Socket[i].getFD()));
+			_connecting.insert(std::make_pair(new_socket, all_servs[i]));
 			if (new_socket > _server_fd_highest)
 				_server_fd_highest = new_socket;
 			break ;
