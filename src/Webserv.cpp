@@ -50,7 +50,7 @@ void	Webserv::server(all_servers &all_servs)
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
 			throw "Error: select";
 		if (!select_fd)
-			std::cout << "\r..." << std::flush;
+			std::cout << "\r" << std::flush;
 		else
 			_handle_fd_set(all_servs);
 	}
@@ -130,6 +130,7 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 			if (!_Request.getLocation()->cgi.first.length() || ft_checkDir(_Request.getConstructPath()))
 				to_send += "\r\n";
 			to_send += _Response.getContent();
+			std::cout << "Method " << _Request.getMethod() << " : " << _Request.getConstructPath() << " sent with status code " << _Response.getStatus().first << " " << _Response.getStatus().second << std::endl << std::endl;
 			if (write(*it, to_send.c_str(), to_send.length()) <= 0)
 			{
 				if (*it > 0)
@@ -162,8 +163,8 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 				break ;
 			}
 			_Request = Request(std::string(buff));
-//			size_t reqLen = requestLen(_Request.getContent());
-			if (ret >= 6000)
+			size_t reqLen = requestLen(_Request.getContent());
+			if (ret >= 6000 || (reqLen >= 6000 && reqLen != std::string::npos))
 			{
 				_Request.setStatus(413);
 			}
