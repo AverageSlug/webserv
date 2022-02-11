@@ -8,7 +8,8 @@
 class Response
 {
 	public:
-		Response(Request *req);
+		Response();
+		Response(Request req);
 		~Response();
 		Response(const Response &cpy);
 		Response		&operator=(const Response &a);
@@ -33,7 +34,6 @@ class Response
 
 
 	private:
-		Response();
 		void		_init();
 		void		_set_headers();
 		std::string	_get_headers();
@@ -50,7 +50,7 @@ class Response
 		std::string	_transfer_encoding;
 		std::string	_www_authenticate;
 		std::pair<int, std::string>	_status;
-		Request		*_request;
+		Request		_request;
 		std::string _content;
 		std::string	_header;
 		const t_location	*_location;

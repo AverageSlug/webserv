@@ -1,11 +1,13 @@
 #include "Response.hpp"
 
-Response::Response(Request *request)
+Response::Response() {}
+
+Response::Response(Request request)
 {
 	_request = request;
-	_location = request->getLocation();
-	setStatus(request->getStatus());
-	if (!ft_checkPath(_request->getConstructPath()) && _status.first < 400)
+	_location = request.getLocation();
+	setStatus(request.getStatus());
+	if (!ft_checkPath(_request.getConstructPath()) && _status.first < 400)
 		setStatus(404);
 }
 
@@ -21,8 +23,8 @@ Response::Response(const Response &cpy)
 Response &Response::operator=(const Response &a)
 {
 	_request = a._request;
-	_location = a._request->getLocation();
-	setStatus(a._request->getStatus());
+	_location = a._request.getLocation();
+	setStatus(a._request.getStatus());
 	return (*this);
 }
 
@@ -108,22 +110,22 @@ bool	Response::checkMethod(const std::string method)
 void    Response::setContent(const std::string file_content)
 {
 	if (_status.first < 400)
-		checkMethod(_request->getMethod());
+		checkMethod(_request.getMethod());
 	if (_status.first >= 400)
 	{
 		setErrorContent();
 		return ;
 	}
-	if (!ft_checkDir(_request->getConstructPath()) && _request->getLocation()->cgi.first.length())
+	if (!ft_checkDir(_request.getConstructPath()) && _request.getLocation()->cgi.first.length())
 	{
-		CGI cgi(*_request);
-		_content = cgi.exec(_request->getLocation()->cgi.second);
+		CGI cgi(_request);
+		_content = cgi.exec(_request.getLocation()->cgi.second);
 	}
-	else if (_request->getMethod() == "GET")
+	else if (_request.getMethod() == "GET")
 		ft_get(file_content);
-	else if (_request->getMethod() == "POST")
+	else if (_request.getMethod() == "POST")
 		ft_post();
-	else if (_request->getMethod() == "DELETE")
+	else if (_request.getMethod() == "DELETE")
 		ft_delete();
 }
 
@@ -204,9 +206,9 @@ const std::string	Response::setIndex(std::string const path) const
 void	Response::setErrorContent()
 {
 	std::map<int, std::string>::const_iterator	it;
-	it = _request->getServ()->errorPages().find(_status.first);
+	it = _request.getServ()->errorPages().find(_status.first);
 	/* Default error page setup case */
-	if (it != _request->getServ()->errorPages().end() &&
+	if (it != _request.getServ()->errorPages().end() &&
 		ft_checkPath(it->second))
 	{
 		_content = getFileContent(it->second);
@@ -257,10 +259,10 @@ void	Response::ft_get(const std::string content)
 {
 	 if (_status.first != 200)
 	 	return ;
-	if (ft_checkDir(_request->getConstructPath())) // if directory
+	if (ft_checkDir(_request.getConstructPath())) // if directory
 	{
 		if (_location && _location->autoindex == true)
-			_content = setIndex(_request->getConstructPath());
+			_content = setIndex(_request.getConstructPath());
 		else
 			setStatus(403);
 	}
@@ -283,15 +285,15 @@ off_t	Response::getFileLength(std::string file)
 
 bool	Response::uploadFile()
 {
-	if (false == _request->setFileInfo())
+	if (false == _request.setFileInfo())
 		return false;
-	std::map<std::string, std::string>	fileInfo = _request->getFileInfo();
+	std::map<std::string, std::string>	fileInfo = _request.getFileInfo();
 
 	for (std::map<std::string, std::string>::iterator	it = fileInfo.begin(); it != fileInfo.end(); ++it)
 	{
 		std::string	toUploadPath = "./all_data" + _location->uploadStore + it->first;
-		if (_request->getServ()->clientMaxBodySize() &&
-			getFileLength(toUploadPath) > _request->getServ()->clientMaxBodySize())
+		if (_request.getServ()->clientMaxBodySize() &&
+			getFileLength(toUploadPath) > _request.getServ()->clientMaxBodySize())
 		{
 			setStatus(413);
 			return false;
@@ -331,11 +333,11 @@ void	Response::ft_post()
 		_content += "</body>\n";
 		_content += "</html>\n";
 	}
-	else if ((size_t)_request->getServ()->clientMaxBodySize() != 0 &&
-		_request->getContent().size() > (size_t)_request->getServ()->clientMaxBodySize())
+	else if ((size_t)_request.getServ()->clientMaxBodySize() != 0 &&
+		_request.getContent().size() > (size_t)_request.getServ()->clientMaxBodySize())
 		setStatus(413);
 	else
-		_content = _request->getContent();
+		_content = _request.getContent();
 }
 
 void	Response::ft_delete()
@@ -343,22 +345,22 @@ void	Response::ft_delete()
 	if (_status.first != 200)
 		return ;
 	
-	if (std::remove(_request->getConstructPath().c_str()) != 0)
+	if (std::remove(_request.getConstructPath().c_str()) != 0)
 		setStatus(403);
 	_content += "<html><body><h1>File deleted.</h1></body></html>";
 }
 
 void	Response::_set_headers()
 {
-//	_allow = _request->getMethod(); //this is supposed to be the list of allowed methods
+//	_allow = _request.getMethod(); //this is supposed to be the list of allowed methods
 //	_content_language = "en";
 	std::stringstream ss;
-	if (_request->getLocation()->cgi.first.length())
+	if (_request.getLocation()->cgi.first.length())
 		ss << _content.substr(_content.find("\r\n\r\n") + 4, _content.length()).length();
 	else
 		ss << _content.length();
 	_content_length = ss.str();
-//	_content_location = _request->getUri();
+//	_content_location = _request.getUri();
 //	_content_type = ""; //content-type !!
 //	_date = "Wed, 02 Feb 2022 12:05:59"; //date !!
 //	_last_modified = "Mon, 29 Jun 2000"; //last-modified !!
@@ -371,7 +373,7 @@ void	Response::_set_headers()
 		std::stringstream(_retry_after) << 3;
 	}
 //	_server = "webigornulserv/4.2.0";
-//	if (_request->getChunked())
+//	if (_request.getChunked())
 //		_transfer_encoding = "chunked";
 //	else
 //		_transfer_encoding = "identity";

@@ -8,6 +8,7 @@
 class Request
 {
 	public:
+		Request();
 		Request(const Request &);
 		Request(const std::string content);
 		~Request();
@@ -15,7 +16,7 @@ class Request
 
 		const t_location*	getLocation() const;
 		std::string			getMethod();
-		int					getStatus();
+		int					getStatus() const;
 		std::string			getConstructPath();
 		bool				setRequestUri(const std::string &);
 		void				setConstructPath();
@@ -47,8 +48,6 @@ class Request
 		value_type			getData();
 
 	private:
-
-		Request();
 
 		std::string			_constructPath;
 		const Server		*_server;

@@ -38,26 +38,17 @@ void	Socket::_setaddr()
 int		Socket::setup()
 {
 	if ((_Socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-	{
-		std::cout << "Error: socket" << std::endl;
-		return (1);
-	}
+		throw "Error: socket";
 	printf("%s %i\n", _server.ip().c_str(), _server.port());
 	_setaddr();
-	int	reuseaddr = 1;
-	if (setsockopt(_Socket_fd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr)) < 0)
-	{
-		std::cout << "Error: setsockopt" << std::endl;
-		return (1);
-	}
-	fcntl(_Socket_fd, F_SETFL, O_NONBLOCK);
+	// int	reuseaddr = 1;
+	// if (setsockopt(_Socket_fd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr)) < 0)
+	// 	throw "Error: setsockopt";
+	// fcntl(_Socket_fd, F_SETFL, O_NONBLOCK);
 	if (bind(_Socket_fd, (struct sockaddr*)&_val, sizeof(_val)) < 0)
 		throw "Error: bind";
 	if (listen(_Socket_fd, 1000) < 0)
-	{
-		std::cout << "Error: listen" << std::endl;
-		return (1);
-	}
+		throw "Error: listen";
 	return (0);
 }
 

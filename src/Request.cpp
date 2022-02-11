@@ -1,17 +1,15 @@
 #include "Request.hpp"
 
-// Request::Request() :
-// 	_constructPath(ROOT_PATH),
-// 	_status(200),
-// 	_data(),
-// 	_request_method(),
-// 	_uri("/"),
-// 	_queryString(""),
-// 	_content(),
-// 	_chunked(false),
-// 	_content("")
-// {
-// }
+Request::Request() :
+	_constructPath("./all_data"),
+	_status(200),
+	_data(),
+	_request_method(),
+	_uri("/"),
+	_content(""),
+	_chunked(false)
+{
+}
 
 Request::Request(const std::string content) :
 	_constructPath("./all_data"),
@@ -89,7 +87,7 @@ Request::value_type		Request::getData()
 	return _data;
 }
 
-int					Request::getStatus()
+int					Request::getStatus() const
 {
 	return _status;
 }

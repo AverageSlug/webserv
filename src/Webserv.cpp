@@ -9,6 +9,7 @@ Webserv::Webserv() {}
 
 Webserv::~Webserv()
 {
+	delete [] _Socket;
 }
 
 Webserv::Webserv(const Webserv &cpy)
@@ -102,19 +103,19 @@ const Server*	Webserv::getReqServ(const std::string name) const
 
 int		Webserv::reqParser()
 {
-	std::vector<std::string>				buffer = ft_strtovec(_Request->getContent(), "\n");
+	std::vector<std::string>				buffer = ft_strtovec(_Request.getContent(), "\n");
 	std::vector<std::string>::iterator		line = buffer.begin();
 
-	if (_Request->setRequestUri(*line++) == false)
+	if (_Request.setRequestUri(*line++) == false)
 	{
-		_Request->setServer(getReqServ(""));
+		_Request.setServer(getReqServ(""));
 		return 0;
 	}
 	for ( ; line != buffer.end() && !(*line).empty(); ++line)
-		_Request->setHeaderData(*line);
-	_Request->setServer(getReqServ(_Request->getData()["Host"][0]));
-	_Request->setConstructPath();
-	_Request->setChunked();
+		_Request.setHeaderData(*line);
+	_Request.setServer(getReqServ(_Request.getData()["Host"][0]));
+	_Request.setConstructPath();
+	_Request.setChunked();
 //	setContent();
 	return 1;
 }
@@ -128,23 +129,22 @@ void	Webserv::_handle_fd_set()
 	{
 		if (FD_ISSET(*it, &_write_fd))
 		{
-			_Response = new Response(_Request);
-			_Response->setContent(getFileContent(_Request->getConstructPath()));
-			_Response->header();
-			to_send = _Response->get_header();
-			if (!_Request->getLocation()->cgi.first.length() || ft_checkDir(_Request->getConstructPath()))
+			_Response = Response(_Request);
+			_Response.setContent(getFileContent(_Request.getConstructPath()));
+			_Response.header();
+			to_send = _Response.get_header();
+			if (!_Request.getLocation()->cgi.first.length() || ft_checkDir(_Request.getConstructPath()))
 				to_send += "\r\n";
-			to_send += _Response->getContent();
-			if ((v = send(*it, to_send.c_str(), to_send.length(), 0)) < 0)
+			to_send += _Response.getContent();
+			if (write(*it, to_send.c_str(), to_send.length()) <= 0)
 			{
+				if (*it > 0)
+					close(*it);
 				FD_CLR(*it, &_set);
 				FD_CLR(*it, &_read_fd);
 				_connecting.erase(*it);
 			}
-			close(*it);
 			_connected.erase(it);
-			delete _Response;
-			delete _Request;
 			v = 0;
 			break ;
 		}
@@ -155,8 +155,8 @@ void	Webserv::_handle_fd_set()
 		long sock = it->first;
 		if (FD_ISSET(sock, &_read_fd))
 		{
-			char buff[6001] = {0};
-			ret = recv(sock, buff, 6000, 0);
+			char buff[6000] = {0};
+			ret = read(sock, buff, 6000);
 			if (ret <= 6)
 			{
 				if (sock > 0)
@@ -164,16 +164,17 @@ void	Webserv::_handle_fd_set()
 				FD_CLR(sock, &_set);
 				FD_CLR(sock, &_read_fd);
 				_connecting.erase(sock);
+				it = _connecting.begin();
 				break ;
 			}
-			_Request = new Request(std::string(buff));
-//			size_t reqLen = requestLen(_Request->getContent());
+			_Request = Request(std::string(buff));
+//			size_t reqLen = requestLen(_Request.getContent());
 			if (ret >= 6000)
 			{
-				_Request->setStatus(413);
+				_Request.setStatus(413);
 			}
 			if (reqParser() == 0 || (std::string(buff).compare(0, 3, "GET") && std::string(buff).compare(0, 4, "POST") && std::string(buff).compare(0, 6, "DELETE") && std::string(buff).compare(0, 4, "----")))
-				_Request->setStatus(400);
+				_Request.setStatus(400);
 			_connected.push_back(sock);
 			break ;
 		}

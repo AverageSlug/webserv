@@ -30,8 +30,8 @@ void	CGI::_setup(Request &request)
 	_env["CONTENT_LENGTH"] = request.getContent().length();
 	_env["CONTENT_TYPE"] = ""; //request.getData()["Content-Type"][0];
 	_env["GATEWAY_INTERFACE"] = "CGI/1.1";
-	_env["PATH_INFO"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));// + "?" + request.getContent().substr(request.getContent().find("\r\n\r\n") + 4, request.getContent().length());
-	_env["PATH_TRANSLATED"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));// + "?" + request.getContent().substr(request.getContent().find("\r\n\r\n") + 4, request.getContent().length());
+	_env["PATH_INFO"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));
+	_env["PATH_TRANSLATED"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));
 	_env["QUERY_STRING"] = request.getUri().substr(request.getUri().find("?") + 1, request.getUri().length());
 	_env["REMOTE_ADDR"] = ""; //where do I get user data???
 	_env["REMOTE_HOST"] = ""; //where do I get user data???
@@ -43,8 +43,6 @@ void	CGI::_setup(Request &request)
 	_env["SERVER_PORT"] = request.getData()["Host"][0].substr(request.getData()["Host"][0].find(":") + 1, request.getData()["Host"][0].length());
 	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	_env["SERVER_SOFTWARE"] = request.getServ()->name()[0];
-
-	std::cout << request.getContent().substr(request.getContent().find("\r\n\r\n") + 4, request.getContent().length()) << std::endl;
 }
 
 char		**CGI::_envtoa()

@@ -26,7 +26,20 @@ Server&	Server::operator=(const Server &x)
 	_name = x._name;
 	_errorPages = x._errorPages;
 	_clientMaxBodySize = x._clientMaxBodySize;
-	_locations = x._locations;
+	for (size_t i = 0; i != x._locations.size(); i++)
+	{
+		_locations.clear();
+		t_location *tmp_location = new s_location;
+		tmp_location->autoindex = x._locations[i]->autoindex;
+		tmp_location->cgi = x._locations[i]->cgi;
+		tmp_location->index = x._locations[i]->index;
+		tmp_location->methods = x._locations[i]->methods;
+		tmp_location->path = x._locations[i]->path;
+		tmp_location->redirection = x._locations[i]->redirection;
+		tmp_location->root = x._locations[i]->root;
+		tmp_location->uploadStore = x._locations[i]->uploadStore;
+		_locations.push_back(tmp_location);
+	}
 	return *this;
 }
 

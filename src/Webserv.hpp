@@ -22,9 +22,9 @@ class Webserv
 
 	private:
 		all_servers	_all_servers;
-		Request		*_Request;
+		Request		_Request;
 		Socket		*_Socket;
-		Response	*_Response;
+		Response	_Response;
 		long	_server_fd_highest;
 		fd_set	_set;
 		int		_size;
