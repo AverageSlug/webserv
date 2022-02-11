@@ -9,19 +9,17 @@
 class Webserv
 {
 	public:
-		Webserv(const all_servers &all_servers);
 		Webserv();
 		~Webserv();
 		Webserv(const Webserv &cpy);
 		Webserv &operator=(const Webserv &a);
-		void	setup();
-		void	server();
+		void	setup(all_servers &all_servs);
+		void	server(all_servers &all_servs);
 		size_t	requestLen(std::string const & content);
-		int			reqParser();
-		const Server*	getReqServ(const std::string name) const;
+		int			reqParser(all_servers &all_servs);
+		const Server*	getReqServ(const std::string name, all_servers &all_servs) const;
 
 	private:
-		all_servers	_all_servers;
 		Request		_Request;
 		Socket		*_Socket;
 		Response	_Response;
@@ -32,7 +30,7 @@ class Webserv
 		fd_set	_write_fd;
 		std::map<long, long>	_connecting;
 		std::vector<long>		_connected;
-		void	_handle_fd_set();
+		void	_handle_fd_set(all_servers &all_servs);
 };
 
 #endif

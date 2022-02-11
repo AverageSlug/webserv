@@ -29,9 +29,9 @@ int		main(int argc, char **argv)
 	}
 	try
 	{
-		Webserv Webserv(all_servers);
-		Webserv.setup();
-		Webserv.server();
+		Webserv Webserv;
+		Webserv.setup(all_servers);
+		Webserv.server(all_servers);
 	}
 	catch(const char* e)
 	{

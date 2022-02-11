@@ -6,19 +6,16 @@
 class Socket
 {
 	public:
-		void	set_Socket(const Server &server);
 		Socket();
 		~Socket();
 		Socket(const Socket &cpy);
 		Socket &operator=(const Socket &a);
-		int		setup();
+		int		setup(const Server &server);
 		long	getFD();
-		Server	getserv();
 		struct	sockaddr_in	&getVal();
 	private:
-		void	_setaddr();
+		void	_setaddr(const Server &server);
 		long	_Socket_fd;
-		Server	_server;
 		struct	sockaddr_in	_val;
 };
 

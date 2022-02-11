@@ -21,10 +21,11 @@ all_servers::all_servers(const all_servers &x)
 
 all_servers&	all_servers::operator=(const all_servers &x)
 {
-	if (&x == this)
-		return *this;
-	this->_servers = x._servers;
-	this->_bracket = x._bracket;
+	(void)x;
+	// if (&x == this)
+	// 	return *this;
+	// this->_servers = x._servers;
+	// this->_bracket = x._bracket;
 	return *this;
 }
 

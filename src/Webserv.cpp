@@ -1,10 +1,5 @@
 #include "Webserv.hpp"
 
-Webserv::Webserv(const all_servers &all_servers)
-{
-	_all_servers = all_servers;
-}
-
 Webserv::Webserv() {}
 
 Webserv::~Webserv()
@@ -23,16 +18,15 @@ Webserv &Webserv::operator=(const Webserv &a)
 	return (*this);
 }
 
-void	Webserv::setup()
+void	Webserv::setup(all_servers &all_servs)
 {
 	FD_ZERO(&_set);
-	_size = _all_servers.size();
+	_size = all_servs.size();
 	_server_fd_highest = 0;
 	_Socket = new Socket[_size];
 	for (int i = 0; i < _size; i++)
 	{
-		_Socket[i].set_Socket(*_all_servers.getservs()[i]);
-		if (_Socket[i].setup())
+		if (_Socket[i].setup(*all_servs.getservs()[i]))
 			throw "Socket setup failed";
 		FD_SET(_Socket[i].getFD(), &_set);
 		if (_Socket[i].getFD() > _server_fd_highest)
@@ -40,7 +34,7 @@ void	Webserv::setup()
 	}
 }
 
-void	Webserv::server()
+void	Webserv::server(all_servers &all_servs)
 {
 	struct	timeval	timeout;
 	int		select_fd;
@@ -56,9 +50,9 @@ void	Webserv::server()
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
 			throw "Error: select";
 		if (!select_fd)
-			std::cout << "\r" << std::flush;
+			std::cout << "\r..." << std::flush;
 		else
-			_handle_fd_set();
+			_handle_fd_set(all_servs);
 	}
 }
 
@@ -88,39 +82,39 @@ size_t	Webserv::requestLen(std::string const & content)
 	return ret;
 }
 
-const Server*	Webserv::getReqServ(const std::string name) const
+const Server*	Webserv::getReqServ(const std::string name, all_servers &all_servs) const
 {
-	for (size_t i = 0; i < _all_servers.size(); ++i)
+	for (size_t i = 0; i < all_servs.size(); ++i)
 	{
-		for (size_t j = 0; j < _all_servers[i]->name().size(); ++j)
+		for (size_t j = 0; j < all_servs[i]->name().size(); ++j)
 		{
-			if (_all_servers[i]->name()[j] == name)
-				return _all_servers[i];
+			if (all_servs[i]->name()[j] == name)
+				return all_servs[i];
 		}
 	}
-	return _all_servers[0];
+	return all_servs[0];
 }
 
-int		Webserv::reqParser()
+int		Webserv::reqParser(all_servers &all_servs)
 {
 	std::vector<std::string>				buffer = ft_strtovec(_Request.getContent(), "\n");
 	std::vector<std::string>::iterator		line = buffer.begin();
 
 	if (_Request.setRequestUri(*line++) == false)
 	{
-		_Request.setServer(getReqServ(""));
+		_Request.setServer(getReqServ("", all_servs));
 		return 0;
 	}
 	for ( ; line != buffer.end() && !(*line).empty(); ++line)
 		_Request.setHeaderData(*line);
-	_Request.setServer(getReqServ(_Request.getData()["Host"][0]));
+	_Request.setServer(getReqServ(_Request.getData()["Host"][0], all_servs));
 	_Request.setConstructPath();
 	_Request.setChunked();
 //	setContent();
 	return 1;
 }
 
-void	Webserv::_handle_fd_set()
+void	Webserv::_handle_fd_set(all_servers &all_servs)
 {
 	int v = 1;
 	std::string to_send;
@@ -173,13 +167,13 @@ void	Webserv::_handle_fd_set()
 			{
 				_Request.setStatus(413);
 			}
-			if (reqParser() == 0 || (std::string(buff).compare(0, 3, "GET") && std::string(buff).compare(0, 4, "POST") && std::string(buff).compare(0, 6, "DELETE") && std::string(buff).compare(0, 4, "----")))
+			if (reqParser(all_servs) == 0 || (std::string(buff).compare(0, 3, "GET") && std::string(buff).compare(0, 4, "POST") && std::string(buff).compare(0, 6, "DELETE") && std::string(buff).compare(0, 4, "----")))
 				_Request.setStatus(400);
 			_connected.push_back(sock);
 			break ;
 		}
 	}
-	for (unsigned int i = 0; v && i < _all_servers.size(); i++)
+	for (unsigned int i = 0; v && i < all_servs.size(); i++)
 	{
 		if (FD_ISSET(_Socket[i].getFD(), &_read_fd))
 		{
