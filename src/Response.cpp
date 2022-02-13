@@ -1,11 +1,18 @@
 #include "Response.hpp"
 
-Response::Response() {}
+Response::Response()
+{
+	_location = NULL;
+	setStatus(200);
+}
 
 Response::Response(Request request)
 {
 	_request = request;
-	_location = request.getLocation();
+	if (_request.getStatus() == 400)
+		_location = NULL;
+	else
+		_location = request.getLocation();
 	setStatus(request.getStatus());
 	if (!ft_checkPath(_request.getConstructPath()) && _status.first < 400)
 		setStatus(404);
@@ -23,7 +30,10 @@ Response::Response(const Response &cpy)
 Response &Response::operator=(const Response &a)
 {
 	_request = a._request;
-	_location = a._request.getLocation();
+	if (_request.getStatus() == 400)
+		_location = NULL;
+	else
+		_location = a._request.getLocation();
 	setStatus(a._request.getStatus());
 	return (*this);
 }
@@ -206,15 +216,17 @@ const std::string	Response::setIndex(std::string const path) const
 void	Response::setErrorContent()
 {
 	std::map<int, std::string>::const_iterator	it;
-	it = _request.getServ()->errorPages().find(_status.first);
-	/* Default error page setup case */
-	if (it != _request.getServ()->errorPages().end() &&
-		ft_checkPath(it->second))
+	if (_status.first != 400)
 	{
-		_content = getFileContent(it->second);
-		return ;
+		it = _request.getServ()->errorPages().find(_status.first);
+		if (it != _request.getServ()->errorPages().end() &&
+			ft_checkPath(it->second))
+		{
+			_content = getFileContent(it->second);
+			return ;
+		}
 	}
-	
+
 	/* Default case */
 	std::string content = "<!DOCTYPE html>\r\n";
 	content += "<html lang=\"en\">\r\n";
@@ -355,7 +367,7 @@ void	Response::_set_headers()
 //	_allow = _request.getMethod(); //this is supposed to be the list of allowed methods
 //	_content_language = "en";
 	std::stringstream ss;
-	if (_request.getLocation()->cgi.first.length())
+	if (_status.first != 400 && _request.getLocation()->cgi.first.length())
 		ss << _content.substr(_content.find("\r\n\r\n") + 4, _content.length()).length();
 	else
 		ss << _content.length();

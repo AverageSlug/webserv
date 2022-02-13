@@ -25,7 +25,7 @@ class Request
 		void				setHeaderData(const std::string &);
 		void				setChunked();
 		void				setStatus(int status);
-		void				setServer(const Server *);
+		void				setServer(const Server *, int);
 		bool				setFileInfo();
 		int					reqParser();
 		const Server*		getReqServ(const std::string name) const;

@@ -1,6 +1,9 @@
 #include "Webserv.hpp"
 
-Webserv::Webserv() {}
+Webserv::Webserv()
+{
+	_Response = Response();
+}
 
 Webserv::~Webserv()
 {
@@ -84,13 +87,19 @@ size_t	Webserv::requestLen(std::string const & content)
 
 const Server*	Webserv::getReqServ(const std::string name, all_servers &all_servs) const
 {
+	size_t pos = name.find(':');
+	std::string temp_port;
+	int port;
+
+	if (pos == std::string::npos)
+		temp_port = name;
+	else
+		temp_port = name.substr(pos + 1);
+	std::stringstream(temp_port) >> port;
 	for (size_t i = 0; i < all_servs.size(); ++i)
 	{
-		for (size_t j = 0; j < all_servs[i]->name().size(); ++j)
-		{
-			if (all_servs[i]->name()[j] == name)
-				return all_servs[i];
-		}
+		if (all_servs[i]->port() == port)
+			return all_servs[i];
 	}
 	return all_servs[0];
 }
@@ -102,12 +111,12 @@ int		Webserv::reqParser(all_servers &all_servs)
 
 	if (_Request.setRequestUri(*line++) == false)
 	{
-		_Request.setServer(getReqServ("", all_servs));
+		_Request.setServer(getReqServ("", all_servs), _Request.getStatus());
 		return 0;
 	}
 	for ( ; line != buffer.end() && !(*line).empty(); ++line)
 		_Request.setHeaderData(*line);
-	_Request.setServer(getReqServ(_Request.getData()["Host"][0], all_servs));
+	_Request.setServer(getReqServ(_Request.getData()["Host"][0], all_servs), _Request.getStatus());
 	_Request.setConstructPath();
 	_Request.setChunked();
 //	setContent();
@@ -127,11 +136,11 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 			_Response.setContent(getFileContent(_Request.getConstructPath()));
 			_Response.header();
 			to_send = _Response.get_header();
-			if (!_Request.getLocation()->cgi.first.length() || ft_checkDir(_Request.getConstructPath()))
+			if (_Response.getStatus().first == 400 || !_Request.getLocation()->cgi.first.length() || ft_checkDir(_Request.getConstructPath()))
 				to_send += "\r\n";
 			to_send += _Response.getContent();
 			std::cout << "Method " << _Request.getMethod() << " : " << _Request.getConstructPath() << " sent with status code " << _Response.getStatus().first << " " << _Response.getStatus().second << std::endl << std::endl;
-			if (write(*it, to_send.c_str(), to_send.length()) <= 0)
+			if (send(*it, to_send.c_str(), to_send.length(), MSG_NOSIGNAL) <= 0)
 			{
 				if (*it > 0)
 					close(*it);
@@ -144,14 +153,29 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 			break ;
 		}
 	}
-	for (std::map<long, long>::iterator it = _connecting.begin(); v && it != _connecting.end(); it++)
+	for (std::map<long, Server*>::iterator it = _connecting.begin(); v && it != _connecting.end(); it++)
 	{
 		int ret = 0;
 		long sock = it->first;
 		if (FD_ISSET(sock, &_read_fd))
 		{
-			char buff[6000] = {0};
-			ret = read(sock, buff, 6000);
+			int BUFF_SIZE = it->second->clientMaxBodySize();
+			if (it->second->clientMaxBodySize() == 0)
+				BUFF_SIZE = 2147483646;
+			char *buff = new char[BUFF_SIZE + 1];
+			std::memset(buff, 0, BUFF_SIZE);
+			ret = recv(sock, buff, BUFF_SIZE, 0);
+			// if (_Response.getStatus().first >= 400)
+			// {
+			// 	if (sock > 0)
+			// 		close(sock);
+			// 	FD_CLR(sock, &_set);
+			// 	FD_CLR(sock, &_read_fd);
+			// 	_connecting.erase(sock);
+			// 	it = _connecting.begin();
+			// 	_Response = Response();
+			// 	break;
+			// }
 			if (ret <= 6)
 			{
 				if (sock > 0)
@@ -160,17 +184,20 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 				FD_CLR(sock, &_read_fd);
 				_connecting.erase(sock);
 				it = _connecting.begin();
+				delete [] buff;
 				break ;
 			}
 			_Request = Request(std::string(buff));
-			size_t reqLen = requestLen(_Request.getContent());
-			if (ret >= 6000 || (reqLen >= 6000 && reqLen != std::string::npos))
+			const int reqLen = requestLen(_Request.getContent());
+			if ((BUFF_SIZE && ret >= BUFF_SIZE) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos))
 			{
 				_Request.setStatus(413);
 			}
-			if (reqParser(all_servs) == 0 || (std::string(buff).compare(0, 3, "GET") && std::string(buff).compare(0, 4, "POST") && std::string(buff).compare(0, 6, "DELETE") && std::string(buff).compare(0, 4, "----")))
+			if ((std::string(buff).compare(0, 3, "GET") && std::string(buff).compare(0, 4, "POST") && std::string(buff).compare(0, 6, "DELETE") && std::string(buff).compare(0, 4, "----")) || reqParser(all_servs) == 0)
 				_Request.setStatus(400);
 			_connected.push_back(sock);
+			delete [] buff;
+
 			break ;
 		}
 	}
@@ -183,7 +210,7 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 				throw "Error: accept";
 			fcntl(new_socket, F_SETFL, O_NONBLOCK);
 			FD_SET(new_socket, &_set);
-			_connecting.insert(std::make_pair(new_socket, _Socket[i].getFD()));
+			_connecting.insert(std::make_pair(new_socket, all_servs[i]));
 			if (new_socket > _server_fd_highest)
 				_server_fd_highest = new_socket;
 			break ;

@@ -95,7 +95,7 @@ int					Request::getStatus() const
 const t_location*	Request::getLocation() const
 {
 	location_type		serv_loc;
-	if (_server != NULL)
+	if (_status != 400 && _server != NULL)
 		serv_loc = _server->locations();
 	std::string				path = _uri;
 	size_t					pos;
@@ -135,16 +135,21 @@ bool	Request::setRequestUri(const std::string &first_line)
 {
 	const vector_type	line = ft_strtovec(first_line, " ");
 
-	if (line.size() != 3)
+	if (line.size() != 3 || (std::string(first_line).compare(0, 3, "GET") && std::string(first_line).compare(0, 4, "POST") && std::string(first_line).compare(0, 6, "DELETE") && std::string(first_line).compare(0, 4, "----")))
 		return false;
 	_request_method = line[0];
 	_uri = line[1];
 	return true;
 }
 
-void	Request::setServer(const Server *server)
+void	Request::setServer(const Server *server, int i)
 {
-	_server = server;
+	if (i == 400)
+	{
+		_server = NULL;
+	}
+	else
+		_server = server;
 }
 
 void	Request::setContent()
@@ -156,7 +161,6 @@ void	Request::setContent()
 	vector_type::const_iterator	it;
 	std::string					tmp_string("");
 
-	std::cout << "_content before = " << _content << "end of _content before\n";
 	if (pos == std::string::npos)
 		_content = "";
 	else
@@ -183,7 +187,6 @@ void	Request::setContent()
 			tmp_string = buf;
 		_content = tmp_string;
 	}
-	std::cout << "_content = " << _content << "end of _content\n";
 }
 
 void	Request::setConstructPath()
