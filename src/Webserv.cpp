@@ -51,7 +51,10 @@ void	Webserv::server(all_servers &all_servs)
 		timeout.tv_sec = 1;
 		timeout.tv_usec = 0;
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
+		{
+			std::cout << errno << std::endl;
 			throw "Error: select";
+		}
 		if (!select_fd)
 			std::cout << "\r" << std::flush;
 		else
@@ -132,6 +135,7 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 	{
 		if (FD_ISSET(*it, &_write_fd))
 		{
+			int sendret = 0;
 			_Response = Response(_Request);
 			_Response.setContent(getFileContent(_Request.getConstructPath()));
 			_Response.header();
@@ -141,10 +145,8 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 			to_send += _Response.getContent();
 			std::cout << "Method " << _Request.getMethod() << " : " << _Request.getConstructPath() << " sent with status code " << _Response.getStatus().first << " " << _Response.getStatus().second << std::endl << std::endl;
 			signal(SIGPIPE, SIG_IGN);
-			if (send(*it, to_send.c_str(), to_send.length(), 0) <= 0)
+			if ((sendret = send(*it, to_send.c_str(), to_send.length(), 0)) <= 0)
 			{
-				if (*it > 0)
-					close(*it);
 				FD_CLR(*it, &_set);
 				FD_CLR(*it, &_read_fd);
 				_connecting.erase(*it);
@@ -180,7 +182,9 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 			if (ret <= 6)
 			{
 				if (sock > 0)
+				{
 					close(sock);
+				}
 				FD_CLR(sock, &_set);
 				FD_CLR(sock, &_read_fd);
 				_connecting.erase(sock);

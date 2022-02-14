@@ -137,6 +137,11 @@ void    Response::setContent(const std::string file_content)
 		ft_post();
 	else if (_request.getMethod() == "DELETE")
 		ft_delete();
+	if (_status.first >= 400)
+	{
+		setErrorContent();
+		return ;
+	}
 }
 
 
