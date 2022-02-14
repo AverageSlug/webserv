@@ -140,7 +140,8 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 				to_send += "\r\n";
 			to_send += _Response.getContent();
 			std::cout << "Method " << _Request.getMethod() << " : " << _Request.getConstructPath() << " sent with status code " << _Response.getStatus().first << " " << _Response.getStatus().second << std::endl << std::endl;
-			if (send(*it, to_send.c_str(), to_send.length(), MSG_NOSIGNAL) <= 0)
+			signal(SIGPIPE, SIG_IGN);
+			if (send(*it, to_send.c_str(), to_send.length(), 0) <= 0)
 			{
 				if (*it > 0)
 					close(*it);
