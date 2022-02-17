@@ -27,8 +27,6 @@ class Request
 		void				setStatus(int status);
 		void				setServer(const Server *, int);
 		bool				setFileInfo();
-		int					reqParser();
-		const Server*		getReqServ(const std::string name) const;
 		const Server*		getServ();
 		std::string			getUri();
 		std::string			getContent();

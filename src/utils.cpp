@@ -87,7 +87,7 @@ std::string	getFileContent(const std::string& file)
 	std::string		content;
 	std::string		gline;
 
-	if (ifs.is_open())
+	if (!ft_checkDir(file) && ifs.is_open())
 	{
 		while (1)
 		{

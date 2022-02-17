@@ -10,7 +10,7 @@ class Socket
 		~Socket();
 		Socket(const Socket &cpy);
 		Socket &operator=(const Socket &a);
-		int		setup(const Server &server);
+		void	setup(const Server &server);
 		long	getFD();
 		struct	sockaddr_in	&getVal();
 	private:

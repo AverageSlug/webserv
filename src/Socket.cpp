@@ -30,7 +30,7 @@ void	Socket::_setaddr(const Server &server)
 	_val.sin_port = htons(server.port());
 }
 
-int		Socket::setup(const Server &server)
+void	Socket::setup(const Server &server)
 {
 	if ((_Socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		throw "Error: socket";
@@ -44,7 +44,6 @@ int		Socket::setup(const Server &server)
 		throw "Error: bind";
 	if (listen(_Socket_fd, 1000) < 0)
 		throw "Error: listen";
-	return (0);
 }
 
 long	Socket::getFD()

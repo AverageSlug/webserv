@@ -29,8 +29,7 @@ void	Webserv::setup(all_servers &all_servs)
 	_Socket = new Socket[_size];
 	for (int i = 0; i < _size; i++)
 	{
-		if (_Socket[i].setup(*all_servs.getservs()[i]))
-			throw "Socket setup failed";
+		_Socket[i].setup(*all_servs.getservs()[i]);
 		FD_SET(_Socket[i].getFD(), &_set);
 		if (_Socket[i].getFD() > _server_fd_highest)
 			_server_fd_highest = _Socket[i].getFD();
@@ -52,7 +51,7 @@ void	Webserv::server(all_servers &all_servs)
 		timeout.tv_usec = 0;
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
 		{
-			std::cout << errno << std::endl;
+			std::cout << "errno" << std::endl;
 			throw "Error: select";
 		}
 		if (!select_fd)

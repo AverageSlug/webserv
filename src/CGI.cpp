@@ -10,6 +10,9 @@ _req_cont(request.getContent())
 
 CGI::~CGI()
 {
+	for (int i = 0; _enva[i]; i++)
+		delete [] _enva[i];
+	delete [] _enva;
 }
 
 CGI::CGI(const CGI &cpy)
@@ -55,7 +58,6 @@ char		**CGI::_envtoa()
 	{
 		std::string tmp = it->first + "=" + it->second;
 		env[i] = new char[tmp.size() + 1];
-		env[i] = strdup(tmp.c_str());
 		i++;
 	}
 	env[i] = NULL;
@@ -67,8 +69,8 @@ std::string	CGI::exec(const std::string &script)
 	std::string	ret;
 	pid_t		pid;
 	char *const *n = NULL;
-	char		**env = _envtoa();
-	if (!env)
+	_enva = _envtoa();
+	if (!_enva)
 		throw "Error: CGI";
 	int		in = dup(0);
 	int		out = dup(1);
@@ -85,14 +87,16 @@ std::string	CGI::exec(const std::string &script)
 	else if (!pid)
 	{
 		if (dup2(IFD, 0) < 0)
-			throw "Error: CGI";
+			exit(1);
 		if (dup2(OFD, 1) < 0)
-			throw "Error: CGI";
-		execve(script.c_str(), n, env);
-		throw "Error: CGI";
-		exit(0);
+			exit(1);
+		execve(script.c_str(), n, _enva);
+		exit(1);
 	}
-	waitpid(-1, NULL, 0);
+	int		status;
+	waitpid(-1, &status, 0);
+	if (WEXITSTATUS(status) == 1)
+		throw "Error: CGI";
 	lseek(OFD, 0, 0);
 	char buff[65536] = {0};
 	int read = 1;
@@ -110,8 +114,5 @@ std::string	CGI::exec(const std::string &script)
 	close(OFD);
 	close(in);
 	close(out);
-	for (int i = 0; env[i]; i++)
-		delete [] env[i];
-	delete env;
 	return (ret);
 }
