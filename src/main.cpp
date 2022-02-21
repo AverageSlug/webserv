@@ -14,7 +14,7 @@ int		main(int argc, char **argv)
     }
     else
     {
-        std::cout << "error" << std::endl;
+        std::cout << "error: bad configuration file" << std::endl;
         return (1);
     }
     all_servers all_servers;
@@ -35,6 +35,7 @@ int		main(int argc, char **argv)
 	}
 	catch(const char* e)
 	{
-		std::cerr << e << '\n';
+		std::cerr << e << std::endl;
+		exit(1);
 	}
 }

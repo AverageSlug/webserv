@@ -31,6 +31,8 @@ class Request
 		std::string			getUri();
 		std::string			getContent();
 		bool				getChunked();
+		bool				find_content_type();
+
 
 
 		bool				parseFile();

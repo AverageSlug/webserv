@@ -3,7 +3,7 @@
 CGI::CGI() {}
 
 CGI::CGI(Request &request) :
-_req_cont(request.getContent())
+_req_cont(request.getContent().substr(request.getContent().find("\r\n\r\n") + 4))
 {
 	_setup(request);
 }
@@ -29,17 +29,17 @@ CGI &CGI::operator=(const CGI &a)
 void	CGI::_setup(Request &request)
 {
 	_env["REDIRECT_STATUS"] = "200";
-	_env["AUTH_TYPE"] = ""; //request.getData()["Authorization"][0]; !?
-	_env["CONTENT_LENGTH"] = request.getContent().length();
-	_env["CONTENT_TYPE"] = ""; //request.getData()["Content-Type"][0];
+	std::stringstream ss;
+	ss << _req_cont.length();
+	_env["CONTENT_LENGTH"] = ss.str();
+	if (request.find_content_type())
+		_env["CONTENT_TYPE"] = request.getData()["Content-Type"][0];
+	else
+		_env["CONTENT_TYPE"] = "";
 	_env["GATEWAY_INTERFACE"] = "CGI/1.1";
 	_env["PATH_INFO"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));
 	_env["PATH_TRANSLATED"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));
 	_env["QUERY_STRING"] = request.getUri().substr(request.getUri().find("?") + 1, request.getUri().length());
-	_env["REMOTE_ADDR"] = ""; //where do I get user data???
-	_env["REMOTE_HOST"] = ""; //where do I get user data???
-	_env["REMOTE_IDENT"] = ""; //request.getData()["Authorization"][0]; !?
-	_env["REMOTE_USER"] = ""; //request.getData()["Authorization"][0]; !?
 	_env["REQUEST_METHOD"] = request.getMethod();
 	_env["SCRIPT_NAME"] = request.getLocation()->cgi.second;
 	_env["SERVER_NAME"] = request.getData()["Host"][0].substr(0, request.getData()["Host"][0].find(":"));

@@ -82,6 +82,14 @@ bool				Request::getChunked()
 	return _chunked;
 }
 
+bool				Request::find_content_type()
+{
+	if (_data.find("Content-Type") != _data.end())
+		return 1;
+	else 
+		return 0;
+}
+
 Request::value_type		Request::getData()
 {
 	return _data;
@@ -152,41 +160,42 @@ void	Request::setServer(const Server *server, int i)
 		_server = server;
 }
 
-void	Request::setContent()
+void    Request::setContent()
 {
-	std::string					buf(_content);
-	const size_t				pos = buf.find("\n");
-	
-	vector_type					vector_content;
-	vector_type::const_iterator	it;
-	std::string					tmp_string("");
-
-	if (pos == std::string::npos)
-		_content = "";
-	else
-	{
-		buf = buf.substr(pos + 1);
-		if (_chunked)
-		{
-			vector_content = ft_strtovec(buf, "\n");
-			it = vector_content.begin();
-			if (it != vector_content.end() && (it + 1) != vector_content.end())
-			{
-				++it;
-				for ( ; it != vector_content.end(); it += 2)
-				{
-					if ((it + 1) == vector_content.end())
-						break ;
-					tmp_string += *it;
-				}
-			}
-			else
-				tmp_string = buf;
-		}
-		else
-			tmp_string = buf;
-		_content = tmp_string;
-	}
+    std::string                 buf(this->_content);
+    const std::string           delim("\r\n\r\n");
+    const size_t                pos = buf.find(delim);
+    
+    vector_type                 content_;
+    vector_type::const_iterator it;
+    std::string                 tmp_string = "";
+    if (pos == std::string::npos)
+        this->_content = "";
+    else
+    {
+        buf = buf.substr(pos + delim.length());
+        if (this->_chunked)
+        {
+            content_ = ft_strtovec(buf, "\r\n");
+            it = content_.begin();
+            if (it != content_.end() && (it + 1) != content_.end())
+            {
+                ++it;
+                for ( ; it != content_.end(); it += 2)
+                {
+                    if ((it + 1) == content_.end())
+                        break ;
+                    tmp_string += *it;
+                }
+            }
+            else
+                tmp_string = buf;
+        }
+        else
+            tmp_string = buf;
+        
+        this->_content = tmp_string;
+    }
 }
 
 void	Request::setConstructPath()

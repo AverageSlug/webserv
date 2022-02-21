@@ -21,24 +21,6 @@ Server::Server(const Server &x)
 Server&	Server::operator=(const Server &x)
 {
 	(void)x;
-	// if (this == &x)
-	// 	return *this;
-	// _port = x._port;
-	// _name = x._name;
-	// _errorPages = x._errorPages;
-	// _clientMaxBodySize = x._clientMaxBodySize;
-	// for (size_t i = 0; i != x._locations.size(); i++)
-	// {
-	// 	_locations[i] = new s_location;
-	// 	_locations[i]->autoindex = x._locations[i]->autoindex;
-	// 	_locations[i]->cgi = x._locations[i]->cgi;
-	// 	_locations[i]->index = x._locations[i]->index;
-	// 	_locations[i]->methods = x._locations[i]->methods;
-	// 	_locations[i]->path = x._locations[i]->path;
-	// 	_locations[i]->redirection = x._locations[i]->redirection;
-	// 	_locations[i]->root = x._locations[i]->root;
-	// 	_locations[i]->uploadStore = x._locations[i]->uploadStore;
-	// }
 	return *this;
 }
 
@@ -133,16 +115,20 @@ void	Server::setErrorPages(const data_type &data) // error_page keyword
 
 void	Server::setClientMaxBodySize(const data_type &data) // client_max_body_size keyword
 {
-	 if (data.size() != 2)
+	if (data.size() != 2)
 		throw "Error while reading configuration file";
 	if (!ft_isNumeric(data[1]))
 		throw "Error while reading configuration file";
 	std::stringstream(data[1]) >> _clientMaxBodySize;
+	if (_clientMaxBodySize > 393216)
+		throw "Client size too large !";
+	if (_clientMaxBodySize < 400)
+		throw "Client size too small !";
 }
 
 void	Server::setCgi(t_location  *loc, const data_type &data) // cgi_pass keyword
 {
-	 if (data.size() != 3)
+	if (data.size() != 3)
 		throw "Error while reading configuration file";
 	loc->cgi.first = data[1];
 	loc->cgi.second = data[2];

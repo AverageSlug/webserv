@@ -2,7 +2,6 @@
 
 Webserv::Webserv()
 {
-	_Response = Response();
 }
 
 Webserv::~Webserv()
@@ -50,10 +49,7 @@ void	Webserv::server(all_servers &all_servs)
 		timeout.tv_sec = 1;
 		timeout.tv_usec = 0;
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
-		{
-			std::cout << "errno" << std::endl;
 			throw "Error: select";
-		}
 		if (!select_fd)
 			std::cout << "\r" << std::flush;
 		else
@@ -108,7 +104,7 @@ const Server*	Webserv::getReqServ(const std::string name, all_servers &all_servs
 
 int		Webserv::reqParser(all_servers &all_servs)
 {
-	std::vector<std::string>				buffer = ft_strtovec(_Request.getContent(), "\n");
+	std::vector<std::string>				buffer = ft_strtovec(_Request.getContent(), "\r\n");
 	std::vector<std::string>::iterator		line = buffer.begin();
 
 	if (_Request.setRequestUri(*line++) == false)
@@ -121,9 +117,9 @@ int		Webserv::reqParser(all_servers &all_servs)
 	_Request.setServer(getReqServ(_Request.getData()["Host"][0], all_servs), _Request.getStatus());
 	_Request.setConstructPath();
 	_Request.setChunked();
-//	setContent();
 	return 1;
 }
+
 
 void	Webserv::_handle_fd_set(all_servers &all_servs)
 {
@@ -135,14 +131,14 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 		if (FD_ISSET(*it, &_write_fd))
 		{
 			int sendret = 0;
-			_Response = Response(_Request);
-			_Response.setContent(getFileContent(_Request.getConstructPath()));
-			_Response.header();
-			to_send = _Response.get_header();
-			if (_Response.getStatus().first == 400 || !_Request.getLocation()->cgi.first.length() || ft_checkDir(_Request.getConstructPath()))
+			Response resp = Response(_Request);
+			resp.setContent(getFileContent(_Request.getConstructPath()));
+			resp.header();
+			to_send = resp.get_header();
+			if (resp.getStatus().first == 400 || !_Request.getLocation()->cgi.first.length() || ft_checkDir(_Request.getConstructPath()))
 				to_send += "\r\n";
-			to_send += _Response.getContent();
-			std::cout << "Method " << _Request.getMethod() << " : " << _Request.getConstructPath() << " sent with status code " << _Response.getStatus().first << " " << _Response.getStatus().second << std::endl << std::endl;
+			to_send += resp.getContent();
+			std::cout << "Method " << _Request.getMethod() << " : " << _Request.getConstructPath() << " sent with status code " << resp.getStatus().first << " " << resp.getStatus().second << std::endl << std::endl;
 			signal(SIGPIPE, SIG_IGN);
 			if ((sendret = send(*it, to_send.c_str(), to_send.length(), 0)) <= 0)
 			{
@@ -163,21 +159,10 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 		{
 			int BUFF_SIZE = it->second->clientMaxBodySize();
 			if (it->second->clientMaxBodySize() == 0)
-				BUFF_SIZE = 2147483646;
+				BUFF_SIZE = 393215;
 			char *buff = new char[BUFF_SIZE + 1];
 			std::memset(buff, 0, BUFF_SIZE);
-			ret = recv(sock, buff, BUFF_SIZE, 0);
-			// if (_Response.getStatus().first >= 400)
-			// {
-			// 	if (sock > 0)
-			// 		close(sock);
-			// 	FD_CLR(sock, &_set);
-			// 	FD_CLR(sock, &_read_fd);
-			// 	_connecting.erase(sock);
-			// 	it = _connecting.begin();
-			// 	_Response = Response();
-			// 	break;
-			// }
+			ret = recv(sock, buff, BUFF_SIZE - 1, 0);
 			if (ret <= 6)
 			{
 				if (sock > 0)
@@ -192,8 +177,10 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 				break ;
 			}
 			_Request = Request(std::string(buff));
+			std::cout << ret << std::endl;
 			const int reqLen = requestLen(_Request.getContent());
-			if ((BUFF_SIZE && ret >= BUFF_SIZE) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos))
+			std::cout << reqLen << std::endl;
+			if ((BUFF_SIZE && ret >= 393216) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos))
 			{
 				_Request.setStatus(413);
 			}

@@ -34,7 +34,7 @@ void	Socket::setup(const Server &server)
 {
 	if ((_Socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		throw "Error: socket";
-	printf("%s | %i\n", server.ip().c_str(), server.port());
+	std::cout << server.ip().c_str() << " | " << server.port() << std::endl;
 	_setaddr(server);
 	int	reuseaddr = 1;
 	if (setsockopt(_Socket_fd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr)) < 0)

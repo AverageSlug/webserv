@@ -6,15 +6,14 @@ Response::Response()
 	setStatus(200);
 }
 
-Response::Response(Request request)
+Response::Response(Request request) : _request(request)
 {
-	_request = request;
 	if (_request.getStatus() == 400)
 		_location = NULL;
 	else
 		_location = request.getLocation();
 	setStatus(request.getStatus());
-	if (!ft_checkPath(_request.getConstructPath()) && _status.first < 400)
+	if (!ft_checkPath(_request.getConstructPath().substr(0, _request.getConstructPath().find("?"))) && _status.first < 400)
 		setStatus(404);
 }
 
