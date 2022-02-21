@@ -44,12 +44,6 @@ Server*	all_servers::last()            const
 	return this->_servers.back();
 }
 
-void	all_servers::newServer(const data_type &data)
-{
-	(void)data; // !
-	this->_servers.push_back(new Server());
-}
-
 void	all_servers::newLocation(Server *server, const data_type &data)
 {
 	server->newLocation(data);

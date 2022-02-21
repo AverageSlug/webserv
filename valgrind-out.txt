@@ -1,0 +1,202 @@
+==1692== Memcheck, a memory error detector
+==1692== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==1692== Using Valgrind-3.15.0-608cb11914-20190413 and LibVEX; rerun with -h for copyright info
+==1692== Command: ./webserv
+==1692== Parent PID: 87202
+==1692== 
+--1692-- 
+--1692-- Valgrind options:
+--1692--    --leak-check=full
+--1692--    --show-leak-kinds=all
+--1692--    --track-origins=yes
+--1692--    --verbose
+--1692--    --log-file=valgrind-out.txt
+--1692-- Output from sysctl({CTL_KERN,KERN_VERSION}):
+--1692--   Darwin Kernel Version 18.7.0: Tue Aug 20 16:57:14 PDT 2019; root:xnu-4903.271.2~2/RELEASE_X86_64
+--1692-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand
+--1692-- Page sizes: currently 4096, max supported 4096
+--1692-- Valgrind library directory: /Users/ijacquet/.brew/Cellar/valgrind/3.15.0/lib/valgrind
+--1692-- ./webserv (rx at 0x100000000, rw at 0x1000e4000)
+--1692--    reading syms   from primary file (278 20378)
+--1692--    dSYM= ./webserv.dSYM/Contents/Resources/DWARF/webserv
+--1692--    reading dwarf3 from dsyms file
+--1692-- /usr/lib/dyld (rx at 0x1001e4000, rw at 0x10024f000)
+--1692--    reading syms   from primary file (5 2132)
+--1692-- Scheduler: using generic scheduler lock implementation.
+--1692-- Reading suppressions file: /Users/ijacquet/.brew/Cellar/valgrind/3.15.0/lib/valgrind/default.supp
+==1692== embedded gdbserver: reading from /var/folders/zz/zyxvpxvq6csfxvn_n000740m001s05/T//vgdb-pipe-from-vgdb-to-1692-by-ijacquet-on-???
+==1692== embedded gdbserver: writing to   /var/folders/zz/zyxvpxvq6csfxvn_n000740m001s05/T//vgdb-pipe-to-vgdb-from-1692-by-ijacquet-on-???
+==1692== embedded gdbserver: shared mem   /var/folders/zz/zyxvpxvq6csfxvn_n000740m001s05/T//vgdb-pipe-shared-mem-vgdb-1692-by-ijacquet-on-???
+==1692== 
+==1692== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==1692== don't want to do, unless you know exactly what you're doing,
+==1692== or are doing some strange experiment):
+==1692==   /Users/ijacquet/.brew/Cellar/valgrind/3.15.0/lib/valgrind/../../bin/vgdb --pid=1692 ...command...
+==1692== 
+==1692== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==1692==   /path/to/gdb ./webserv
+==1692== and then give GDB the following command
+==1692==   target remote | /Users/ijacquet/.brew/Cellar/valgrind/3.15.0/lib/valgrind/../../bin/vgdb --pid=1692
+==1692== --pid is optional if only one valgrind process is running
+==1692== 
+--1692-- REDIR: 0x100225120 (dyld:strcmp) redirected to 0x25805895d (???)
+--1692-- REDIR: 0x10021f5f6 (dyld:arc4random) redirected to 0x2580589fb (???)
+--1692-- REDIR: 0x100224500 (dyld:strlen) redirected to 0x25805892c (???)
+--1692-- REDIR: 0x100225420 (dyld:strcpy) redirected to 0x258058979 (???)
+--1692-- REDIR: 0x1002226f0 (dyld:strcat) redirected to 0x25805893d (???)
+==1692== Conditional jump or move depends on uninitialised value(s)
+==1692==    at 0x1001EA330: dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5502: dyldbootstrap::start(macho_header const*, int, char const**, long, macho_header const*, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5035: _dyld_start (in /usr/lib/dyld)
+==1692==  Uninitialised value was created by a stack allocation
+==1692==    at 0x10021DA64: amfi_check_dyld_policy_self (in /usr/lib/dyld)
+==1692== 
+==1692== Conditional jump or move depends on uninitialised value(s)
+==1692==    at 0x1001EC456: dyld::checkEnvironmentVariables(char const**) (in /usr/lib/dyld)
+==1692==    by 0x1001EA339: dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5502: dyldbootstrap::start(macho_header const*, int, char const**, long, macho_header const*, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5035: _dyld_start (in /usr/lib/dyld)
+==1692==  Uninitialised value was created by a stack allocation
+==1692==    at 0x10021DA64: amfi_check_dyld_policy_self (in /usr/lib/dyld)
+==1692== 
+--1692-- REDIR: 0x1002242f0 (dyld:strlcat) redirected to 0x258058996 (???)
+==1692== Conditional jump or move depends on uninitialised value(s)
+==1692==    at 0x1001E6BBC: dyld::processDyldEnvironmentVariable(char const*, char const*, char const*) (in /usr/lib/dyld)
+==1692==    by 0x1001EC566: dyld::checkEnvironmentVariables(char const**) (in /usr/lib/dyld)
+==1692==    by 0x1001EA339: dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5502: dyldbootstrap::start(macho_header const*, int, char const**, long, macho_header const*, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5035: _dyld_start (in /usr/lib/dyld)
+==1692==  Uninitialised value was created by a stack allocation
+==1692==    at 0x10021DA64: amfi_check_dyld_policy_self (in /usr/lib/dyld)
+==1692== 
+==1692== Conditional jump or move depends on uninitialised value(s)
+==1692==    at 0x1001EA341: dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5502: dyldbootstrap::start(macho_header const*, int, char const**, long, macho_header const*, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5035: _dyld_start (in /usr/lib/dyld)
+==1692==  Uninitialised value was created by a stack allocation
+==1692==    at 0x10021DA64: amfi_check_dyld_policy_self (in /usr/lib/dyld)
+==1692== 
+==1692== Conditional jump or move depends on uninitialised value(s)
+==1692==    at 0x1001EE39D: dyld::loadPhase3(char const*, char const*, dyld::LoadContext const&, unsigned int&, std::__1::vector<char const*, std::__1::allocator<char const*> >*) (in /usr/lib/dyld)
+==1692==    by 0x1001EDD17: dyld::loadPhase1(char const*, char const*, dyld::LoadContext const&, unsigned int&, std::__1::vector<char const*, std::__1::allocator<char const*> >*) (in /usr/lib/dyld)
+==1692==    by 0x1001E7AC9: dyld::loadPhase0(char const*, char const*, dyld::LoadContext const&, unsigned int&, std::__1::vector<char const*, std::__1::allocator<char const*> >*) (in /usr/lib/dyld)
+==1692==    by 0x1001E761D: dyld::load(char const*, dyld::LoadContext const&, unsigned int&) (in /usr/lib/dyld)
+==1692==    by 0x1001EB3A0: dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5502: dyldbootstrap::start(macho_header const*, int, char const**, long, macho_header const*, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5035: _dyld_start (in /usr/lib/dyld)
+==1692==  Uninitialised value was created by a stack allocation
+==1692==    at 0x10021DA64: amfi_check_dyld_policy_self (in /usr/lib/dyld)
+==1692== 
+==1692== Conditional jump or move depends on uninitialised value(s)
+==1692==    at 0x1001EE39D: dyld::loadPhase3(char const*, char const*, dyld::LoadContext const&, unsigned int&, std::__1::vector<char const*, std::__1::allocator<char const*> >*) (in /usr/lib/dyld)
+==1692==    by 0x1001EDD17: dyld::loadPhase1(char const*, char const*, dyld::LoadContext const&, unsigned int&, std::__1::vector<char const*, std::__1::allocator<char const*> >*) (in /usr/lib/dyld)
+==1692==    by 0x1001E7AC9: dyld::loadPhase0(char const*, char const*, dyld::LoadContext const&, unsigned int&, std::__1::vector<char const*, std::__1::allocator<char const*> >*) (in /usr/lib/dyld)
+==1692==    by 0x1001E7658: dyld::load(char const*, dyld::LoadContext const&, unsigned int&) (in /usr/lib/dyld)
+==1692==    by 0x1001EB3A0: dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5502: dyldbootstrap::start(macho_header const*, int, char const**, long, macho_header const*, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5035: _dyld_start (in /usr/lib/dyld)
+==1692==  Uninitialised value was created by a stack allocation
+==1692==    at 0x10021DA64: amfi_check_dyld_policy_self (in /usr/lib/dyld)
+==1692== 
+--1692-- UNKNOWN fcntl 98!
+--1692-- /Users/ijacquet/.brew/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_core-amd64-darwin.so (rx at 0x1002af000, rw at 0x1002b5000)
+--1692--    reading syms   from primary file (3 88)
+--1692--    dSYM= /Users/ijacquet/.brew/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_core-amd64-darwin.so.dSYM/Contents/Resources/DWARF/vgpreload_core-amd64-darwin.so
+--1692-- UNKNOWN fcntl 98! (repeated 2 times)
+--1692-- /Users/ijacquet/.brew/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so (rx at 0x1002b9000, rw at 0x1002c2000)
+--1692--    reading syms   from primary file (72 96)
+--1692--    dSYM= /Users/ijacquet/.brew/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so.dSYM/Contents/Resources/DWARF/vgpreload_memcheck-amd64-darwin.so
+==1692== Conditional jump or move depends on uninitialised value(s)
+==1692==    at 0x1001FB120: ImageLoaderMachO::getRPaths(ImageLoader::LinkContext const&, std::__1::vector<char const*, std::__1::allocator<char const*> >&) const (in /usr/lib/dyld)
+==1692==    by 0x1001F70AC: ImageLoader::recursiveLoadLibraries(ImageLoader::LinkContext const&, bool, ImageLoader::RPathChain const&, char const*) (in /usr/lib/dyld)
+==1692==    by 0x1001F6429: ImageLoader::link(ImageLoader::LinkContext const&, bool, bool, bool, ImageLoader::RPathChain const&, char const*) (in /usr/lib/dyld)
+==1692==    by 0x1001E9823: dyld::link(ImageLoader*, bool, bool, ImageLoader::RPathChain const&, unsigned int) (in /usr/lib/dyld)
+==1692==    by 0x1001EB3F7: dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5502: dyldbootstrap::start(macho_header const*, int, char const**, long, macho_header const*, unsigned long*) (in /usr/lib/dyld)
+==1692==    by 0x1001E5035: _dyld_start (in /usr/lib/dyld)
+==1692==  Uninitialised value was created by a stack allocation
+==1692==    at 0x10021DA64: amfi_check_dyld_policy_self (in /usr/lib/dyld)
+==1692== 
+--1692-- /usr/lib/libc++.1.dylib (rx at 0x1002c8000, rw at 0x10031c000)
+--1692--    reading syms   from primary file (2023 1671)
+--1692-- UNKNOWN fcntl 98! (repeated 4 times)
+--1692-- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.asan_osx_dynamic.dylib (rx at 0x10037b000, rw at 0x10041d000)
+--1692--    reading syms   from primary file (284 1871)
+--1692-- /usr/lib/libSystem.B.dylib (rx at 0x101051000, rw at 0x101053000)
+--1692--    reading syms   from primary file (29 7)
+--1692-- /usr/lib/libc++abi.dylib (rx at 0x101058000, rw at 0x10106e000)
+--1692--    reading syms   from primary file (375 604)
+--1692-- /usr/lib/system/libcache.dylib (rx at 0x101084000, rw at 0x101089000)
+--1692--    reading syms   from primary file (32 28)
+--1692-- UNKNOWN fcntl 98! (repeated 8 times)
+--1692-- /usr/lib/system/libcommonCrypto.dylib (rx at 0x10108e000, rw at 0x101099000)
+--1692--    reading syms   from primary file (222 164)
+--1692-- /usr/lib/system/libcompiler_rt.dylib (rx at 0x1010a6000, rw at 0x1010ae000)
+--1692--    reading syms   from primary file (510 8)
+--1692-- /usr/lib/system/libcopyfile.dylib (rx at 0x1010bb000, rw at 0x1010c5000)
+--1692--    reading syms   from primary file (11 37)
+--1692-- /usr/lib/system/libcorecrypto.dylib (rx at 0x1010cb000, rw at 0x101150000)
+--1692--    reading syms   from primary file (525 697)
+--1692-- /usr/lib/system/libdispatch.dylib (rx at 0x10116c000, rw at 0x1011a6000)
+--1692--    reading syms   from primary file (300 878)
+--1692-- /usr/lib/system/libdyld.dylib (rx at 0x1011d6000, rw at 0x101203000)
+--1692--    reading syms   from primary file (107 1127)
+--1692-- /usr/lib/system/libkeymgr.dylib (rx at 0x101221000, rw at 0x101222000)
+--1692--    reading syms   from primary file (11 2)
+--1692-- UNKNOWN fcntl 98! (repeated 16 times)
+--1692-- /usr/lib/system/libmacho.dylib (rx at 0x10122d000, rw at 0x101233000)
+--1692--    reading syms   from primary file (105 2)
+--1692-- /usr/lib/system/libquarantine.dylib (rx at 0x101239000, rw at 0x10123c000)
+--1692--    reading syms   from primary file (71 38)
+--1692-- /usr/lib/system/libremovefile.dylib (rx at 0x101242000, rw at 0x101244000)
+--1692--    reading syms   from primary file (12 6)
+--1692-- /usr/lib/system/libsystem_asl.dylib (rx at 0x101249000, rw at 0x101261000)
+--1692--    reading syms   from primary file (220 227)
+--1692-- /usr/lib/system/libsystem_blocks.dylib (rx at 0x10126e000, rw at 0x10126f000)
+--1692--    reading syms   from primary file (21 7)
+--1692-- /usr/lib/system/libsystem_c.dylib (rx at 0x101273000, rw at 0x1012fb000)
+--1692--    reading syms   from primary file (1342 803)
+--1692-- /usr/lib/system/libsystem_configuration.dylib (rx at 0x101323000, rw at 0x101327000)
+--1692--    reading syms   from primary file (38 64)
+--1692-- /usr/lib/system/libsystem_coreservices.dylib (rx at 0x10132d000, rw at 0x101331000)
+--1692--    reading syms   from primary file (14 43)
+--1692-- /usr/lib/system/libsystem_darwin.dylib (rx at 0x101336000, rw at 0x10133d000)
+--1692--    reading syms   from primary file (40 331)
+--1692-- /usr/lib/system/libsystem_dnssd.dylib (rx at 0x101347000, rw at 0x10134e000)
+--1692--    reading syms   from primary file (39 34)
+--1692-- /usr/lib/system/libsystem_info.dylib (rx at 0x101353000, rw at 0x10139f000)
+--1692--    reading syms   from primary file (426 719)
+--1692-- /usr/lib/system/libsystem_m.dylib (rx at 0x1013b5000, rw at 0x101401000)
+--1692--    reading syms   from primary file (811 1)
+--1692-- /usr/lib/system/libsystem_malloc.dylib (rx at 0x10140f000, rw at 0x10143a000)
+--1692--    reading syms   from primary file (156 420)
+--1692-- /usr/lib/system/libsystem_networkextension.dylib (rx at 0x101449000, rw at 0x101454000)
+--1692--    reading syms   from primary file (99 180)
+--1692-- /usr/lib/system/libsystem_notify.dylib (rx at 0x10145f000, rw at 0x101467000)
+--1692--    reading syms   from primary file (23 1)
+--1692-- /usr/lib/system/libsystem_sandbox.dylib (rx at 0x10146d000, rw at 0x101471000)
+--1692--    reading syms   from primary file (100 13)
+--1692-- UNKNOWN fcntl 98! (repeated 32 times)
+--1692-- /usr/lib/system/libsystem_secinit.dylib (rx at 0x101477000, rw at 0x10147a000)
+--1692--    reading syms   from primary file (4 7)
+--1692-- /usr/lib/system/libsystem_kernel.dylib (rx at 0x10147f000, rw at 0x1014a8000)
+--1692--    reading syms   from primary file (1306 120)
+--1692-- /usr/lib/system/libsystem_platform.dylib (rx at 0x1014c2000, rw at 0x1014cc000)
+--1692--    reading syms   from primary file (166 105)
+--1692-- /usr/lib/system/libsystem_pthread.dylib (rx at 0x1014d4000, rw at 0x1014df000)
+--1692--    reading syms   from primary file (186 99)
+--1692-- /usr/lib/system/libsystem_symptoms.dylib (rx at 0x1014e9000, rw at 0x1014f1000)
+--1692--    reading syms   from primary file (10 89)
+--1692-- /usr/lib/system/libsystem_trace.dylib (rx at 0x1014f7000, rw at 0x10150d000)
+--1692--    reading syms   from primary file (126 235)
+--1692-- /usr/lib/system/libunwind.dylib (rx at 0x10151b000, rw at 0x101521000)
+--1692--    reading syms   from primary file (102 52)
+--1692-- /usr/lib/system/libxpc.dylib (rx at 0x101528000, rw at 0x101558000)
+--1692--    reading syms   from primary file (590 928)
+--1692-- /usr/lib/libobjc.A.dylib (rx at 0x10157b000, rw at 0x101d01000)
+--1692--    reading syms   from primary file (360 900)
+--1692-- REDIR: 0x1014c3740 (libsystem_platform.dylib:_platform_memcmp) redirected to 0x1002bc849 (_platform_memcmp)
+--1692-- REDIR: 0x1014c4360 (libsystem_platform.dylib:_platform_strcmp) redirected to 0x1002bc0d1 (_platform_strcmp)
+--1692-- REDIR: 0x1012cbfc4 (libsystem_c.dylib:strrchr) redirected to 0x1002bbb50 (strrchr)
+--1692-- REDIR: 0x10141c83b (libsystem_malloc.dylib:malloc_zone_register) redirected to 0x1002bb996 (malloc_zone_register)
+==1692== Warning: set address range perms: large range [0xffffffff000, 0x120000000000) (defined)

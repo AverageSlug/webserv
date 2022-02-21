@@ -34,7 +34,6 @@ class all_servers
 
 		void				newParserLine(Server *, const data_type &);
 		void				newLocation(Server *, const data_type &);
-		void				newServer(const data_type &);
 		void				openBlock(const data_type &);
 		void				closeBlock(const data_type &);
 		std::vector<Server *>	getservs() {return _servers;}

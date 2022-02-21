@@ -22,7 +22,7 @@ class Webserv
 	private:
 		Request		_Request;
 		Socket		*_Socket;
-		Response	_Response;
+		// Response	_Response;
 		long	_server_fd_highest;
 		fd_set	_set;
 		int		_size;
@@ -31,6 +31,7 @@ class Webserv
 		std::map<long, Server*>	_connecting;
 		std::vector<long>		_connected;
 		void	_handle_fd_set(all_servers &all_servs);
+		int		_handle_fd_set2(Request *req);
 };
 
 #endif

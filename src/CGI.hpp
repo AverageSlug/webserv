@@ -18,6 +18,7 @@ class CGI
 		char	**_envtoa();
 		std::string							_req_cont;
 		std::map<std::string, std::string>	_env;
+		char								**_enva;
 };
 
 #endif
