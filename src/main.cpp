@@ -36,6 +36,5 @@ int		main(int argc, char **argv)
 	catch(const char* e)
 	{
 		std::cerr << e << std::endl;
-		exit(1);
 	}
 }

@@ -2,12 +2,14 @@
 
 Response::Response()
 {
+	std::cout << "def res" << std::endl;
 	_location = NULL;
 	setStatus(200);
 }
 
 Response::Response(Request request) : _request(request)
 {
+	std::cout << "nrm res" << std::endl;
 	if (_request.getStatus() == 400)
 		_location = NULL;
 	else
@@ -19,15 +21,18 @@ Response::Response(Request request) : _request(request)
 
 Response::~Response()
 {
+	std::cout << "des res" << std::endl;
 }
 
 Response::Response(const Response &cpy)
 {
+	std::cout << "cpy res" << std::endl;
 	*this = cpy;
 }
 
 Response &Response::operator=(const Response &a)
 {
+	std::cout << "equ res" << std::endl;
 	_request = a._request;
 	if (_request.getStatus() == 400)
 		_location = NULL;
@@ -368,18 +373,12 @@ void	Response::ft_delete()
 
 void	Response::_set_headers()
 {
-//	_allow = _request.getMethod(); //this is supposed to be the list of allowed methods
-//	_content_language = "en";
 	std::stringstream ss;
 	if (_status.first != 400 && _request.getLocation()->cgi.first.length())
 		ss << _content.substr(_content.find("\r\n\r\n") + 4, _content.length()).length();
 	else
 		ss << _content.length();
 	_content_length = ss.str();
-//	_content_location = _request.getUri();
-//	_content_type = ""; //content-type !!
-//	_date = "Wed, 02 Feb 2022 12:05:59"; //date !!
-//	_last_modified = "Mon, 29 Jun 2000"; //last-modified !!
 	if (_status.first == 201)
 	{
 		_location_path = _location->root;
@@ -388,24 +387,11 @@ void	Response::_set_headers()
 	{
 		std::stringstream(_retry_after) << 3;
 	}
-//	_server = "webigornulserv/4.2.0";
-//	if (_request.getChunked())
-//		_transfer_encoding = "chunked";
-//	else
-//		_transfer_encoding = "identity";
-//	if (_status.first == 401)
-//	{
-//		_www_authenticate = "Basic";
-//	}
 }
 
 std::string	Response::_get_headers()
 {
-	 std::string	header;
-	// if (_allow != "")
-	// 	header += "Allow: " + _allow + "\r\n";
-	// if (_content_language != "")
-	// 	header += "Content-Language: " + _content_language + "\r\n";
+	std::string	header;
 	if (_content_length != "")
 		header += "Content-Length: " + _content_length + "\r\n";
 	if (_status.first >= 300 && _status.first <= 399)
@@ -413,24 +399,6 @@ std::string	Response::_get_headers()
 		header += "Location: ";
 		header += _location->redirection.second + "\r\n";
 	}
-	// if (_content_location != "")
-	// 	header += "Content-Location: " + _content_location + "\r\n";
-	// if (_content_type != "")
-	// 	header += "Content-Type: " + _content_type + "\r\n";
-	// if (_date != "")
-	// 	header += "Date: " + _date + "\r\n";
-	// if (_last_modified != "")
-	// 	header += "Last-Modified: " + _last_modified + "\r\n";
-	// if (_location != "")
-	// 	header += "Location: " + _location + "\r\n";
-	// if (_retry_after != "")
-	// 	header += "Retry-After: " + _retry_after + "\r\n";
-	// if (_server != "")
-	// 	header += "Server: " + _server + "\r\n";
-	// if (_transfer_encoding != "")
-	// 	header += "Transfer-Encoding: " + _transfer_encoding + "\r\n";
-	// if (_www_authenticate != "")
-	// 	header += "WWW-Authenticate: " + _www_authenticate + "\r\n";
 	return (header);
 }
 

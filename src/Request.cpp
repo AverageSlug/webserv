@@ -9,6 +9,7 @@ Request::Request() :
 	_content(""),
 	_chunked(false)
 {
+	std::cout << "def req" << std::endl;
 }
 
 Request::Request(const std::string content) :
@@ -20,10 +21,12 @@ Request::Request(const std::string content) :
 	_content(content),
 	_chunked(false)
 {
+	std::cout << "nrm req" << std::endl;
 }
 
 Request&			Request::operator=(const Request &x)
 {
+	std::cout << "equ req" << std::endl;
 	if (this == &x)
 		return *this;
 	_constructPath = x._constructPath;
@@ -40,11 +43,13 @@ Request&			Request::operator=(const Request &x)
 
 Request::Request(const Request &x)
 {
+	std::cout << "cpy req" << std::endl;
 	*this = x;
 }
 
 Request::~Request()
 {
+	std::cout << "des req" << std::endl;
 }
 
 std::string			Request::getMethod()
@@ -112,7 +117,7 @@ const t_location*	Request::getLocation() const
 	{
 		for (location_type::const_iterator it = serv_loc.begin(); it != serv_loc.end(); ++it)
 		{
-			if (path == (*it)->path) //!!
+			if (path == (*it)->path)
 			{
 				return *it;
 			}

@@ -22,7 +22,6 @@ class Webserv
 	private:
 		Request		_Request;
 		Socket		*_Socket;
-		// Response	_Response;
 		long	_server_fd_highest;
 		fd_set	_set;
 		int		_size;

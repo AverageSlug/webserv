@@ -11,7 +11,7 @@ _req_cont(request.getContent().substr(request.getContent().find("\r\n\r\n") + 4)
 CGI::~CGI()
 {
 	for (int i = 0; _enva[i]; i++)
-		delete [] _enva[i];
+		free(_enva[i]);
 	delete [] _enva;
 }
 
@@ -37,13 +37,13 @@ void	CGI::_setup(Request &request)
 	else
 		_env["CONTENT_TYPE"] = "";
 	_env["GATEWAY_INTERFACE"] = "CGI/1.1";
-	_env["PATH_INFO"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));
-	_env["PATH_TRANSLATED"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));
-	_env["QUERY_STRING"] = request.getUri().substr(request.getUri().find("?") + 1, request.getUri().length());
+	_env["PATH_INFO"] = request.getUri().substr(0, request.getUri().find("?"));
+	_env["PATH_TRANSLATED"] = request.getUri().substr(0, request.getUri().find("?"));
+	_env["QUERY_STRING"] = request.getUri().substr(request.getUri().find("?") + 1);
 	_env["REQUEST_METHOD"] = request.getMethod();
-	_env["SCRIPT_NAME"] = request.getLocation()->cgi.second;
+	_env["SCRIPT_NAME"] = request.getConstructPath().substr(0, request.getConstructPath().find("?"));
 	_env["SERVER_NAME"] = request.getData()["Host"][0].substr(0, request.getData()["Host"][0].find(":"));
-	_env["SERVER_PORT"] = request.getData()["Host"][0].substr(request.getData()["Host"][0].find(":") + 1, request.getData()["Host"][0].length());
+	_env["SERVER_PORT"] = request.getData()["Host"][0].substr(request.getData()["Host"][0].find(":") + 1);
 	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	_env["SERVER_SOFTWARE"] = request.getServ()->name()[0];
 }
@@ -57,7 +57,7 @@ char		**CGI::_envtoa()
 	for (std::map<std::string, std::string>::iterator it = _env.begin(); it != _env.end(); it++)
 	{
 		std::string tmp = it->first + "=" + it->second;
-		env[i] = new char[tmp.size() + 1];
+		env[i] = strdup(tmp.c_str());
 		i++;
 	}
 	env[i] = NULL;
