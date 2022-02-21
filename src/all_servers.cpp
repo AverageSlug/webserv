@@ -2,7 +2,6 @@
 
 all_servers::all_servers()
 {
-	std::cout << "def all" << std::endl;
 	_bracket[OUTSIDE] = WAIT_BRACKS;
 	_bracket[IN_SERVER] = NONE;
 	_bracket[IN_LOCA] = NONE;
@@ -10,20 +9,17 @@ all_servers::all_servers()
 
 all_servers::~all_servers()
 {
-	std::cout << "des all" << std::endl;
 	for (size_t i = 0; i < this->_servers.size(); i++)
 		delete this->_servers[i];
 }
 
 all_servers::all_servers(const all_servers &x)
 {
-	std::cout << "cpy all" << std::endl;
 	*this = x;
 }
 
 all_servers&	all_servers::operator=(const all_servers &x)
 {
-	std::cout << "equ all" << std::endl;
 	(void)x;
 	return *this;
 }

@@ -2,24 +2,20 @@
 
 Webserv::Webserv()
 {
-	std::cout << "def web" << std::endl;
 }
 
 Webserv::~Webserv()
 {
-	std::cout << "des web" << std::endl;
 	delete [] _Socket;
 }
 
 Webserv::Webserv(const Webserv &cpy)
 {
-	std::cout << "cpy web" << std::endl;
 	*this = cpy;
 }
 
 Webserv &Webserv::operator=(const Webserv &a)
 {
-	std::cout << "equ web" << std::endl;
 	(void)a;
 	return (*this);
 }
@@ -135,9 +131,7 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 		if (FD_ISSET(*it, &_write_fd))
 		{
 			int sendret = 0;
-			std::cout << "res_pre" << std::endl;
 			Response resp = Response(_Request);
-			std::cout << "res_end" << std::endl;
 			resp.setContent(getFileContent(_Request.getConstructPath()));
 			resp.header();
 			to_send = resp.get_header();
@@ -165,7 +159,6 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 		long sock = it->first;
 		if (FD_ISSET(sock, &_read_fd))
 		{
-			std::cout << "req_fnc" << std::endl;
 			int BUFF_SIZE = it->second->clientMaxBodySize();
 			if (it->second->clientMaxBodySize() == 0)
 				BUFF_SIZE = 393215;
@@ -183,9 +176,7 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 				delete [] buff;
 				break ;
 			}
-			std::cout << "req_pre" << std::endl;
 			_Request = Request(std::string(buff));
-			std::cout << "req_end" << std::endl;
 			const int reqLen = requestLen(_Request.getContent());
 			if (!std::string(buff).compare(0, 4, "POST") && ((BUFF_SIZE && ret >= 393216) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos) || (ret >= BUFF_SIZE - 1)))
 				_Request.setStatus(413);

@@ -9,7 +9,6 @@ Request::Request() :
 	_content(""),
 	_chunked(false)
 {
-	std::cout << "def req" << std::endl;
 }
 
 Request::Request(const std::string content) :
@@ -21,12 +20,10 @@ Request::Request(const std::string content) :
 	_content(content),
 	_chunked(false)
 {
-	std::cout << "nrm req" << std::endl;
 }
 
 Request&			Request::operator=(const Request &x)
 {
-	std::cout << "equ req" << std::endl;
 	if (this == &x)
 		return *this;
 	_constructPath = x._constructPath;
@@ -43,13 +40,11 @@ Request&			Request::operator=(const Request &x)
 
 Request::Request(const Request &x)
 {
-	std::cout << "cpy req" << std::endl;
 	*this = x;
 }
 
 Request::~Request()
 {
-	std::cout << "des req" << std::endl;
 }
 
 std::string			Request::getMethod()

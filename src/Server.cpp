@@ -5,26 +5,22 @@ Server::Server() :
 	_ip("127.0.0.1"),
 	_clientMaxBodySize(1000000)
 {
-	std::cout << "def srv" << std::endl;
 }
 
 Server::~Server()
 {
-	std::cout << "des srv" << std::endl;
 	for (size_t i = 0; i < _locations.size(); i++)
 	 	delete _locations[i];
 }
 
 Server::Server(const Server &x)
 {
-	std::cout << "cpy srv" << std::endl;
 	*this = x;
 }
 
 Server&	Server::operator=(const Server &x)
 {
 	(void)x;
-	std::cout << "equ srv" << std::endl;
 	return *this;
 }
 

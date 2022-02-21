@@ -2,14 +2,12 @@
 
 Response::Response()
 {
-	std::cout << "def res" << std::endl;
 	_location = NULL;
 	setStatus(200);
 }
 
 Response::Response(Request request) : _request(request)
 {
-	std::cout << "nrm res" << std::endl;
 	if (_request.getStatus() == 400)
 		_location = NULL;
 	else
@@ -21,18 +19,15 @@ Response::Response(Request request) : _request(request)
 
 Response::~Response()
 {
-	std::cout << "des res" << std::endl;
 }
 
 Response::Response(const Response &cpy)
 {
-	std::cout << "cpy res" << std::endl;
 	*this = cpy;
 }
 
 Response &Response::operator=(const Response &a)
 {
-	std::cout << "equ res" << std::endl;
 	_request = a._request;
 	if (_request.getStatus() == 400)
 		_location = NULL;
@@ -230,7 +225,7 @@ void	Response::setErrorContent()
 		it = _request.getServ()->errorPages().find(_status.first);
 		if (it != _request.getServ()->errorPages().end() &&
 			ft_checkPath(it->second))
-		{std::cout << "here errors\n";
+		{
 			_content = getFileContent(it->second);
 			return ;
 		}

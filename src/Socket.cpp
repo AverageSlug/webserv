@@ -2,24 +2,20 @@
 
 Socket::Socket()
 {
-	std::cout << "def sok" << std::endl;
 }
 
 Socket::~Socket()
 {
-	std::cout << "des sok" << std::endl;
 	close(_Socket_fd);
 }
 
 Socket::Socket(const Socket &cpy)
 {
-	std::cout << "cpy sok" << std::endl;
 	*this = cpy;
 }
 
 Socket &Socket::operator=(const Socket &a)
 {
-	std::cout << "equ sok" << std::endl;
 	memset((char *)&_val, 0, sizeof(_val));
 	_val.sin_family = AF_INET;
 	_val.sin_addr.s_addr = a._val.sin_addr.s_addr;
