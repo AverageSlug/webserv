@@ -225,13 +225,12 @@ void	Response::setErrorContent()
 		it = _request.getServ()->errorPages().find(_status.first);
 		if (it != _request.getServ()->errorPages().end() &&
 			ft_checkPath(it->second))
-		{
+		{std::cout << "here errors\n";
 			_content = getFileContent(it->second);
 			return ;
 		}
 	}
 
-	/* Default case */
 	std::string content = "<!DOCTYPE html>\r\n";
 	content += "<html lang=\"en\">\r\n";
 	content += "<head>\r\n";

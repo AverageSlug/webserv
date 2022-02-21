@@ -135,8 +135,10 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 			resp.setContent(getFileContent(_Request.getConstructPath()));
 			resp.header();
 			to_send = resp.get_header();
-			if (resp.getStatus().first == 400 || !_Request.getLocation()->cgi.first.length() || ft_checkDir(_Request.getConstructPath()))
+			if (resp.getStatus().first == 400 || (!_Request.getLocation()->cgi.first.length() || resp.getStatus().first >= 400) || ft_checkDir(_Request.getConstructPath()))
+			{
 				to_send += "\r\n";
+			}
 			to_send += resp.getContent();
 			std::cout << "Method " << _Request.getMethod() << " : " << _Request.getConstructPath() << " sent with status code " << resp.getStatus().first << " " << resp.getStatus().second << std::endl << std::endl;
 			signal(SIGPIPE, SIG_IGN);
