@@ -115,16 +115,20 @@ void	Server::setErrorPages(const data_type &data) // error_page keyword
 
 void	Server::setClientMaxBodySize(const data_type &data) // client_max_body_size keyword
 {
-	 if (data.size() != 2)
+	if (data.size() != 2)
 		throw "Error while reading configuration file";
 	if (!ft_isNumeric(data[1]))
 		throw "Error while reading configuration file";
 	std::stringstream(data[1]) >> _clientMaxBodySize;
+	if (_clientMaxBodySize > 393216)
+		throw "Client size too large !";
+	if (_clientMaxBodySize < 400)
+		throw "Client size too small !";
 }
 
 void	Server::setCgi(t_location  *loc, const data_type &data) // cgi_pass keyword
 {
-	 if (data.size() != 3)
+	if (data.size() != 3)
 		throw "Error while reading configuration file";
 	loc->cgi.first = data[1];
 	loc->cgi.second = data[2];

@@ -28,8 +28,7 @@ void	Webserv::setup(all_servers &all_servs)
 	_Socket = new Socket[_size];
 	for (int i = 0; i < _size; i++)
 	{
-		if (_Socket[i].setup(*all_servs.getservs()[i]))
-			throw "Socket setup failed";
+		_Socket[i].setup(*all_servs.getservs()[i]);
 		FD_SET(_Socket[i].getFD(), &_set);
 		if (_Socket[i].getFD() > _server_fd_highest)
 			_server_fd_highest = _Socket[i].getFD();
@@ -50,9 +49,7 @@ void	Webserv::server(all_servers &all_servs)
 		timeout.tv_sec = 1;
 		timeout.tv_usec = 0;
 		if ((select_fd = select(_server_fd_highest + 1, &_read_fd, &_write_fd, NULL, &timeout)) < 0)
-		{
 			throw "Error: select";
-		}
 		if (!select_fd)
 			std::cout << "\r" << std::flush;
 		else
@@ -162,21 +159,10 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 		{
 			int BUFF_SIZE = it->second->clientMaxBodySize();
 			if (it->second->clientMaxBodySize() == 0)
-				BUFF_SIZE = 2147483646;
+				BUFF_SIZE = 393215;
 			char *buff = new char[BUFF_SIZE + 1];
 			std::memset(buff, 0, BUFF_SIZE);
-			ret = recv(sock, buff, BUFF_SIZE, 0);
-			// if (resp.getStatus().first >= 400)
-			// {
-			// 	if (sock > 0)
-			// 		close(sock);
-			// 	FD_CLR(sock, &_set);
-			// 	FD_CLR(sock, &_read_fd);
-			// 	_connecting.erase(sock);
-			// 	it = _connecting.begin();
-			// 	resp = Response();
-			// 	break;
-			// }
+			ret = recv(sock, buff, BUFF_SIZE - 1, 0);
 			if (ret <= 6)
 			{
 				if (sock > 0)
@@ -191,8 +177,10 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 				break ;
 			}
 			_Request = Request(std::string(buff));
+			std::cout << ret << std::endl;
 			const int reqLen = requestLen(_Request.getContent());
-			if ((BUFF_SIZE && ret >= BUFF_SIZE) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos))
+			std::cout << reqLen << std::endl;
+			if ((BUFF_SIZE && ret >= 393216) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos))
 			{
 				_Request.setStatus(413);
 			}
