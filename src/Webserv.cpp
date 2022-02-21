@@ -177,10 +177,8 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 				break ;
 			}
 			_Request = Request(std::string(buff));
-			std::cout << ret << std::endl;
 			const int reqLen = requestLen(_Request.getContent());
-			std::cout << reqLen << std::endl;
-			if ((BUFF_SIZE && ret >= 393216) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos))
+			if (!std::string(buff).compare(0, 4, "POST") && ((BUFF_SIZE && ret >= 393216) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos) || (ret >= BUFF_SIZE - 1)))
 			{
 				_Request.setStatus(413);
 			}
