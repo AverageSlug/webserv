@@ -83,7 +83,11 @@ std::string	CGI::exec(const std::string &script)
 	lseek(IFD, 0, 0);
 	pid = fork();
 	if (pid < 0)
+	{
+		fclose(IFile);
+		fclose(OFile);
 		throw "Error: CGI";
+	}
 	else if (!pid)
 	{
 		if (dup2(IFD, 0) < 0)
@@ -96,7 +100,11 @@ std::string	CGI::exec(const std::string &script)
 	int		status;
 	waitpid(-1, &status, 0);
 	if (WEXITSTATUS(status) == 1)
+	{
+		fclose(IFile);
+		fclose(OFile);
 		throw "Error: CGI";
+	}
 	lseek(OFD, 0, 0);
 	char buff[65536] = {0};
 	int read = 1;
