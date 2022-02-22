@@ -11,7 +11,7 @@ _req_cont(request.getContent().substr(request.getContent().find("\r\n\r\n") + 4)
 CGI::~CGI()
 {
 	for (int i = 0; _enva[i]; i++)
-		delete [] _enva[i];
+		free(_enva[i]);
 	delete [] _enva;
 }
 
@@ -57,7 +57,6 @@ char		**CGI::_envtoa()
 	for (std::map<std::string, std::string>::iterator it = _env.begin(); it != _env.end(); it++)
 	{
 		std::string tmp = it->first + "=" + it->second;
-		env[i] = new char[tmp.size() + 1];
 		env[i] = strdup(tmp.c_str());
 		i++;
 	}

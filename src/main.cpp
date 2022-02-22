@@ -1,6 +1,14 @@
 #include "all_servers.hpp"
 #include "Webserv.hpp"
 
+#ifdef LEAKS
+void	handler(int signal)
+{
+	(void)signal;
+	system("leaks webserv");
+}
+#endif
+
 int		main(int argc, char **argv)
 {
     char const *config_file;
@@ -27,6 +35,10 @@ int		main(int argc, char **argv)
 		std::cerr << e << std::endl;
 		exit(1);
 	}
+	#ifdef LEAKS
+	signal(SIGINT, handler);
+	signal(SIGQUIT, handler);
+	#endif
 	try
 	{
 		Webserv Webserv;

@@ -2,7 +2,7 @@ NAME		=	$(shell basename $(CURDIR))
 
 CXX			=	clang++
 
-CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98 -pedantic
+CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98 -pedantic -g
 
 SRCS		=	$(wildcard src/*.cpp)
 
