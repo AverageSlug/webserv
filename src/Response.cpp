@@ -14,7 +14,9 @@ Response::Response(Request request) : _request(request)
 		_location = request.getLocation();
 	setStatus(request.getStatus());
 	if (!ft_checkPath(_request.getConstructPath().substr(0, _request.getConstructPath().find("?"))) && _status.first < 400)
+	{
 		setStatus(404);
+	}
 }
 
 Response::~Response()

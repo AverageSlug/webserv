@@ -178,9 +178,14 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 			}
 			_Request = Request(std::string(buff));
 			const int reqLen = requestLen(_Request.getContent());
-			if (!std::string(buff).compare(0, 4, "POST") && ((BUFF_SIZE && ret >= 393216) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos) || (ret >= BUFF_SIZE - 1)))
+			if (!std::string(buff).compare(0, 4, "POST") && ((std::string(buff).compare(std::string(buff).size() - 4 , std::string(buff).size(), "--\r\n")) || ((BUFF_SIZE && ret >= 393216)) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos) || (ret >= BUFF_SIZE - 1)))
 				_Request.setStatus(413);
-			if ((std::string(buff).compare(0, 3, "GET") && std::string(buff).compare(0, 4, "POST") && std::string(buff).compare(0, 6, "DELETE") && std::string(buff).compare(0, 4, "----")) || reqParser(all_servs) == 0)
+			if (_Request.getStatus() == 413 && !(((BUFF_SIZE && ret >= 393216)) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos) || (ret >= BUFF_SIZE - 1)))
+			{
+				if (reqParser(all_servs) && _Request.getLocation()->cgi.first.length())
+					_Request.setStatus(200);
+			}
+			else if ((std::string(buff).compare(0, 3, "GET") && std::string(buff).compare(0, 4, "POST") && std::string(buff).compare(0, 6, "DELETE") && std::string(buff).compare(0, 4, "----")) || reqParser(all_servs) == 0)
 				_Request.setStatus(400);
 			_connected.push_back(sock);
 			delete [] buff;
