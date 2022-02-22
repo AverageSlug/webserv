@@ -128,7 +128,6 @@ void	Server::setClientMaxBodySize(const data_type &data) // client_max_body_size
 
 void	Server::setCgi(t_location  *loc, const data_type &data) // cgi_pass keyword
 {
-	std::cout << "here cgi\n";
 	if (data.size() != 3)
 		throw "Error while reading configuration file";
 	loc->cgi.first = data[1];
