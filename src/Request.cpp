@@ -285,7 +285,9 @@ bool	Request::setFileInfo()
 	for (size_t i = 0; toFind[i].empty() == false; ++i)
 	{
 		if ((pos = headerBuf.find(toFind[i])) == std::string::npos)
+		{
 			return false;
+		}
 	}
 	std::string	boundary = "boundary=";
 	std::string buff = headerBuf;

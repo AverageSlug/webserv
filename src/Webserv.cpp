@@ -62,18 +62,25 @@ size_t	Webserv::requestLen(std::string const & content)
 	size_t pos = content.find("Content-Length: ");
 
 	if (pos == std::string::npos)
-		return std::string::npos;
-	
-	pos += std::string("Content-Length: ").length();
+	{
+		pos = content.find("\r\n\r\n");
+			if (pos == std::string::npos)
+				return std::string::npos;
+		pos += 4;
+		return content.substr(pos, content.size()).size();
+	}
+	else
+		pos += std::string("Content-Length: ").length();
 
 	std::string getLen;
 
-	for (size_t i = pos; i < content.length() - pos; i++)
+	for (size_t i = pos; i < content.length(); i++)
 	{
 		if (std::isdigit(content[i]))
 			getLen += content[i];
 		else
 			break ;
+		std::cout << getLen << std::endl;
 	}
 
 	std::stringstream sstream(getLen);
@@ -159,9 +166,7 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 		long sock = it->first;
 		if (FD_ISSET(sock, &_read_fd))
 		{
-			int BUFF_SIZE = it->second->clientMaxBodySize();
-			if (it->second->clientMaxBodySize() == 0)
-				BUFF_SIZE = 393215;
+			int BUFF_SIZE = 393215;
 			char *buff = new char[BUFF_SIZE + 1];
 			std::memset(buff, 0, BUFF_SIZE);
 			ret = recv(sock, buff, BUFF_SIZE - 1, 0);
@@ -178,7 +183,7 @@ void	Webserv::_handle_fd_set(all_servers &all_servs)
 			}
 			_Request = Request(std::string(buff));
 			const int reqLen = requestLen(_Request.getContent());
-			if (!std::string(buff).compare(0, 4, "POST") && ((std::string(buff).compare(std::string(buff).size() - 4 , std::string(buff).size(), "--\r\n")) || ((BUFF_SIZE && ret >= 393216)) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos) || (ret >= BUFF_SIZE - 1)))
+			if (!std::string(buff).compare(0, 4, "POST") && (((reqLen > ret || reqLen > it->second->clientMaxBodySize()) && (size_t)reqLen != std::string::npos) || (ret >= BUFF_SIZE - 1)))
 				_Request.setStatus(413);
 			if (_Request.getStatus() == 413 && !(((BUFF_SIZE && ret >= 393216)) || (reqLen >= BUFF_SIZE && (size_t)reqLen != std::string::npos) || (ret >= BUFF_SIZE - 1)))
 			{

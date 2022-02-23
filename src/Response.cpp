@@ -350,9 +350,11 @@ void	Response::ft_post()
 		_content += "</body>\n";
 		_content += "</html>\n";
 	}
-	else if ((size_t)_request.getServ()->clientMaxBodySize() != 0 &&
-		_request.getContent().size() > (size_t)_request.getServ()->clientMaxBodySize())
-		setStatus(413);
+	// else if ((size_t)_request.getServ()->clientMaxBodySize() != 0 &&
+	// 	_request.getContent().size() > (size_t)_request.getServ()->clientMaxBodySize())
+	// 	{
+	// 	setStatus(413);
+	// 	}
 	else
 		_content = _request.getContent();
 }
