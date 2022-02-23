@@ -80,7 +80,6 @@ size_t	Webserv::requestLen(std::string const & content)
 			getLen += content[i];
 		else
 			break ;
-		std::cout << getLen << std::endl;
 	}
 
 	std::stringstream sstream(getLen);
